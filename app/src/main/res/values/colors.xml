@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="titleColor" type="color">#fff4f4ff</item>
+    <item name="titleColorPressStart" type="color">#ffeffeff</item>
+    <item name="titleColorPressEnd" type="color">#ffacb9c6</item>
+
+
+    <item name="startColor" type="color">#ffeaf3f6</item>
+    <item name="centerColor" type="color">#fff</item>
+    <item name="endColor" type="color">#ffeaf3f6</item>
+
+    <item name="borderColor" type="color">#328ca4b5</item>
+
+    <item name="btnBackgroundDefault" type="color">#D5E0DF</item>
+    <item name="btnBackgroundPress" type="color">#ffe7eeff</item>
+    <item name="btnBorder" type="color">#fa72899a</item>
+</resources>
