@@ -1,6 +1,5 @@
 package com.atlas.mars.objectcontrol;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,21 +36,19 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        action_bar_title = (LinearLayout)findViewById(R.id.action_bar_title);
-
-        String name =  "LinearLayout";
-        ViewGroup vgr = (ViewGroup)action_bar_title;
-        viewArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
-
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-        Context context = getApplicationContext();
-        //viewArrayList.get(0).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
+        _init();
+    }
+
+    private void _init(){
+        action_bar_title = (LinearLayout)findViewById(R.id.action_bar_title);
+        ViewGroup vgr = (ViewGroup)action_bar_title;
+        viewArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
 
 
         pager.setOnPageChangeListener(new OnPageChangeListener() {
-
             @Override
             public void onPageSelected(int position) {
                 setActiveNavBar(position);
@@ -67,12 +64,31 @@ public class MainActivity extends ActionBarActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+        for(int i = 0; i<viewArrayList.size(); i++){
+            setTitleClickListiner(viewArrayList.get(i), i);
+        }
+
     }
+
+    private void setTitleClickListiner(View view, int _i){
+        final int i = _i;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pager.setCurrentItem(i);
+            }
+        });
+
+    }
+
 
     @Override
     protected void onStart() {
         int i = pager.getCurrentItem();
         viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
+
+       // pager.setCurrentItem(1);
         super.onStart();
     }
 
@@ -81,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
             if(k==i){
                 viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
             }else{
-                viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_default, null));
+                viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_bar, null));
             }
         }
 

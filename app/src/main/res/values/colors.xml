@@ -2,7 +2,7 @@
 <resources>
     <item name="titleColor" type="color">#fff4f4ff</item>
     <item name="titleColorPressStart" type="color">#ffeffeff</item>
-    <item name="titleColorPressEnd" type="color">#ffacb9c6</item>
+    <item name="titleColorPressEnd" type="color">#ffb9b9b9</item>
 
 
     <item name="startColor" type="color">#ffeaf3f6</item>
@@ -14,4 +14,6 @@
     <item name="btnBackgroundDefault" type="color">#D5E0DF</item>
     <item name="btnBackgroundPress" type="color">#ffe7eeff</item>
     <item name="btnBorder" type="color">#fa72899a</item>
+
+    <item name="whiteColor" type="color">#FFF</item>
 </resources>
