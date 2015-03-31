@@ -5,12 +5,25 @@
         <!-- Customize your theme here. -->
         <item name="android:textColorPrimary">@color/whiteColor</item>
         <item name="android:textColor">@color/whiteColor</item>
+        <item name="android:titleTextStyle">@style/titleStyle</item>
+        <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
+    </style>
+    <style name="Dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
     </style>
 
     <style name="MyOwnDialogTitle">
-        <item name="android:background">
-            @drawable/title_bar
+       <item name="android:background">
+            @color/btnBorder
+        </item>
+        <item name="android:textColor">
+            @color/whiteColor
+        </item>
+
+    </style>
+    <style name="titleStyle">
+        <item name="android:textColor">
+            @color/borderColor
         </item>
     </style>
     <style name="titleBar">

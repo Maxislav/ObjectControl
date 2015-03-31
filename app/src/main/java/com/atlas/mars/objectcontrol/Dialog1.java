@@ -1,29 +1,60 @@
 package com.atlas.mars.objectcontrol;
 
+import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 public class Dialog1 extends  DialogFragment implements OnClickListener {
 
+
+    Activity activity;
+
+    /*public static void setActivity(Activity activity){
+        Dialog1.activity = activity;
+    }
+*/
+
     final String LOG_TAG = "myLogs";
+
+    @Override
+    public void onAttach(Activity activity) {
+        this.activity = activity;
+        super.onAttach(activity);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //setStyle(DialogFragment.STYLE_NO_TITLE, R.style.titleBar);
+        Log.d(LOG_TAG,"Theme" + getTheme()+""); //0
+       setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getDialog().setTitle("Title!");
         View v = inflater.inflate(R.layout.dialog1, null);
+
+        LinearLayout ll = (LinearLayout) v.findViewById(R.id.ll);
+
+        LayoutInflater inflatert = activity.getLayoutInflater();
+        View row = inflater.inflate(R.layout.row_select_obj, null);
+        LinearLayout rowLinearLayout = (LinearLayout) row;
+        ll.addView(rowLinearLayout);
+       /* LayoutInflater inflatert = getLayoutInflater();
+
+        LinearLayout rowLinearLayout = (LinearLayout) row;
+        v.addView(rowLinearLayout);*/
+
         v.findViewById(R.id.btnYes).setOnClickListener(this);
         v.findViewById(R.id.btnNo).setOnClickListener(this);
         v.findViewById(R.id.btnMaybe).setOnClickListener(this);

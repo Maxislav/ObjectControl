@@ -13,13 +13,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,6 +51,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dlg1 = new Dialog1();
+        dlg1.onAttach(this);
         _init();
     }
 
@@ -133,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "setSelectObjButton +++ ");
-                showPopupMenu(v);
+               // showPopupMenu(v);
             }
         });
     }
@@ -160,56 +167,74 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
 
 
-    public static void showPopupMenu(View v) {
+    public  void showPopupMenu(View v) {
 
         PopupMenu popupMenu = new PopupMenu(getContext(),v);
         popupMenu.inflate(R.menu.select_object); // Для Android 4.0
+        MenuItem item;
+        MenuInflater mi = new MenuInflater(getContext());
+        //item = mi.inflate(R.menu.one_row,popupMenu.getMenu());
+     //   item = mi
+       // popupMenu.getMenu().add()
+       // getMenuInflater
         Log.d(TAG, "showPopupMenu +++ ");
 
-      /*  Context context = getContext();
-        //FragmentManager fm = getSupportFragmentManager();
-        EditNameDialog editNameDialog = new EditNameDialog();
-        editNameDialog.show(getApplicationContext(), "fragment_edit_name");*/
-       // editNameDialog.gg(context, "fragment_edit_name");
-       /* popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+       // PopupMenu popupMenuRow = new PopupMenu(getContext(),popupMenu)
+
+        popupMenu
+                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // Toast.makeText(PopupMenuDemoActivity.this,
+                        // item.toString(), Toast.LENGTH_LONG).show();
+                        // return true;
+                        switch (item.getItemId()) {
+
+                            case R.id.menu4:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 1",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.menu5:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 2",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.menu6:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 3",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+        popupMenu.show();
+
+    }
+    PopupWindow pw;
+    public void showPopupWindow(View view){
+        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.row_select_obj, null);
 
 
+
+
+       pw = new PopupWindow( v, FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        pw.setOutsideTouchable(false);
+        pw.showAtLocation(view, Gravity.CENTER, 0, 0);
+        Button b = (Button)v.findViewById(R.id.btn);
+        b.setOnClickListener(new View.OnClickListener() {
+            //final PopupWindow _pw = pw;
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-
-                    case R.id.menu4:
-                        Toast.makeText(getContext(),
-                                "Вы выбрали PopupMenu 1",
-                                Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.menu5:
-                        Toast.makeText(getContext(),
-                                "Вы выбрали PopupMenu 2",
-                                Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.menu6:
-                        Toast.makeText(getContext(),
-                                "Вы выбрали PopupMenu 3",
-                                Toast.LENGTH_SHORT).show();
-                        return true;
-                    default:
-                        return false;
-                }
-
+            public void onClick(View v) {
+                pw.dismiss();
             }
-
         });
-        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-            @Override
-            public void onDismiss(PopupMenu menu) {
-                Toast.makeText(getContext(), "onDismiss",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-
-        });
-        popupMenu.show();*/
+        //pw.showAsDropDown(view, 0, 0);
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -255,19 +280,18 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
-    public void onButtonSelected(int buttonIndex) {
-
+    public void onButtonSelected(int buttonIndex, View v) {
+        //showPopupMenu(v);
+        showPopupWindow(v);
       //  FragmentManager fragmentManager = getSupportFragmentManager();
 
-        dlg1 = new Dialog1();
-        dlg1.show(getFragmentManager(), "dlg1");
+
+        //dlg1.show(getFragmentManager(), "dlg1");
 
 
+        //FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        Toast.makeText(getApplicationContext(), buttonIndex + "",
-                Toast.LENGTH_SHORT).show();
+      /*  Toast.makeText(getApplicationContext(), buttonIndex + "",
+                Toast.LENGTH_SHORT).show();*/
     }
 }

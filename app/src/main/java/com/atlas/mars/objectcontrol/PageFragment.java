@@ -80,14 +80,14 @@ public class PageFragment extends Fragment implements View.OnClickListener  {
 
 
         OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
-        listener.onButtonSelected(buttonIndex);
+        listener.onButtonSelected(buttonIndex, v);
 
        /* Toast.makeText(getActivity(), String.valueOf(buttonIndex),
                 Toast.LENGTH_SHORT).show();*/
 
     }
     public interface OnSelectedButtonListener {
-        void onButtonSelected(int buttonIndex);
+        void onButtonSelected(int buttonIndex, View v);
     }
 
     int translateIdToIndex(int id) {
