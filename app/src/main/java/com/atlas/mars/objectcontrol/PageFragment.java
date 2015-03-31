@@ -45,7 +45,7 @@ public class PageFragment extends Fragment {
                view  = inflater.inflate(R.layout.fragment, null);
 
                TextView tvPage = (TextView) view.findViewById(R.id.tvPage);
-               tvPage.setText("Page " + pageNumber);
+               tvPage.setText("Page " + (pageNumber+1));
                tvPage.setBackgroundColor(backColor);
                 break;
 

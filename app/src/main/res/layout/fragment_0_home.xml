@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +17,8 @@
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Блокировка"
+                android:text="Lock send"
+                android:textColor="@color/whiteColor"
                 android:id="@+id/switch1"
                 android:layout_weight="1"
                 android:layout_below="@+id/linearLayout"

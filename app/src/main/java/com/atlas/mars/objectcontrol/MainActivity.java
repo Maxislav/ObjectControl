@@ -31,18 +31,16 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        myJQuery = new MyJQuery();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(pagerAdapter);
         _init();
     }
 
     private void _init(){
+        myJQuery = new MyJQuery();
+        pager = (ViewPager) findViewById(R.id.pager);
+        pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(pagerAdapter);
         action_bar_title = (LinearLayout)findViewById(R.id.action_bar_title);
         ViewGroup vgr = (ViewGroup)action_bar_title;
         viewArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
@@ -66,12 +64,12 @@ public class MainActivity extends ActionBarActivity {
         });
 
         for(int i = 0; i<viewArrayList.size(); i++){
-            setTitleClickListiner(viewArrayList.get(i), i);
+            setTitleClickListener(viewArrayList.get(i), i);
         }
 
     }
 
-    private void setTitleClickListiner(View view, int _i){
+    private void setTitleClickListener(View view, int _i){
         final int i = _i;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
