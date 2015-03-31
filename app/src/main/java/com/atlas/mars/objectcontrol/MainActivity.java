@@ -1,5 +1,8 @@
 package com.atlas.mars.objectcontrol;
 
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,20 +17,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
     static ArrayList<View> viewArrayList;
+    static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
     MyJQuery myJQuery;
     LinearLayout lv;
     ViewPager pager;
     PagerAdapter pagerAdapter;
+   static Button selectObjButton;
+    private static final int NOTIFY_ID = 101;
+    final int DIALOG_EXIT = 1;
+    DialogFragment dlg1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +49,16 @@ public class MainActivity extends ActionBarActivity {
         _init();
     }
 
+
     private void _init(){
         myJQuery = new MyJQuery();
+        fragmentView = new ArrayList<View>();
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         action_bar_title = (LinearLayout)findViewById(R.id.action_bar_title);
         ViewGroup vgr = (ViewGroup)action_bar_title;
         viewArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
-
 
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             @Override
@@ -84,13 +98,23 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         int i = pager.getCurrentItem();
-        viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
+        setActiveNavBar(i);
+
+       // viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
 
        // pager.setCurrentItem(1);
         super.onStart();
     }
 
     private void setActiveNavBar(int k){
+
+        if(k==0 && selectObjButton == null){
+          //  View view  = pager.getChildAt(k);
+          //  selectObjButton = (Button)view.findViewById(R.id.selectButton);
+        }
+
+
+
         for (int i = 0 ; i<viewArrayList.size(); i++){
             if(k==i){
                 viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
@@ -101,6 +125,93 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    public static void setSelectObjButton(Button v) {
+
+        selectObjButton = v;
+        Log.d(TAG, "setSelectObjButton");
+        selectObjButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "setSelectObjButton +++ ");
+                showPopupMenu(v);
+            }
+        });
+    }
+
+    public static Context getContext() {
+        try {
+            return (Context) Class.forName("android.app.ActivityThread")
+                    .getMethod("currentApplication").invoke(null, (Object[]) null);
+        } catch (final Exception e1) {
+            try {
+                return (Context) Class.forName("android.app.AppGlobals")
+                        .getMethod("getInitialApplication").invoke(null, (Object[]) null);
+            } catch (final Exception e2) {
+                throw new RuntimeException("Failed to get application instance");
+            }
+        }
+    }
+
+   /* public static Context getAppContext() {
+        MainActivity.this.getApplicationContext();
+        return MainActivity.context;
+    }*/
+
+
+
+
+    public static void showPopupMenu(View v) {
+
+        PopupMenu popupMenu = new PopupMenu(getContext(),v);
+        popupMenu.inflate(R.menu.select_object); // Для Android 4.0
+        Log.d(TAG, "showPopupMenu +++ ");
+
+      /*  Context context = getContext();
+        //FragmentManager fm = getSupportFragmentManager();
+        EditNameDialog editNameDialog = new EditNameDialog();
+        editNameDialog.show(getApplicationContext(), "fragment_edit_name");*/
+       // editNameDialog.gg(context, "fragment_edit_name");
+       /* popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.menu4:
+                        Toast.makeText(getContext(),
+                                "Вы выбрали PopupMenu 1",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.menu5:
+                        Toast.makeText(getContext(),
+                                "Вы выбрали PopupMenu 2",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.menu6:
+                        Toast.makeText(getContext(),
+                                "Вы выбрали PopupMenu 3",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        return false;
+                }
+
+            }
+
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                Toast.makeText(getContext(), "onDismiss",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
+        popupMenu.show();*/
+    }
+
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
         public MyFragmentPagerAdapter(FragmentManager fm) {
@@ -109,7 +220,9 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.newInstance(position);
+            Log.d(TAG , "getItem " + position );
+
+            return  PageFragment.newInstance(position);
         }
 
         @Override
@@ -139,5 +252,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onButtonSelected(int buttonIndex) {
+
+      //  FragmentManager fragmentManager = getSupportFragmentManager();
+
+        dlg1 = new Dialog1();
+        dlg1.show(getFragmentManager(), "dlg1");
+
+
+
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        Toast.makeText(getApplicationContext(), buttonIndex + "",
+                Toast.LENGTH_SHORT).show();
     }
 }

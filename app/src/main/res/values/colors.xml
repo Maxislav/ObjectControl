@@ -16,4 +16,7 @@
     <item name="btnBorder" type="color">#fa72899a</item>
 
     <item name="whiteColor" type="color">#FFF</item>
+
+    <item name="gradientStart" type="color">#fa3a3a3e</item>
+    <item name="gradientEnd" type="color">#fa8b8d9a</item>
 </resources>
