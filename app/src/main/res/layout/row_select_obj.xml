@@ -19,7 +19,9 @@
             android:layout_height="wrap_content"
             android:text="Title"
             android:padding="10dp"
-            android:textColor="@color/blackColor" />
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:textColor="@color/gradientEnd" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
