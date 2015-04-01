@@ -2,10 +2,8 @@ package com.atlas.mars.objectcontrol;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +45,7 @@ public class Dialog1 extends  DialogFragment implements OnClickListener {
         LinearLayout ll = (LinearLayout) v.findViewById(R.id.ll);
 
         LayoutInflater inflatert = activity.getLayoutInflater();
-        View row = inflater.inflate(R.layout.row_select_obj, null);
+        View row = inflater.inflate(R.layout.dialog_select_obj, null);
         LinearLayout rowLinearLayout = (LinearLayout) row;
         ll.addView(rowLinearLayout);
        /* LayoutInflater inflatert = getLayoutInflater();

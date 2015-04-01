@@ -17,13 +17,23 @@
     <item name="btnBackgroundPress" type="color">#ffe7eeff</item>
     <item name="btnBorder" type="color">#fa72899a</item>
 
+    <item name="darkColorText" type="color">#fa2c333c</item>
+    <item name="whiteFieldEditText" type="color">#96a0a0a0</item>
+
     <item name="whiteColor" type="color">#FFF</item>
     <item name="blackColor" type="color">#000</item>
     <item name="redColor" type="color">#ffff0037</item>
 
     <item name="gradientStart" type="color">#fa3a3a3e</item>
     <item name="gradientEnd" type="color">#fa8b8d9a</item>
+    <item name="dark" type="color">#fa656774</item>
 
     <item name="redBorderDark" type="color">#ffff0000</item>
     <item name="redBorderLight" type="color">#ffffa9a7</item>
+
+
+    <item name="gradientStartDialog" type="color">#fa2c333c</item>
+    <item name="gradientEndDialog" type="color">#01ffa9a7</item>
+
+
 </resources>
