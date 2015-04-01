@@ -3,6 +3,7 @@ package com.atlas.mars.objectcontrol;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +11,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
-public class PageFragment extends Fragment implements View.OnClickListener  {
+public class PageFragment extends Fragment implements View.OnClickListener {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
+    static final String TAG = "myLogs";
+    static final String SAVE_PAGE_NUMBER = "save_page_number";
 
     int pageNumber;
     int backColor;
     static ArrayList<View> fragmetView;
     public static Button selectObjButton;
+    static HashMap< Integer, View> fragmetMapView; //массив фрагментов
 
     static PageFragment newInstance(int page) {
         PageFragment pageFragment = new PageFragment();
@@ -28,6 +33,7 @@ public class PageFragment extends Fragment implements View.OnClickListener  {
         pageFragment.setArguments(arguments);
         return pageFragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,11 @@ public class PageFragment extends Fragment implements View.OnClickListener  {
 
         Random rnd = new Random();
         backColor = Color.argb(40, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        int savedPageNumber = -1;
+        if (savedInstanceState != null) {
+            savedPageNumber = savedInstanceState.getInt(SAVE_PAGE_NUMBER);
+        }
+        Log.d(TAG, "savedPageNumber = " + savedPageNumber);
     }
 
 
@@ -52,7 +63,7 @@ public class PageFragment extends Fragment implements View.OnClickListener  {
                 selectObjButton = (Button) (view.findViewById(R.id.selectButton));
 
                 selectObjButton.setOnClickListener(this);
-
+               TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
               //  MainActivity.setSelectObjButton(selectObjButton);
 
 
@@ -85,6 +96,11 @@ public class PageFragment extends Fragment implements View.OnClickListener  {
        /* Toast.makeText(getActivity(), String.valueOf(buttonIndex),
                 Toast.LENGTH_SHORT).show();*/
 
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: " + pageNumber);
     }
     public interface OnSelectedButtonListener {
         void onButtonSelected(int buttonIndex, View v);

@@ -19,15 +19,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
-    static ArrayList<View> viewArrayList;
+    static ArrayList<View> titleArrayList;
+    static HashMap< Integer, View> fragmetMapView; //массив фрагментов
     static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
     static final private int CHOOSE_THIEF = 0;
@@ -41,12 +45,15 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     DialogFragment dlg1;
     MyDialog myDialog;
     DataBaseHelper db;
+    static String selectObject;
+    static HashMap<String,String> mapSelectObjects;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        selectObject = "";
         dlg1 = new Dialog1();
         dlg1.onAttach(this);
         _init();
@@ -54,7 +61,19 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
 
     private void _init() {
+        mapSelectObjects = new HashMap<>();
+
+
         db = new DataBaseHelper(this);
+
+        ArrayList arrayList = db.getValueSelected();
+        HashMap<String,String> map = new HashMap<>();
+        for (int k = 0; k<arrayList.size(); k++) {
+            map= (HashMap)arrayList.get(k);
+            mapSelectObjects.put(map.get(db.UID),map.get(db.VALUE_NAME));
+        }
+      //  setTextSelectedObj();
+
         myDialog = new MyDialog(this);
         myJQuery = new MyJQuery();
         fragmentView = new ArrayList<View>();
@@ -63,8 +82,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         pager.setAdapter(pagerAdapter);
         action_bar_title = (LinearLayout) findViewById(R.id.action_bar_title);
         ViewGroup vgr = (ViewGroup) action_bar_title;
-        viewArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
+        titleArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
 
+        pager.setOffscreenPageLimit(3);
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -82,11 +102,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         });
 
-        for (int i = 0; i < viewArrayList.size(); i++) {
-            setTitleClickListener(viewArrayList.get(i), i);
+        for (int i = 0; i < titleArrayList.size(); i++) {
+            setTitleClickListener(titleArrayList.get(i), i);
         }
 
     }
+
 
     private void setTitleClickListener(View view, int _i) {
         final int i = _i;
@@ -105,6 +126,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         int i = pager.getCurrentItem();
         setActiveNavBar(i);
         super.onStart();
+
     }
 
     private void setActiveNavBar(int k) {
@@ -114,12 +136,14 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             //  selectObjButton = (Button)view.findViewById(R.id.selectButton);
         }
 
-
-        for (int i = 0; i < viewArrayList.size(); i++) {
+        //View v =fragmetMapView.get(4);
+        View v = pager.getChildAt(k);
+       // fragmetMapView.put(k, pager.getChildAt(k));
+        for (int i = 0; i < titleArrayList.size(); i++) {
             if (k == i) {
-                viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
+                titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
             } else {
-                viewArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_bar, null));
+                titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_bar, null));
             }
         }
 
@@ -228,6 +252,36 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         }
     }
+
+    public void setActiveObject(String name, String id, boolean bo){
+        if(bo){
+            mapSelectObjects.put(id, name);
+        }else{
+            if( mapSelectObjects!=null && 0<mapSelectObjects.size() ){
+                mapSelectObjects.remove(id);
+            }
+        }
+        setTextSelectedObj();
+    }
+
+    private void setTextSelectedObj(){
+        selectObject = "";
+
+        if( mapSelectObjects!=null && 0<mapSelectObjects.size()){
+            for (Map.Entry<String, String> entry : mapSelectObjects.entrySet())
+            {
+                selectObject+=entry.getValue()+" ";
+                //System.out.println(entry.getKey() + "/" + entry.getValue());
+            }
+        }else{
+            selectObject = "NONE";
+        }
+
+        View view = pager.getChildAt(0);
+        TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+        tvSelectObject.setText(selectObject);
+    }
+
     public void showPopupWindow(View view) {
         myDialog.dialogSelectObj(view);
     }
