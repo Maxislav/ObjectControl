@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class PageFragment extends Fragment implements View.OnClickListener {
@@ -63,7 +64,19 @@ public class PageFragment extends Fragment implements View.OnClickListener {
                 selectObjButton = (Button) (view.findViewById(R.id.selectButton));
 
                 selectObjButton.setOnClickListener(this);
-               TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+                TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+                HashMap<String,String> mapSelectObjects =  MainActivity.mapSelectObjects;
+                String selectObject = "";
+                if( mapSelectObjects!=null && 0<mapSelectObjects.size()){
+                    for (Map.Entry<String, String> entry : mapSelectObjects.entrySet())
+                    {
+                        selectObject+=entry.getValue()+" ";
+                        //System.out.println(entry.getKey() + "/" + entry.getValue());
+                    }
+                }else{
+                    selectObject = "NONE";
+                }
+                tvSelectObject.setText(selectObject);
               //  MainActivity.setSelectObjButton(selectObjButton);
 
 

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener {
+public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener, Communicator  {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
@@ -48,6 +48,15 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static String selectObject;
     static HashMap<String,String> mapSelectObjects;
 
+    @Override
+    public void count(String data){
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("counter", 23);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +114,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         for (int i = 0; i < titleArrayList.size(); i++) {
             setTitleClickListener(titleArrayList.get(i), i);
         }
+        //setTextSelectedObj();
 
     }
 
