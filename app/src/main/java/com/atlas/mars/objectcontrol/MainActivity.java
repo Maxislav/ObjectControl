@@ -1,7 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -226,7 +225,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         pw.setOutsideTouchable(false);
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
-        Button b = (Button)v.findViewById(R.id.btn);
+        FrameLayout b = (FrameLayout)v.findViewById(R.id.btn);
         b.setOnClickListener(new View.OnClickListener() {
             //final PopupWindow _pw = pw;
             @Override

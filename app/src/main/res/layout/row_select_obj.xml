@@ -1,51 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:minWidth="250dp"
-    android:layout_height="match_parent" android:layout_gravity="center">
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/borderColor"
-
+        android:background="@color/titleColor"
         android:gravity="center"
-        android:padding="10dp">
+        android:orientation="vertical"
+      >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/blackColor"
-            android:text="Title"/>
-        </LinearLayout>
+            android:text="Title"
+            android:padding="10dp"
+            android:textColor="@color/blackColor" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@drawable/border_bottom"></LinearLayout>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/gradientEnd" android:padding="10dp" android:layout_gravity="center">
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-
-            android:button="@drawable/custom_checkbox_design"
-
-            android:text="New CheckBox"
-            />
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:button="@drawable/custom_checkbox_design"
-            android:layout_height="wrap_content"
-            android:text="New CheckBox"
-             />
-        <TextView
+        android:layout_gravity="center"
+        android:background="@color/gradientEnd"
+        android:orientation="vertical">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Ololo"
-            android:gravity="center"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:id="@+id/btn"
-            android:text="Ok"
-            android:layout_height="wrap_content" android:layout_gravity="center" />
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:button="@drawable/custom_checkbox_design"
+                android:padding="10dp"
+                android:text="Object 1"
+                android:textColor="@color/whiteColor" />
+
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:button="@drawable/custom_checkbox_design"
+                android:padding="10dp"
+                android:text="Object 2"
+                android:textColor="@color/whiteColor" />
+
+
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@drawable/border_bottom"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_style"
+                android:id="@+id/btn"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Ok" />
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/border_vertical">
+                </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:clickable="true"
+                android:background="@drawable/btn_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Cancel" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+
 
 
     </LinearLayout>
