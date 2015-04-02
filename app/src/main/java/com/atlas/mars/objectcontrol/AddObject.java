@@ -38,7 +38,6 @@ public class AddObject extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent answerInent = new Intent();
-
                 String name = edTextName.getText().toString();
                 String phone = edTextPhone.getText().toString();
                 answerInent.putExtra(NAME, name);

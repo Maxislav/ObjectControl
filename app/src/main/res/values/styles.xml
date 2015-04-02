@@ -8,7 +8,15 @@
         <item name="android:titleTextStyle">@style/titleStyle</item>
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
         <item name="android:windowBackground">@color/blackColor</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+
     </style>
+
+
+    <style name="PopupMenu">
+        <item name="android:popupBackground">@drawable/gradient_dialog</item>
+    </style>
+
     <style name="Dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
     </style>

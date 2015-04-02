@@ -18,20 +18,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
-public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener, Communicator  {
+public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener, Communicator {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
     static ArrayList<View> titleArrayList;
-    static HashMap< Integer, View> fragmetMapView; //массив фрагментов
+    static HashMap<Integer, View> fragmetMapView; //массив фрагментов
     static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
     static final private int CHOOSE_THIEF = 0;
@@ -46,12 +49,49 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     MyDialog myDialog;
     DataBaseHelper db;
     static String selectObject;
-    static HashMap<String,String> mapSelectObjects;
+    static HashMap<String, String> mapSelectObjects;
+    boolean saveToHistory;
+
 
     @Override
-    public void setTextSelectObject(TextView setTextSelectedObj){
+    public void setTextSelectObject(TextView setTextSelectedObj) {
         setTextSelectedObj(setTextSelectedObj);
     }
+
+    @Override
+    public void editCommand(FrameLayout _btnEdit) {
+        final FrameLayout btnEdit = _btnEdit;
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenuEditCommands(v);
+            }
+        });
+    }
+
+    private void showPopupMenuEditCommands(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.inflate(R.menu.edit_commands);
+        popupMenu
+                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.create:
+                                Intent questionIntent = new Intent(MainActivity.this, MakeCommandActivity.class);
+                                startActivityForResult(questionIntent, CHOOSE_THIEF);
+                                return true;
+                            default:
+                                return false;
+
+                        }
+                    }
+                });
+        popupMenu.show();
+    }
+
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -76,12 +116,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         db = new DataBaseHelper(this);
 
         ArrayList arrayList = db.getValueSelected();
-        HashMap<String,String> map = new HashMap<>();
-        for (int k = 0; k<arrayList.size(); k++) {
-            map= (HashMap)arrayList.get(k);
-            mapSelectObjects.put(map.get(db.UID),map.get(db.VALUE_NAME));
+        HashMap<String, String> map = new HashMap<>();
+        for (int k = 0; k < arrayList.size(); k++) {
+            map = (HashMap) arrayList.get(k);
+            mapSelectObjects.put(map.get(db.UID), map.get(db.VALUE_NAME));
         }
-      //  setTextSelectedObj();
+        //  setTextSelectedObj();
 
         myDialog = new MyDialog(this);
         myJQuery = new MyJQuery();
@@ -89,15 +129,18 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
+        //pagerAdapter.addToBackStack();
         action_bar_title = (LinearLayout) findViewById(R.id.action_bar_title);
 
-        titleArrayList = myJQuery.getViewsByTag( (ViewGroup)action_bar_title, LinearLayout.class);
+        titleArrayList = myJQuery.getViewsByTag((ViewGroup) action_bar_title, LinearLayout.class);
 
         pager.setOffscreenPageLimit(3);
+
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 setActiveNavBar(position);
+
                 Log.d(TAG, "onPageSelected, position = " + position);
             }
 
@@ -148,7 +191,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
         //View v =fragmetMapView.get(4);
         View v = pager.getChildAt(k);
-       // fragmetMapView.put(k, pager.getChildAt(k));
+        // fragmetMapView.put(k, pager.getChildAt(k));
         for (int i = 0; i < titleArrayList.size(); i++) {
             if (k == i) {
                 titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
@@ -187,10 +230,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
 
-
-
-    public  void goToNewObjCreate(){
-            Log.d(TAG, "goToNewObjCreate   ");
+    public void goToNewObjCreate() {
+        Log.d(TAG, "goToNewObjCreate   ");
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -228,9 +269,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         int id = item.getItemId();
 
 
-        if(id == R.id.action_add_objecte){
+        if (id == R.id.action_add_objecte) {
             Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
-                startActivityForResult(questionIntent, CHOOSE_THIEF);
+            startActivityForResult(questionIntent, CHOOSE_THIEF);
             return true;
         }
 
@@ -249,54 +290,56 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
         if (requestCode == CHOOSE_THIEF) {
             if (resultCode == RESULT_OK) {
-                String name =  data.getStringExtra(AddObject.NAME);
-                String phone =  data.getStringExtra(AddObject.PHONE);
-                Log.d(TAG, "Result " + name +" : "+ phone);
-
-                long n  = db.addNewDevice(name,phone);
-
-                Toast.makeText(getApplicationContext(), "ID : " + n + "",
-                        Toast.LENGTH_SHORT).show();
-            }else {
+                String name = data.getStringExtra(AddObject.NAME);
+                String phone = data.getStringExtra(AddObject.PHONE);
+                if (phone.isEmpty() || name.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Пустое значение поля",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //todo Раскоментировать
+                // long n  = db.addNewDevice(name,phone);
+                //  Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+            } else {
 
             }
         }
     }
 
-    public void setActiveObject(String name, String id, boolean bo){
-        if(bo){
+    public void setActiveObject(String name, String id, boolean bo) {
+        if (bo) {
             mapSelectObjects.put(id, name);
-        }else{
-            if( mapSelectObjects!=null && 0<mapSelectObjects.size() ){
+        } else {
+            if (mapSelectObjects != null && 0 < mapSelectObjects.size()) {
                 mapSelectObjects.remove(id);
             }
         }
         View view = pager.getChildAt(0);
-        TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+        TextView tvSelectObject = (TextView) view.findViewById(R.id.tvSelectObject);
         setTextSelectedObj(tvSelectObject);
     }
 
-    private void setTextSelectedObj(TextView tvSelectObject ){
+    private void setTextSelectedObj(TextView tvSelectObject) {
         selectObject = "";
 
-        if( mapSelectObjects!=null && 0<mapSelectObjects.size()){
-            for (Map.Entry<String, String> entry : mapSelectObjects.entrySet())
-            {
-                selectObject+=entry.getValue()+" ";
+        if (mapSelectObjects != null && 0 < mapSelectObjects.size()) {
+            for (Map.Entry<String, String> entry : mapSelectObjects.entrySet()) {
+                selectObject += entry.getValue() + " ";
                 //System.out.println(entry.getKey() + "/" + entry.getValue());
             }
-        }else{
+        } else {
             selectObject = "NONE";
         }
 
 
-       // tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+        // tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
         tvSelectObject.setText(selectObject);
     }
 
     public void showPopupWindow(View view) {
         myDialog.dialogSelectObj(view);
     }
+
     @Override
     public void onButtonSelected(int buttonIndex, View v) {
         //showPopupMenu(v);
@@ -312,4 +355,5 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
       /*  Toast.makeText(getApplicationContext(), buttonIndex + "",
                 Toast.LENGTH_SHORT).show();*/
     }
+
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
+        Communicator communicator;
         switch (pageNumber) {
             case 0:
 
@@ -67,12 +69,10 @@ public class PageFragment extends Fragment implements View.OnClickListener {
                 selectObjButton = (Button) (view.findViewById(R.id.selectButton));
                 selectObjButton.setOnClickListener(this);
                 TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
-                Communicator communicator = (Communicator)getActivity();
+                communicator = (Communicator)getActivity();
                 communicator.setTextSelectObject(tvSelectObject);
                 break;
             case 1:
-
-
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
                 rowCreator = new RowCreator(view, inflater);
                 rowCreator.create();
@@ -80,6 +80,12 @@ public class PageFragment extends Fragment implements View.OnClickListener {
                 for(int k = 0; k<10; k++){
                     rowCreator.create();
                 }
+                communicator = (Communicator)getActivity();
+                FrameLayout btnEdit = (FrameLayout)view.findViewById(R.id.btnEdit);
+                communicator.editCommand(btnEdit);
+
+
+
                // rowCreator.create();
                 //rowCreator.create();
 

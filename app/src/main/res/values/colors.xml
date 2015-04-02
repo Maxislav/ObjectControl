@@ -25,7 +25,7 @@
     <item name="redColor" type="color">#ffff0037</item>
 
     <item name="gradientStart" type="color">#fa3a3a3e</item>
-    <item name="gradientEnd" type="color">#fa8b8d9a</item>
+    <item name="gradientEnd" type="color">#f9685f62</item>
     <item name="grayText" type="color">#fa8b8d9a</item>
     <item name="dark" type="color">#fa656774</item>
 
@@ -33,8 +33,8 @@
     <item name="redBorderLight" type="color">#ffffa9a7</item>
 
 
-    <item name="gradientStartDialog" type="color">#fa2c333c</item>
-    <item name="gradientEndDialog" type="color">#01ffa9a7</item>
+    <item name="gradientStartDialog" type="color">#f62c333c</item>
+    <item name="gradientEndDialog" type="color">#9f684241</item>
 
 
 </resources>
