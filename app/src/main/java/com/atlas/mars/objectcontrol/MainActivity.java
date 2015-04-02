@@ -49,8 +49,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static HashMap<String,String> mapSelectObjects;
 
     @Override
-    public void count(String data){
-
+    public void setTextSelectObject(TextView setTextSelectedObj){
+        setTextSelectedObj(setTextSelectedObj);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -90,8 +90,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         action_bar_title = (LinearLayout) findViewById(R.id.action_bar_title);
-        ViewGroup vgr = (ViewGroup) action_bar_title;
-        titleArrayList = myJQuery.getViewsByTag(vgr, LinearLayout.class);
+
+        titleArrayList = myJQuery.getViewsByTag( (ViewGroup)action_bar_title, LinearLayout.class);
 
         pager.setOffscreenPageLimit(3);
         pager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -271,10 +271,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 mapSelectObjects.remove(id);
             }
         }
-        setTextSelectedObj();
+        View view = pager.getChildAt(0);
+        TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+        setTextSelectedObj(tvSelectObject);
     }
 
-    private void setTextSelectedObj(){
+    private void setTextSelectedObj(TextView tvSelectObject ){
         selectObject = "";
 
         if( mapSelectObjects!=null && 0<mapSelectObjects.size()){
@@ -287,8 +289,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             selectObject = "NONE";
         }
 
-        View view = pager.getChildAt(0);
-        TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
+
+       // tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
         tvSelectObject.setText(selectObject);
     }
 

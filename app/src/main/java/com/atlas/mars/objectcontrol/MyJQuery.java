@@ -10,26 +10,33 @@ import java.util.ArrayList;
  */
 public class MyJQuery {
 
+    ArrayList<View> allViews;
 
-    public  ArrayList<View> getViewsByTag(ViewGroup root, Class type){
-        ArrayList<View> allViews = new ArrayList<View>();
+    MyJQuery() {
+        allViews = new ArrayList<View>();
+    }
+    public ArrayList<View> getViewsByTagWithReset(ViewGroup root, Class type){
+        allViews = new ArrayList<View>();
+
+        return  getViewsByTag(root, type);
+
+    };
+
+    public ArrayList<View> getViewsByTag(ViewGroup root, Class type) {
+
         View V = root.findViewWithTag("LinearLayout");
         final int childCount = root.getChildCount();
-        for(int i=0; i<childCount; i++){
+        for (int i = 0; i < childCount; i++) {
             final View childView = root.getChildAt(i);
 
-          /*  if(childView instanceof ViewGroup){
-                allViews.addAll(getViewsByTag((ViewGroup)childView, tag));
-            }*/
-                if(childView.getClass().equals(type)){
-                    allViews.add(childView);
-                }
+            if (childView instanceof ViewGroup && 0 < ((ViewGroup) childView).getChildCount()) {
+                getViewsByTag((ViewGroup) childView, type);
+            }
 
-               /* final Object tagView = childView.getTag();
+            if (childView.getClass().equals(type)) {
+                allViews.add(childView);
+            }
 
-                childView.findViewWithTag("LinearLayout");
-                if(tagView != null && tagView.equals(tag))
-                    allViews.add(childView);*/
 
         }
 

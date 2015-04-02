@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="2000" height="480">
+    <polyline stroke="#00FF00" stroke-width="3" points="10,10 410,0" />
+    <polyline  stroke="#00FF00" fill="#00FF00" stroke-width="3"  points="0,0 1000,0 1000,400 0,400 0,0" />
+
+    <path d="M150 0 L75 200 L225 200 Z" stroke="#FF0000" fill="#00FF00"  stroke-width="3"  />
+
+
+    <path d="M10 0     L90 0     L100 10  L100 30  L90 40   L10 40  L0 30    Z" stroke="#FF0000" fill="#00FF00"  stroke-width="3"  />
+</svg>

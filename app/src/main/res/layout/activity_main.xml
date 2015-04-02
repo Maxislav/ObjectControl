@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-        android:id="@+id/mainLayout"
     android:background="@drawable/simple_gradient"
+    android:orientation="vertical"
     tools:context=".MainActivity">
+
     <LinearLayout
+        android:id="@+id/action_bar_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/action_bar_title"
         android:orientation="horizontal">
-        <LinearLayout
-            style="@style/titleBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
 
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"/>
-        </LinearLayout>
         <LinearLayout
             style="@style/titleBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All commands"/>
+                android:text="Home"
+                android:textColor="@color/grayText" />
         </LinearLayout>
+
         <LinearLayout
             style="@style/titleBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" android:gravity="center">
+            android:layout_weight="1"
+            android:gravity="center">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"/>
+                android:text="All commands"
+                android:textColor="@color/grayText" />
         </LinearLayout>
+
+        <LinearLayout
+            style="@style/titleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+                android:textColor="@color/grayText" />
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@drawable/border_bottom"></LinearLayout>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v4.view.ViewPager>
+        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
 </LinearLayout>
