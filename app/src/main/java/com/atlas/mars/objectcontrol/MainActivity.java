@@ -51,8 +51,34 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static String selectObject;
     static HashMap<String, String> mapSelectObjects;
     boolean saveToHistory;
+    final public int TO_ADD_OBJECT = 0;
+    final public int TO_ADD_COMMAND = 1;
+    static  final String FROM = "FROM";
 
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("counter", 23);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        selectObject = "";
+        dlg1 = new Dialog1();
+        dlg1.onAttach(this);
+        _init();
+    }
+    @Override
+    protected void onStart() {
+        int i = pager.getCurrentItem();
+        setActiveNavBar(i);
+        super.onStart();
+
+    }
     @Override
     public void setTextSelectObject(TextView setTextSelectedObj) {
         setTextSelectedObj(setTextSelectedObj);
@@ -80,7 +106,13 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                         switch (item.getItemId()) {
                             case R.id.create:
                                 Intent questionIntent = new Intent(MainActivity.this, MakeCommandActivity.class);
+                                questionIntent.putExtra(FROM, TO_ADD_COMMAND);
                                 startActivityForResult(questionIntent, CHOOSE_THIEF);
+
+                                /*Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
+                                questionIntent.putExtra(FROM, TO_ADD_OBJECT);
+                                startActivityForResult(questionIntent, CHOOSE_THIEF);*/
+
                                 return true;
                             default:
                                 return false;
@@ -91,22 +123,6 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         popupMenu.show();
     }
 
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("counter", 23);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        selectObject = "";
-        dlg1 = new Dialog1();
-        dlg1.onAttach(this);
-        _init();
-    }
 
 
     private void _init() {
@@ -174,13 +190,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
 
-    @Override
-    protected void onStart() {
-        int i = pager.getCurrentItem();
-        setActiveNavBar(i);
-        super.onStart();
 
-    }
 
     private void setActiveNavBar(int k) {
 
@@ -271,6 +281,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
         if (id == R.id.action_add_objecte) {
             Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
+            questionIntent.putExtra(FROM, TO_ADD_OBJECT);
             startActivityForResult(questionIntent, CHOOSE_THIEF);
             return true;
         }
@@ -290,16 +301,28 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
         if (requestCode == CHOOSE_THIEF) {
             if (resultCode == RESULT_OK) {
-                String name = data.getStringExtra(AddObject.NAME);
-                String phone = data.getStringExtra(AddObject.PHONE);
-                if (phone.isEmpty() || name.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Пустое значение поля",
-                            Toast.LENGTH_SHORT).show();
-                    return;
+                int k = data.getIntExtra(FROM, 0);
+                switch (k){
+                    case 0:
+
+                        Log.d(TAG, "RESULT +++ "+ k +"");
+                        String name = data.getStringExtra(AddObject.NAME);
+                        String phone = data.getStringExtra(AddObject.PHONE);
+                        if (phone.isEmpty() || name.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Пустое значение поля",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        //todo Раскоментировать
+                        // long n  = db.addNewDevice(name,phone);
+                        //  Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        Log.d(TAG, "RESULT +++ "+ k +"");
+
+                        break;
                 }
-                //todo Раскоментировать
-                // long n  = db.addNewDevice(name,phone);
-                //  Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+
             } else {
 
             }
@@ -330,30 +353,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         } else {
             selectObject = "NONE";
         }
-
-
-        // tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
         tvSelectObject.setText(selectObject);
-    }
-
-    public void showPopupWindow(View view) {
-        myDialog.dialogSelectObj(view);
     }
 
     @Override
     public void onButtonSelected(int buttonIndex, View v) {
-        //showPopupMenu(v);
-        showPopupWindow(v);
-        //  FragmentManager fragmentManager = getSupportFragmentManager();
-
-
-        //dlg1.show(getFragmentManager(), "dlg1");
-
-
-        //FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-      /*  Toast.makeText(getApplicationContext(), buttonIndex + "",
-                Toast.LENGTH_SHORT).show();*/
+        //showPopupWindow(v);
+        myDialog.dialogSelectObj(v);
     }
-
 }

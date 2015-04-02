@@ -47,7 +47,7 @@
                     <EditText
                         style="@style/editTextStyle"
                         android:layout_width="match_parent"
-                        android:id="@+id/edTextName"
+                        android:id="@+id/edTextNameCommand"
                         android:layout_height="match_parent"
                         android:background="@color/whiteFieldEditText" />
                 </LinearLayout>
@@ -68,8 +68,7 @@
                         style="@style/editTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/edTextPhone"
-                        android:inputType="phone"
+                        android:id="@+id/etCode"
                         android:background="@color/whiteFieldEditText" />
                 </LinearLayout>
                 <LinearLayout

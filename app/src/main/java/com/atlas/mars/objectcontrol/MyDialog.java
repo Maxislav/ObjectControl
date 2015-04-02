@@ -25,35 +25,58 @@ public class MyDialog {
     PopupWindow pw;
     LayoutInflater inflater;
     DataBaseHelper db;
+    View dialog;
+    FrameLayout btn_ok, btn_cancel;
     MyDialog(Activity activity){
        this.activity = activity;
        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
        db = new DataBaseHelper(activity);
     }
 
-    public void dialogSelectObj(View view){
+    protected void onCreate(View view){
         if(pw!=null && pw.isShowing()){
             pw.dismiss();
             return;
         }
-        View v = inflater.inflate(R.layout.dialog_select_obj, null);
-        pw = new PopupWindow(v, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        dialog = inflater.inflate(R.layout.dialog_select_obj, null);
+        pw = new PopupWindow(dialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         pw.setOutsideTouchable(false);
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
-        LinearLayout parent = (LinearLayout) v.findViewById(R.id.parent);
-
-        ArrayList<HashMap> arrayList = getDevices();
-
-        for(int i = 0; i<arrayList.size(); i++){
-            setRow(parent, arrayList.get(i));
-        }
-        FrameLayout btn_ok = (FrameLayout) v.findViewById(R.id.btn_ok);
-        FrameLayout btn_cancel = (FrameLayout) v.findViewById(R.id.btn_cancel);
-        clickListiner(btn_ok);
-        clickListiner(btn_cancel);
+        btn_ok = (FrameLayout) dialog.findViewById(R.id.btn_ok);
+        btn_cancel = (FrameLayout) dialog.findViewById(R.id.btn_cancel);
     }
 
-    private void clickListiner(View v){
+    public void dialogSelectObj(View view){
+        onCreate(view);
+
+        LinearLayout parent = (LinearLayout) dialog.findViewById(R.id.parent);
+        ArrayList<HashMap> arrayList = getDevices();
+        for(int i = 0; i<arrayList.size(); i++){
+            setRow(parent, arrayList.get(i), true);
+        }
+        clickListener(btn_ok);
+        clickListener(btn_cancel);
+    }
+
+    public void dialogMekeCommand(View view){
+        onCreate(view);
+
+        LinearLayout parent = (LinearLayout) dialog.findViewById(R.id.parent);
+        ArrayList<HashMap> arrayList = getDevices();
+        for(int i = 0; i<arrayList.size(); i++){
+            setRow(parent, arrayList.get(i), false);
+        }
+       // FrameLayout btn_cancel = (FrameLayout) dialog.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pw.dismiss();
+            }
+        });
+
+    }
+
+    private void clickListener(View v){
         v.setOnClickListener(new View.OnClickListener() {
             //final PopupWindow _pw = pw;
             MainActivity my =(MainActivity) activity;
@@ -64,19 +87,19 @@ public class MyDialog {
             }
         });
     }
-    private void setRow(LinearLayout parent, HashMap<String, String> map){
+    private void setRow(LinearLayout parent, HashMap<String, String> map, boolean checked){
         View v = inflater.inflate(R.layout.row_object, null);
         String selected = map.get(db.VALUE_SELECTED);
         ViewGroup vg = (ViewGroup)v;
         CheckBox checkBox = (CheckBox)vg.getChildAt(0);
+        if(checked){
+            if(selected!= null && selected.equals("1")){
+                checkBox.setChecked(true);
+            }
 
-        if(selected!= null && selected.equals("1")){
-            checkBox.setChecked(true);
+            setChecked(checkBox, map);
         }
-
         checkBox.setText(map.get(db.VALUE_NAME));
-        setChecked(checkBox, map);
-
         parent.addView(v);
     }
 
