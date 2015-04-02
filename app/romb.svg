@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   enable-background="new"
+   sodipodi:docname="romb.svg">
+  <metadata
+     id="metadata3011">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3009" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     id="namedview3007"
+     showgrid="false"
+     inkscape:zoom="0.88277593"
+     inkscape:cx="152.85232"
+     inkscape:cy="526.18109"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="filter:url(#filter3757)">
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:4.33235216;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m -246.84731,381.456 739.76096,0 57.07472,57.07473 0,79.39975 -57.07472,57.07472 -739.76096,0 -57.07473,-57.07472 0,-79.39975 z"
+       id="rect3770"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:export-filename="/home/mars/AndroidStudioProjects/ObjectControl/app/src/main/res/drawable/romb.svg.png"
+       inkscape:export-xdpi="77.139999"
+       inkscape:export-ydpi="77.139999" />
+    <path
+       style="fill:#676b7d;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:4.90764712999999997;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m -484.90689,299.35903 -27.38297,-27.41856 0,-69.02907 0,-38.44376 27.41856,-27.38297 27.41856,-27.38298 c 317.67135,0 635.34269,0 953.01404,0 l 27.38299,27.41857 27.38298,27.41855 0,38.44376 0,69.02907 -27.41857,27.38297 -27.41856,27.38299 c -317.67135,0 -635.34269,0 -953.01404,0 z"
+       id="path3017"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mars/AndroidStudioProjects/ObjectControl/app/src/main/res/drawable/romb00.png"
+       inkscape:export-xdpi="52.799999"
+       inkscape:export-ydpi="52.799999"
+       sodipodi:nodetypes="ccccccccccccccc" />
+  </g>
+</svg>

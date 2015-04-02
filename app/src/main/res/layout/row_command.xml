@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/imageView"  android:background="@drawable/bitmap_button" />
+
     <LinearLayout
-        android:id="@+id/row_component"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="vertical">
-        <SurfaceView
+        android:layout_height="20dp"
+        android:layout_gravity="center">
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Команда 1" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Команда 1" />
+        </LinearLayout>
 </FrameLayout>
