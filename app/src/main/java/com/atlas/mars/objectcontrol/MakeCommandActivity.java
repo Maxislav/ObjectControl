@@ -3,6 +3,7 @@ package com.atlas.mars.objectcontrol;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.atlas.mars.objectcontrol.dialogs.MakeCommandDialog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,13 +29,20 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
     EditText etNameCommand, etCode;
     FrameLayout btnSelectDevice, btnOk, btnCancel;
     MakeCommandDialog myDialog;
+
+    HashMap<String,String> mapCommand;
+  ArrayList<View> arrayView;
     int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_commands);
+        setTitle(R.string.create_command);
         count = getIntent().getIntExtra(MainActivity.FROM, 0);
+        mapCommand = new HashMap<>();
+        arrayView = new ArrayList<>();
+
 
         btnCancel = (FrameLayout) findViewById(R.id.btn_cancel);
         btnOk = (FrameLayout) findViewById(R.id.btn_ok);
@@ -73,14 +82,31 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
 
     @Override
     public void setCheckbox(View v, HashMap<String, String> _map) {
+        arrayView.add(v);
         Log.d(TAG, "setCheckbox+++ ");
         final CheckBox checkBox = (CheckBox) v;
         final HashMap<String, String> map = _map;
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String id = map.get(DataBaseHelper.UID);
+                if(checkBox.isChecked()){
+                    mapCommand.put(map.get(DataBaseHelper.UID), "1");
+                }else{
+                    mapCommand.remove(map.get(DataBaseHelper.UID));
+                }
                 Log.d(TAG, "ID = " + map.get(DataBaseHelper.UID) + " " + checkBox.isChecked());
+
             }
         });
+    }
+
+    public void clickBtnOk(){
+
+    }
+    public void clickBtnCacel(){
+        for(View view: arrayView){
+            ((CheckBox)view).setChecked(false);
+        }
     }
 }

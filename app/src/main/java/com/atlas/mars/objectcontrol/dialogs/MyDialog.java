@@ -65,23 +65,32 @@ public class MyDialog {
             case 1:
                 btn_ok = (FrameLayout) dialog.findViewById(R.id.btn_ok);
                 btn_cancel = (FrameLayout) dialog.findViewById(R.id.btn_cancel);
-                btn_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pw.dismiss();
-                    }
-                });
                 btn_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        clickBtnOk();
                         pw.dismiss();
                     }
                 });
+                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        clickBtnCancel();
+                        pw.dismiss();
+                    }
+                });
+
                 break;
         }
 
     }
 
+    protected void clickBtnOk(){
+
+    }
+    protected void clickBtnCancel(){
+
+    }
 
 
 

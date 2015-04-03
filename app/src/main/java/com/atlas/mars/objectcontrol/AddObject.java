@@ -28,6 +28,7 @@ public class AddObject extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
+        setTitle(R.string.create_object);
         count = getIntent().getIntExtra("FROM", 0);
         Log.d(TAG, "FROM "+ count +"");
         edTextName = (EditText) findViewById(R.id.edTextName);
