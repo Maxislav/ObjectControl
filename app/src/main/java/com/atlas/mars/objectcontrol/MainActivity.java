@@ -24,10 +24,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener, Communicator {
 
@@ -46,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     private static final int NOTIFY_ID = 101;
     final int DIALOG_EXIT = 1;
     DialogFragment dlg1;
-    MyDialog myDialog;
+    SelectObjDialog myDialog;
     DataBaseHelper db;
     static String selectObject;
     static HashMap<String, String> mapSelectObjects;
@@ -139,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
         //  setTextSelectedObj();
 
-        myDialog = new MyDialog(this);
+        myDialog = new SelectObjDialog(this);
         myJQuery = new MyJQuery();
         fragmentView = new ArrayList<View>();
         pager = (ViewPager) findViewById(R.id.pager);
