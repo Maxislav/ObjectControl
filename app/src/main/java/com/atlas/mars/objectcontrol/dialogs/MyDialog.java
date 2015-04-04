@@ -79,12 +79,9 @@ public class MyDialog {
                         pw.dismiss();
                     }
                 });
-
                 break;
         }
-
     }
-
     protected void clickBtnOk(){
 
     }

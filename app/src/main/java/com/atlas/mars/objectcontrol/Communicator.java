@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -8,6 +9,7 @@ import android.widget.TextView;
  */
 public interface Communicator {
     public void setTextSelectObject(TextView setTextSelectedObj);
-
     public void editCommand(FrameLayout btnEdit);
+    public void initBtnSelectObj(View view);
+
 }

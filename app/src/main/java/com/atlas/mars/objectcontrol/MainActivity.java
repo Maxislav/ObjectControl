@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     private static final int NOTIFY_ID = 101;
     final int DIALOG_EXIT = 1;
     DialogFragment dlg1;
-    SelectObjDialog myDialog;
+    SelectObjDialog selectObjDialog;
     DataBaseHelper db;
     static String selectObject;
     static HashMap<String, String> mapSelectObjects;
@@ -55,6 +55,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     final public int TO_ADD_OBJECT = 0;
     final public int TO_ADD_COMMAND = 1;
     static  final String FROM = "FROM";
+    TextView tvSelectObject;
+
 
 
 
@@ -81,8 +83,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     }
     @Override
-    public void setTextSelectObject(TextView setTextSelectedObj) {
-        setTextSelectedObj(setTextSelectedObj);
+    public void setTextSelectObject(TextView textView) {
+        setTextSelectedObj(textView);
     }
 
     @Override
@@ -140,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
         //  setTextSelectedObj();
 
-        myDialog = new SelectObjDialog(this);
+        selectObjDialog = new SelectObjDialog(this);
         myJQuery = new MyJQuery();
         fragmentView = new ArrayList<View>();
         pager = (ViewPager) findViewById(R.id.pager);
@@ -339,13 +341,13 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         }
         View view = pager.getChildAt(0);
-        TextView tvSelectObject = (TextView) view.findViewById(R.id.tvSelectObject);
+       //TextView tvSelectObject = (TextView) view.findViewById(R.id.tvSelectObject);
+
         setTextSelectedObj(tvSelectObject);
     }
 
     private void setTextSelectedObj(TextView tvSelectObject) {
         selectObject = "";
-
         if (mapSelectObjects != null && 0 < mapSelectObjects.size()) {
             for (Map.Entry<String, String> entry : mapSelectObjects.entrySet()) {
                 selectObject += entry.getValue() + " ";
@@ -358,8 +360,18 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
-    public void onButtonSelected(int buttonIndex, View v) {
-        //showPopupWindow(v);
-        myDialog.dialogSelectObj(v);
+    public void initBtnSelectObj(View view){
+        tvSelectObject =(TextView) myJQuery.getViewsByTagWithReset((ViewGroup)view, TextView.class).get(0);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectObjDialog.dialogSelectObj(v);
+            }
+        });
     }
+
+  /*  @Override
+    public void onButtonSelected(int buttonIndex, View v) {
+        selectObjDialog.dialogSelectObj(v);
+    }*/
 }
