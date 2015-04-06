@@ -11,5 +11,7 @@ public interface Communicator {
     public void setTextSelectObject(TextView setTextSelectedObj);
     public void editCommand(FrameLayout btnEdit);
     public void initBtnSelectObj(View view);
+    public void initBtnAddObj(View view);
+
 
 }

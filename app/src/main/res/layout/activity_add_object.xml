@@ -24,6 +24,8 @@
                     style="@style/rowFields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -46,6 +48,8 @@
                     style="@style/rowFields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="vertical">
 
                     <TextView

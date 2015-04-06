@@ -111,15 +111,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                                 Intent questionIntent = new Intent(MainActivity.this, MakeCommandActivity.class);
                                 questionIntent.putExtra(FROM, TO_ADD_COMMAND);
                                 startActivityForResult(questionIntent, CHOOSE_THIEF);
-
-                                /*Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
-                                questionIntent.putExtra(FROM, TO_ADD_OBJECT);
-                                startActivityForResult(questionIntent, CHOOSE_THIEF);*/
-
                                 return true;
                             default:
                                 return false;
-
                         }
                     }
                 });
@@ -366,6 +360,34 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             @Override
             public void onClick(View v) {
                 selectObjDialog.dialogSelectObj(v);
+            }
+        });
+    }
+    @Override
+    public void initBtnAddObj(View view){
+        final PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.inflate(R.menu.menu_add_obj);
+        popupMenu
+                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.addObj:
+
+                                Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
+                                questionIntent.putExtra(FROM, TO_ADD_OBJECT);
+                                startActivityForResult(questionIntent, CHOOSE_THIEF);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupMenu.show();
             }
         });
     }

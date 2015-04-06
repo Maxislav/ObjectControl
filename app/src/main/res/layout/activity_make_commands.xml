@@ -19,8 +19,6 @@
                 android:layout_margin="10dp">
 
 
-
-
                 <LinearLayout
                     style="@style/rowFields"
                     android:layout_width="match_parent"

@@ -24,8 +24,8 @@
     <item name="blackColor" type="color">#000</item>
     <item name="redColor" type="color">#ffff0037</item>
 
-    <item name="gradientStart" type="color">#fa3a3a3e</item>
-    <item name="gradientEnd" type="color">#f9685f62</item>
+    <item name="gradientStart" type="color">#fa000000</item>
+    <item name="gradientEnd" type="color">#f99d9397</item>
     <item name="grayText" type="color">#fa8b8d9a</item>
     <item name="dark" type="color">#fa656774</item>
 

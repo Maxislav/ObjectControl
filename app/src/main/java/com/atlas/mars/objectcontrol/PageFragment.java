@@ -67,12 +67,11 @@ public class PageFragment extends Fragment implements View.OnClickListener {
             case 0:
 
                 view = inflater.inflate(R.layout.fragment_0_home, null);
-                //selectObjButton = (Button) (view.findViewById(R.id.selectButton));
-                //selectObjButton.setOnClickListener(this);
                 FrameLayout btnSelectObj =(FrameLayout)myJQuery.getViewsByTagWithReset((ViewGroup)view,FrameLayout.class).get(0);
                 communicator = (Communicator)getActivity();
                 TextView tvSelectObject = (TextView)myJQuery.getViewsByTagWithReset((ViewGroup)btnSelectObj, TextView.class ).get(0);
-
+                FrameLayout btnAddObj = (FrameLayout)view.findViewById(R.id.addObj);
+                communicator.initBtnAddObj(btnAddObj);
                 communicator.setTextSelectObject(tvSelectObject);
                 communicator.initBtnSelectObj(btnSelectObj);
 
