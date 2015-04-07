@@ -30,6 +30,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
     public static Button selectObjButton;
     static HashMap< Integer, View> fragmetMapView; //массив фрагментов
     RowCreator rowCreator;
+    static DataBaseHelper db;
     static PageFragment newInstance(int page) {
         PageFragment pageFragment = new PageFragment();
         Bundle arguments = new Bundle();
@@ -43,9 +44,8 @@ public class PageFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        db = new DataBaseHelper(getActivity());
         fragmetView = new ArrayList<>();
-
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
 
         Random rnd = new Random();
@@ -55,6 +55,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
             savedPageNumber = savedInstanceState.getInt(SAVE_PAGE_NUMBER);
         }
         Log.d(TAG, "savedPageNumber = " + savedPageNumber);
+
 
     }
 
@@ -87,14 +88,23 @@ public class PageFragment extends Fragment implements View.OnClickListener {
             case 1:
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
                 rowCreator = new RowCreator(view, inflater);
-                rowCreator.create();
-                rowCreator.create();
-                for(int k = 0; k<10; k++){
-                    rowCreator.create();
+
+                ArrayList <HashMap> arrayList = db.getAllCommand();
+
+                //rowCreator.create();
+                //rowCreator.create();
+                for (HashMap<String, String> map: arrayList){
+                    rowCreator.create(map);
                 }
+
+               /* for(int k = 0; k<arrayList.size(); k++){
+                    rowCreator.create();
+                }*/
                 communicator = (Communicator)getActivity();
                 FrameLayout btnEdit = (FrameLayout)view.findViewById(R.id.btnEdit);
                 communicator.editCommand(btnEdit);
+
+
                 break;
             default:
                 view = inflater.inflate(R.layout.fragment, null);

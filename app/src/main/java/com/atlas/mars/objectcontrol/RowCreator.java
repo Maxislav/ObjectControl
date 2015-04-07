@@ -1,14 +1,13 @@
 package com.atlas.mars.objectcontrol;
 
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by mars on 4/2/15.
@@ -28,16 +27,22 @@ public class RowCreator {
         mainLayout = (LinearLayout)view.findViewById(R.id.mainLayout);
     }
 
-    public FrameLayout create() {
+    public FrameLayout create(HashMap<String,String> map) {
         FrameLayout row = (FrameLayout) inflater.inflate(R.layout.row_command, null);
-        ViewGroup vgRow = (ViewGroup) row;
-        ArrayList<View> arrayList = new  ArrayList<>();
-        arrayList = myJQuery.getViewsByTagWithReset(vgRow, SurfaceView.class);
+       // ViewGroup vgRow = (ViewGroup) row;
+     //   ArrayList<View> arrayList = new  ArrayList<>();
+       // arrayList = myJQuery.getViewsByTagWithReset(vgRow, SurfaceView.class);
       //  SurfaceView surface = (SurfaceView) arrayList.get(0);
        // surfaseCreate(surface);
+        ArrayList<View> arrayList = myJQuery.getViewsByTagWithReset(row, TextView.class);
+        TextView tvCmd = (TextView)arrayList.get(0);
+        tvCmd.setText(map.get(DataBaseHelper.VALUE_NAME));
 
-        TextView tvCmd = (TextView)myJQuery.getViewsByTagWithReset(row, TextView.class).get(0);
-        tvCmd.setText("Команда: "+ (count+1)+"");
+        TextView tvCode = (TextView)arrayList.get(1);
+        tvCode.setText(map.get(DataBaseHelper.VALUE_COMMAND));
+
+        TextView tvNameDevice = (TextView)arrayList.get(2);
+        tvNameDevice.setText(map.get(DataBaseHelper.VALUE_NAME_DEVICE));
 
         mainLayout.addView(row);
 

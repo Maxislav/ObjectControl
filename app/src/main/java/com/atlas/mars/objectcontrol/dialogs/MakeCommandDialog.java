@@ -30,7 +30,7 @@ public class MakeCommandDialog extends MyDialog {
 
     @Override
     protected void clickBtnCancel(){
-        activity1.clickBtnCacel();
+        activity1.clickBtnCancel();
     }
 
     public interface GiftCheckbox {

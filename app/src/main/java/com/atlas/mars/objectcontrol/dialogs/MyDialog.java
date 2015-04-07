@@ -158,18 +158,10 @@ public class MyDialog {
         }
         checkBox.setText(map.get(db.VALUE_NAME));
         parent.addView(v);
-
-//        if(activity instanceof MakeCommandActivity){
-//            MakeCommandActivity activity1 = (MakeCommandActivity)activity;
-//            activity1.onChangeCheckBox(v, map);
-//        }
         doChange(checkBox, map);
-
-        //activity.onChangeCheckddBox(v, true);
-     //   checkListener listener = (checkListener)getClass();
     }
 
-    protected void doChange(View v, HashMap<String,String>map) {
+    protected void doChange(View v, HashMap<String,String> map) {
 
     }
 

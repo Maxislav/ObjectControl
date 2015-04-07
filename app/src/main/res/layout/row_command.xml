@@ -9,19 +9,54 @@
     android:paddingRight="5dp">
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/imageView"  android:background="@drawable/bitmap_button" />
+        android:background="@drawable/bitmap_button" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_gravity="center">
-        <TextView
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+
+                android:layout_weight="1"
+                android:text="Команда" />
+
+
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Команда 1" />
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="Код" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="Устройство" />
         </LinearLayout>
+
+    </LinearLayout>
 </FrameLayout>

@@ -3,18 +3,19 @@ package com.atlas.mars.objectcontrol;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.dialogs.MakeCommandDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Администратор on 4/2/15.
@@ -27,17 +28,20 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
 
     public final static String CODE = "CODE";
     EditText etNameCommand, etCode;
+    TextView tvSelectObject;
     FrameLayout btnSelectDevice, btnOk, btnCancel;
     MakeCommandDialog myDialog;
 
-    HashMap<String,String> mapCommand;
-  ArrayList<View> arrayView;
+    HashMap<String, String> mapCommand;
+    ArrayList<View> arrayView;
     int count;
+    DataBaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_commands);
+
         setTitle(R.string.create_command);
         count = getIntent().getIntExtra(MainActivity.FROM, 0);
         mapCommand = new HashMap<>();
@@ -49,6 +53,9 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
         etNameCommand = (EditText) findViewById(R.id.edTextNameCommand);
         etCode = (EditText) findViewById(R.id.etCode);
         btnSelectDevice = (FrameLayout) findViewById(R.id.btn_select);
+        tvSelectObject = (TextView)findViewById(R.id.tvSelectObject);
+
+
         myDialog = new MakeCommandDialog(this);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +68,7 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clickBtnOkClose();
                 Intent answerInent = new Intent();
                 String nameCommand = etNameCommand.getText().toString();
                 String code = etCode.getText().toString();
@@ -90,23 +98,67 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String id = map.get(DataBaseHelper.UID);
-                if(checkBox.isChecked()){
-                    mapCommand.put(map.get(DataBaseHelper.UID), "1");
-                }else{
+                if (checkBox.isChecked()) {
+                    mapCommand.put(map.get(DataBaseHelper.UID), map.get(DataBaseHelper.VALUE_NAME) );
+                } else {
                     mapCommand.remove(map.get(DataBaseHelper.UID));
                 }
                 Log.d(TAG, "ID = " + map.get(DataBaseHelper.UID) + " " + checkBox.isChecked());
-
+                setTvSelectObject();
             }
         });
     }
 
-    public void clickBtnOk(){
+    private void setTvSelectObject(){
+        String text = "";
+        for (Map.Entry entry : mapCommand.entrySet()) {
+           text+=entry.getValue()+" | ";
+            System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+        }
+
+        text = text.replaceAll("\\|\\s$","");
+        tvSelectObject.setText(text);
+        if(text.isEmpty()){
+            tvSelectObject.setText("NONE");
+        }
 
     }
-    public void clickBtnCacel(){
-        for(View view: arrayView){
-            ((CheckBox)view).setChecked(false);
+
+    //нажатие на диалог OK
+    public void clickBtnOk() {
+
+        for (Map.Entry entry : mapCommand.entrySet()) {
+           //Log.d(TAG, "+++ ID: " + entry.getKey());
+           System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
         }
+    }
+    //нажатие на диалог CANCEL
+    public void clickBtnCancel() {
+        for (View view : arrayView) {
+            ((CheckBox) view).setChecked(false);
+        }
+    }
+
+
+    private  void clickBtnOkClose(){
+        db = new DataBaseHelper(this);
+
+        String nameCommand = etNameCommand.getText().toString();
+        String code = etCode.getText().toString();
+
+        ArrayList<HashMap> arrayList = new ArrayList<>();
+
+        for (Map.Entry entry : mapCommand.entrySet()) {
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("code", code);
+            map.put("name", nameCommand);
+            map.put("idDev", entry.getKey().toString());
+            arrayList.add(map);
+
+            //System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+        }
+
+        db.addCommand(arrayList);
     }
 }
