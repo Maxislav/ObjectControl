@@ -38,7 +38,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/edTextName"
                         android:layout_height="match_parent"
-                        android:background="@color/whiteFieldEditText" />
+                        android:background="@drawable/text_field_background" />
                 </LinearLayout>
 
 
@@ -63,7 +63,7 @@
                         android:layout_height="match_parent"
                         android:id="@+id/edTextPhone"
                         android:inputType="phone"
-                        android:background="@color/whiteFieldEditText" />
+                        android:background="@drawable/text_field_background" />
                 </LinearLayout>
 
                 <LinearLayout

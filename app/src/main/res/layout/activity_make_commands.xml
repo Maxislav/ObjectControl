@@ -37,7 +37,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/edTextNameCommand"
                         android:layout_height="match_parent"
-                        android:background="@color/whiteFieldEditText" />
+                        android:background="@drawable/text_field_background" />
                 </LinearLayout>
                 <LinearLayout
                     style="@style/rowFields"
@@ -57,7 +57,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/etCode"
-                        android:background="@color/whiteFieldEditText" />
+                        android:background="@drawable/text_field_background" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
