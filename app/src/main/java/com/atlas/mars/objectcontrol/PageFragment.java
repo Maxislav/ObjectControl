@@ -86,23 +86,19 @@ public class PageFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case 1:
+                communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
-                rowCreator = new RowCreator(view, inflater);
+                communicator.iniViewAllCommand(view, inflater);
 
+
+               /* rowCreator = new RowCreator(view, inflater);
                 ArrayList <HashMap> arrayList = db.getAllCommand();
-
-                //rowCreator.create();
-                //rowCreator.create();
                 for (HashMap<String, String> map: arrayList){
                     rowCreator.create(map);
-                }
-
-               /* for(int k = 0; k<arrayList.size(); k++){
-                    rowCreator.create();
                 }*/
-                communicator = (Communicator)getActivity();
-                FrameLayout btnEdit = (FrameLayout)view.findViewById(R.id.btnEdit);
-                communicator.editCommand(btnEdit);
+
+               // FrameLayout btnEdit = (FrameLayout)view.findViewById(R.id.btnEdit);
+               // communicator.editCommand(btnEdit);
 
 
                 break;

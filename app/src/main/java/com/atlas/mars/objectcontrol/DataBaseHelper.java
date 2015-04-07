@@ -162,11 +162,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(UID, id);
             map.put(VALUE_COMMAND, command);
             map.put(VALUE_ID_DEVICE, idDev);
-
-
             String nameDevice = getNameDevice(idDev, sdb);
             map.put(VALUE_NAME_DEVICE, nameDevice);
-
             arrayList.add(map);
         }
         sdb.close();
@@ -179,7 +176,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             name = cursor.getString(cursor.getColumnIndex(this.VALUE_NAME));
         }
-
         return name;
+    }
+
+    public boolean delCommand(String id){
+        sdb = getWritableDatabase();
+        String jquery = "DELETE FROM "+TABLE_NAME_COMMANDS+" WHERE _id="+id;
+        try {
+            sdb.execSQL(jquery);
+        }catch (Exception e){
+            e.printStackTrace();
+            sdb.close();
+            return false;
+        }
+        sdb.close();
+        return true;
     }
 }

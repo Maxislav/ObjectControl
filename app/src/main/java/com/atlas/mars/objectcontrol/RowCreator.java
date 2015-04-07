@@ -20,6 +20,7 @@ public class RowCreator {
     static int count = 0;
     final static String TAG = "myLog";
 
+
     RowCreator(View view, LayoutInflater inflater) {
         this.view = view;
         this.inflater = inflater;
@@ -29,11 +30,6 @@ public class RowCreator {
 
     public FrameLayout create(HashMap<String,String> map) {
         FrameLayout row = (FrameLayout) inflater.inflate(R.layout.row_command, null);
-       // ViewGroup vgRow = (ViewGroup) row;
-     //   ArrayList<View> arrayList = new  ArrayList<>();
-       // arrayList = myJQuery.getViewsByTagWithReset(vgRow, SurfaceView.class);
-      //  SurfaceView surface = (SurfaceView) arrayList.get(0);
-       // surfaseCreate(surface);
         ArrayList<View> arrayList = myJQuery.getViewsByTagWithReset(row, TextView.class);
         TextView tvCmd = (TextView)arrayList.get(0);
         tvCmd.setText(map.get(DataBaseHelper.VALUE_NAME));

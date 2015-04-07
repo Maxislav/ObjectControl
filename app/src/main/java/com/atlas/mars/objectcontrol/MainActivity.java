@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +39,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static HashMap<Integer, View> fragmetMapView; //массив фрагментов
     static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
-    static final private int CHOOSE_THIEF = 0;
+    static final public int CHOOSE_THIEF = 0;
     MyJQuery myJQuery;
     LinearLayout lv;
     ViewPager pager;
@@ -56,7 +57,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     final public int TO_ADD_COMMAND = 1;
     static  final String FROM = "FROM";
     TextView tvSelectObject;
-
+    RowCreator  rowCreator;
+    View viewAllCommand;
+    FragmentAllCommand fragmentAllCommand;
 
 
 
@@ -86,41 +89,6 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     public void setTextSelectObject(TextView textView) {
         setTextSelectedObj(textView);
     }
-
-    @Override
-    public void editCommand(FrameLayout _btnEdit) {
-        final FrameLayout btnEdit = _btnEdit;
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopupMenuEditCommands(v);
-            }
-        });
-    }
-
-    private void showPopupMenuEditCommands(View v) {
-        PopupMenu popupMenu = new PopupMenu(this, v);
-        popupMenu.inflate(R.menu.edit_commands);
-        popupMenu
-                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.create:
-                                Intent questionIntent = new Intent(MainActivity.this, MakeCommandActivity.class);
-                                questionIntent.putExtra(FROM, TO_ADD_COMMAND);
-                                startActivityForResult(questionIntent, CHOOSE_THIEF);
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
-                });
-        popupMenu.show();
-    }
-
-
 
     private void _init() {
         mapSelectObjects = new HashMap<>();
@@ -301,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 int k = data.getIntExtra(FROM, 0);
                 switch (k){
                     case 0:
-
+                         //добавление нового Девайса
                         Log.d(TAG, "RESULT +++ "+ k +"");
                         String name = data.getStringExtra(AddObject.NAME);
                         String phone = data.getStringExtra(AddObject.PHONE);
@@ -315,8 +283,10 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                         //  Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
+                        //добавление новой команды
                         Log.d(TAG, "RESULT +++ "+ k +"");
-
+                     //   regenViewAllCommand();
+                        fragmentAllCommand.onRedraw();
                         break;
                 }
 
@@ -391,9 +361,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         });
     }
+    @Override
+    public void iniViewAllCommand(View view, LayoutInflater inflater){
+        fragmentAllCommand = new  FragmentAllCommand(this, view, inflater);
+    }
 
-  /*  @Override
-    public void onButtonSelected(int buttonIndex, View v) {
-        selectObjDialog.dialogSelectObj(v);
-    }*/
 }

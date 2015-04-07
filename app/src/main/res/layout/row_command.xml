@@ -9,7 +9,7 @@
     android:paddingRight="5dp">
 
     <ImageView
-        android:id="@+id/imageView"
+
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/bitmap_button" />
@@ -59,4 +59,11 @@
         </LinearLayout>
 
     </LinearLayout>
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/btn_minus"
+        android:layout_marginRight="10dp"
+        android:visibility="invisible"
+        android:layout_gravity="right|center" />
 </FrameLayout>
