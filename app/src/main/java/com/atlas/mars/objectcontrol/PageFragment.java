@@ -76,7 +76,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
                 communicator.setTextSelectObject(tvSelectObject);
                 communicator.initBtnSelectObj(btnSelectObj);
 
-
+                communicator.iniViewHome(view,inflater);
                // TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
 
 

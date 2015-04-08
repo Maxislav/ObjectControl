@@ -2,7 +2,6 @@ package com.atlas.mars.objectcontrol;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 /**
@@ -13,6 +12,7 @@ public interface Communicator {
     public void initBtnSelectObj(View view);
     public void initBtnAddObj(View view);
     public void iniViewAllCommand(View view, LayoutInflater inflater);
+    public void iniViewHome(View view, LayoutInflater inflater);
 
 
 }

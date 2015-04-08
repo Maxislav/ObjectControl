@@ -19,29 +19,22 @@ import java.util.Map;
 /**
  * Created by Администратор on 4/7/15.
  */
-public class FragmentAllCommand {
-    MainActivity mainActivity;
-    View viewFragment;
-    LayoutInflater inflater;
-    RowCreator rowCreator;
-    DataBaseHelper db;
-    HashMap<String, FrameLayout> hashMapRow;
-    View dialog;
-    PopupWindow pw;
-    static MyJQuery myJQuery;
-
+public class FragmentAllCommand extends FragventView{
 
     public FragmentAllCommand(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
-        this.mainActivity = mainActivity;
+        super(mainActivity, viewFragment, inflater);
+
+       /* this.mainActivity = mainActivity;
         this.viewFragment = viewFragment;
         this.inflater = inflater;
         myJQuery = new MyJQuery();
         db = new DataBaseHelper(mainActivity);
-        rowCreator = new RowCreator(viewFragment, inflater);
-        onInit();
+       // rowCreator = new RowCreator(viewFragment, inflater);
+        onInit();*/
     }
-
-    private void onInit(){
+    @Override
+    public void onInit(){
+        rowCreator = new RowCreator(viewFragment, inflater);
         onDraw();
         editCommand();
     }
