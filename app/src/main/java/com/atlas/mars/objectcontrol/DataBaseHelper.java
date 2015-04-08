@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -33,6 +33,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String VALUE_PARAM = "valueParam";
     public static final String VALUE_COMMAND = "valueCommand";
     public static final String VALUE_ID_DEVICE = "valueIdDevice";
+    public static final String VALUE_FAVORITE = "valueFavorite";
 
     public static final String VALUE_SELECTED = "valueSelected";
 
@@ -42,7 +43,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_COMMANDS = "CREATE TABLE if not exists "
             +TABLE_NAME_COMMANDS+" (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + VALUE_NAME + " VARCHAR(255), " + VALUE_COMMAND +  " VARCHAR(255), " + VALUE_ID_DEVICE +" INTEGER " + ");";
+            + VALUE_NAME + " VARCHAR(255), " + VALUE_COMMAND +  " VARCHAR(255), " + VALUE_ID_DEVICE +" INTEGER " +VALUE_FAVORITE+ " INTEGER"+ ");";
 
 
     public DataBaseHelper(Context context) {
@@ -62,6 +63,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
       //  db.execSQL(SQL_CREATE_TABLE_COMMANDS);
        // String jquery  = "UPDATE " + TABLE_NAME_DEVICES+" SET "+VALUE_SELECTED+"="+0+" WHERE "+VALUE_SELECTED+" IS NULL";
         //db.execSQL(jquery);
+       /* String jquery = "ALTER TABLE "+TABLE_NAME_COMMANDS+" ADD COLUMN "+VALUE_FAVORITE+" "+"INTEGER";
+        db.execSQL(jquery);
+        jquery = "UPDATE " + TABLE_NAME_COMMANDS+" SET "+VALUE_FAVORITE+"="+0+" WHERE "+VALUE_FAVORITE+" IS NULL";
+        db.execSQL(jquery);*/
     }
 
     public long addNewDevice(String name, String phone){
@@ -126,6 +131,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return arrayList;
     }
+    public void setValueFavorite(String id, boolean favorite){
+        String jquery;
+        sdb = getWritableDatabase();
+        if(favorite){
+            jquery = "UPDATE " + TABLE_NAME_COMMANDS+" SET "+VALUE_FAVORITE+"="+1+" WHERE "+UID+"="+id;
+        }else{
+            jquery = "UPDATE " + TABLE_NAME_COMMANDS+" SET "+VALUE_FAVORITE+"="+0+" WHERE "+UID+"="+id;
+        }
+        sdb.execSQL(jquery);
+        sdb.close();
+    }
 
     public boolean addCommand(ArrayList<HashMap> arrayList){
         sdb = this.getWritableDatabase();
@@ -138,6 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 cv.put(VALUE_NAME, map.get("name"));
                 cv.put(VALUE_COMMAND, map.get("code"));
                 cv.put(VALUE_ID_DEVICE, map.get("idDev"));
+                cv.put(VALUE_FAVORITE, "0");
                 long id = sdb.insert(TABLE_NAME_COMMANDS, null, cv);
             }
         }catch (SQLException e){
@@ -159,12 +176,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String id = cursor.getString(cursor.getColumnIndex(UID));
             String command =  cursor.getString(cursor.getColumnIndex(VALUE_COMMAND));
             String idDev =  cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
+            String favorite =  cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
 
             HashMap<String,String> map = new HashMap<>();
             map.put(VALUE_NAME, name);
             map.put(UID, id);
             map.put(VALUE_COMMAND, command);
             map.put(VALUE_ID_DEVICE, idDev);
+            map.put(VALUE_FAVORITE, favorite);
             String nameDevice = getNameDevice(idDev, sdb);
             map.put(VALUE_NAME_DEVICE, nameDevice);
             arrayList.add(map);

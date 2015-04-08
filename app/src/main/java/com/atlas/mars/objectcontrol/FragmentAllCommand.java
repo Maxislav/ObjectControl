@@ -23,20 +23,16 @@ public class FragmentAllCommand extends MyFragmentView {
 
     public FragmentAllCommand(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         super(mainActivity, viewFragment, inflater);
-
-       /* this.mainActivity = mainActivity;
-        this.viewFragment = viewFragment;
-        this.inflater = inflater;
-        myJQuery = new MyJQuery();
-        db = new DataBaseHelper(mainActivity);
-       // rowCreator = new RowCreator(viewFragment, inflater);
-        onInit();*/
     }
     @Override
     public void onInit(){
         rowCreator = new RowCreator(viewFragment, inflater);
         onDraw();
         editCommand();
+    }
+    @Override
+    public void regenParams() {
+        onRedraw();
     }
 
     private void onDraw(){
@@ -47,12 +43,38 @@ public class FragmentAllCommand extends MyFragmentView {
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
             setListenerDelRow(row, id);
+            ArrayList<View> viewArrayList = myJQuery.getViewsByTagWithReset(row, ImageView.class);
+            ImageView imgFavorite = (ImageView)viewArrayList.get(2);
+            if(map.get(db.VALUE_FAVORITE).equals("1")){
+                imgFavorite.setBackgroundResource(R.drawable.btn_favorite);
+            }
+            setListenerFavorite(imgFavorite, map);
         }
+    }
+
+    private void setListenerFavorite(final ImageView imgFavorite, final HashMap<String, String> map){
+        final String id = map.get(db.UID);
+
+        imgFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(map.get(db.VALUE_FAVORITE).equals("1")){
+                    db.setValueFavorite(id, false);
+                    map.put(db.VALUE_FAVORITE, "0");
+                    imgFavorite.setBackgroundResource(R.drawable.btn_unfavorite);
+                }else{
+                    db.setValueFavorite(id, true);
+                    map.put(db.VALUE_FAVORITE, "1");
+                    imgFavorite.setBackgroundResource(R.drawable.btn_favorite);
+                }
+            }
+        });
     }
 
     private void setListenerDelRow(FrameLayout _row, final String _id){
         final FrameLayout row = _row;
         ImageView imgMinus = (ImageView)myJQuery.getViewsByTagWithReset( row, ImageView.class).get(1);
+
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,13 +85,6 @@ public class FragmentAllCommand extends MyFragmentView {
                 }
             }
         });
-
-
-    }
-
-    @Override
-    public void regenParams() {
-        onRedraw();
     }
 
     public void onRedraw(){
@@ -90,8 +105,10 @@ public class FragmentAllCommand extends MyFragmentView {
     private void showMinus(int visible){
 
         for (Map.Entry entry : hashMapRow.entrySet()) {
-            ImageView img = (ImageView)myJQuery.getViewsByTagWithReset((FrameLayout)entry.getValue(), ImageView.class).get(1);
+            ArrayList<View> viewArrayList = myJQuery.getViewsByTagWithReset((FrameLayout)entry.getValue(), ImageView.class);
+            ImageView img = (ImageView)viewArrayList.get(1);
             img.setVisibility(visible);
+
            //System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
         }
         dialogEndDelShow();
