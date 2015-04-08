@@ -131,6 +131,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return arrayList;
     }
+
+    public ArrayList<HashMap> getFavoriteCommand(){
+        ArrayList<HashMap> arrayList = new ArrayList<HashMap>();
+        sdb = this.getWritableDatabase();
+        String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+ " WHERE "+VALUE_FAVORITE+"=1"+" AND "+VALUE_ID_DEVICE+"=(SELECT " +UID+ " FROM "+TABLE_NAME_DEVICES+" WHERE "+VALUE_SELECTED+"="+1+")";
+        Cursor cursor = sdb.rawQuery(jquery,null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(UID));
+            String name = cursor.getString(cursor.getColumnIndex(VALUE_NAME));
+            String idDev = cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
+            String favorite = cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
+
+            String nameDevice = getNameDevice(idDev, sdb);
+
+            HashMap<String,String> map = new HashMap<>();
+            map.put(VALUE_NAME, name);
+            map.put(UID, id);
+            map.put(VALUE_ID_DEVICE, idDev);
+            map.put(VALUE_FAVORITE, favorite);
+            map.put("valueDeviceName", nameDevice);
+            arrayList.add(map);
+
+        }
+
+        sdb.close();
+        return arrayList;
+    }
+
     public void setValueFavorite(String id, boolean favorite){
         String jquery;
         sdb = getWritableDatabase();

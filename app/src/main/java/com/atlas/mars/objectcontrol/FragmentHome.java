@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ public class FragmentHome extends MyFragmentView {
     ArrayList<CheckBox> listCheckBox;
     static HashMap<String, String> mapSelectObjects;
     static ArrayList<HashMap> listDevices;
+    LinearLayout mainLayout;
 
 
     FragmentHome(MainActivity mainActivity, View viewFragment, LayoutInflater inflater) {
@@ -43,6 +45,7 @@ public class FragmentHome extends MyFragmentView {
     @Override
     public void onInit() {
         //rowCreator = new RowCreator(viewFragment, inflater);
+
         selectObjDialog = new DialogSelectObj(mainActivity);
         mapSelectObjects = new HashMap<>();
         listCheckBox = new ArrayList<>();
@@ -59,6 +62,9 @@ public class FragmentHome extends MyFragmentView {
         dialogInflate(dialogView);
         okCancelListener(dialogView);
 
+        mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
+        getFavoriteCommand();
+
     }
 
     @Override
@@ -69,8 +75,15 @@ public class FragmentHome extends MyFragmentView {
         dialogInflate(dialogView);
     }
 
+    private void getFavoriteCommand(){
+            ArrayList<HashMap> arrayList = db.getFavoriteCommand();
+        Log.d("dd", "");
+    }
+
+
     private void getListDevices() {
         listDevices = db.getListDevices();
+        Log.d("dd", "");
     }
 
 
