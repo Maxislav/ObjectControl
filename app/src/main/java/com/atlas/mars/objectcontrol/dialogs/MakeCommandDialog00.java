@@ -10,10 +10,10 @@ import java.util.HashMap;
 /**
  * Created by mars on 4/3/15.
  */
-public class MakeCommandDialog extends MyDialog {
+public class MakeCommandDialog00 extends MyDialog00 {
     MakeCommandActivity activity1;
 
-    public MakeCommandDialog(Activity activity) {
+    public MakeCommandDialog00(Activity activity) {
         super(activity);
         activity1 = (MakeCommandActivity)activity;
     }

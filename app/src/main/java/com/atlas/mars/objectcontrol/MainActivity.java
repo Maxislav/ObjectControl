@@ -24,7 +24,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog;
+import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog00;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     private static final int NOTIFY_ID = 101;
     final int DIALOG_EXIT = 1;
     DialogFragment dlg1;
-    SelectObjDialog selectObjDialog;
+    SelectObjDialog00 selectObjDialog;
     DataBaseHelper db;
     static String selectObject;
     static HashMap<String, String> mapSelectObjects;
@@ -74,8 +74,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         selectObject = "";
-        dlg1 = new Dialog1();
-        dlg1.onAttach(this);
+
         _init();
     }
     @Override
@@ -104,7 +103,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
         //  setTextSelectedObj();
 
-        selectObjDialog = new SelectObjDialog(this);
+        selectObjDialog = new SelectObjDialog00(this);
         myJQuery = new MyJQuery();
         fragmentView = new ArrayList<View>();
         pager = (ViewPager) findViewById(R.id.pager);

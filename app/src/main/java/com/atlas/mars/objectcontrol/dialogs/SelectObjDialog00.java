@@ -5,9 +5,9 @@ import android.app.Activity;
 /**
  * Created by mars on 4/3/15.
  */
-public class SelectObjDialog extends MyDialog {
+public class SelectObjDialog00 extends MyDialog00 {
 
-    public SelectObjDialog(Activity activity) {
+    public SelectObjDialog00(Activity activity) {
         super(activity);
     }
 

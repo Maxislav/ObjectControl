@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.atlas.mars.objectcontrol.dialogs.MakeCommandDialog;
+import com.atlas.mars.objectcontrol.dialogs.MakeCommandDialog00;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by Администратор on 4/2/15.
  */
-public class MakeCommandActivity extends ActionBarActivity implements MakeCommandDialog.GiftCheckbox {
+public class MakeCommandActivity extends ActionBarActivity implements MakeCommandDialog00.GiftCheckbox {
 
     public final static String TAG = "myLog";
     public final static String NAME_COMMAND = "NAME_COMMAND";
@@ -30,7 +30,7 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
     EditText etNameCommand, etCode;
     TextView tvSelectObject;
     FrameLayout btnSelectDevice, btnOk, btnCancel;
-    MakeCommandDialog myDialog;
+    MakeCommandDialog00 myDialog;
 
     HashMap<String, String> mapCommand;
     ArrayList<View> arrayView;
@@ -56,7 +56,7 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
         tvSelectObject = (TextView)findViewById(R.id.tvSelectObject);
 
 
-        myDialog = new MakeCommandDialog(this);
+        myDialog = new MakeCommandDialog00(this);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
