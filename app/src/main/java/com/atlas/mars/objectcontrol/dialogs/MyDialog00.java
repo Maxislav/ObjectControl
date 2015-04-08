@@ -46,7 +46,7 @@ public class MyDialog00 {
     }
 
     protected void onInflate(boolean bool){
-        body =(LinearLayout)dialog.findViewById(R.id.parent);
+        body =(LinearLayout)dialog.findViewById(R.id.contentDialog);
         ArrayList<HashMap> arrayList = getDevices();
         for(int i = 0; i<arrayList.size(); i++){
             setRow(body, arrayList.get(i), bool);

@@ -278,8 +278,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                             return;
                         }
                         //todo Раскоментировать
-                        // long n  = db.addNewDevice(name,phone);
-                        //  Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+                         long n  = db.addNewDevice(name,phone);
+                         Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         //добавление новой команды

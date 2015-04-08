@@ -19,7 +19,7 @@ public abstract class MyFragmentView {
     HashMap<String, FrameLayout> hashMapRow;
     View dialog;
     PopupWindow pw;
-    static MyJQuery myJQuery;
+    MyJQuery myJQuery;
 
     public MyFragmentView(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         this.mainActivity = mainActivity;
@@ -31,5 +31,6 @@ public abstract class MyFragmentView {
     }
 
     abstract public void onInit();
+    abstract public void regenParams();
 
 }

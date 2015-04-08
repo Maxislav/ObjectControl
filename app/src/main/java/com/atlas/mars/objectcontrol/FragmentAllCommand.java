@@ -67,6 +67,11 @@ public class FragmentAllCommand extends MyFragmentView {
 
     }
 
+    @Override
+    public void regenParams() {
+        onRedraw();
+    }
+
     public void onRedraw(){
         ((LinearLayout)viewFragment.findViewById(R.id.mainLayout)).removeAllViews();
         onDraw();

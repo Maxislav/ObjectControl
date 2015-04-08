@@ -44,7 +44,7 @@
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/parent"
+                android:id="@+id/contentDialog"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
             </LinearLayout>

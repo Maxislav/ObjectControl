@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -60,6 +60,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       //  db.execSQL(SQL_CREATE_TABLE_COMMANDS);
+       // String jquery  = "UPDATE " + TABLE_NAME_DEVICES+" SET "+VALUE_SELECTED+"="+0+" WHERE "+VALUE_SELECTED+" IS NULL";
+        //db.execSQL(jquery);
     }
 
     public long addNewDevice(String name, String phone){
@@ -67,6 +69,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(VALUE_NAME, name );
         cv.put(VALUE_PHONE, phone );
+        cv.put(VALUE_SELECTED, "0" );
         long id = sdb.insert(TABLE_NAME_DEVICES, null, cv);
         sdb.close();
         Log.d(TAG, "addNewDevice" + id + "");
