@@ -11,8 +11,8 @@ public interface Communicator {
     public void setTextSelectObject(TextView setTextSelectedObj);
     public void initBtnSelectObj(View view);
     public void initBtnAddObj(View view);
-    public void iniViewAllCommand(View view, LayoutInflater inflater);
-    public void iniViewHome(View view, LayoutInflater inflater);
+    public void initViewAllCommand(View view, LayoutInflater inflater);
+    public void initViewHome(View view, LayoutInflater inflater);
 
 
 }

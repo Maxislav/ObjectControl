@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * Created by mars on 4/8/15.
  */
-public abstract class FragventView {
+public abstract class MyFragmentView {
     MainActivity mainActivity;
     View viewFragment;
     LayoutInflater inflater;
@@ -21,28 +21,15 @@ public abstract class FragventView {
     PopupWindow pw;
     static MyJQuery myJQuery;
 
-    public FragventView(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
+    public MyFragmentView(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         this.mainActivity = mainActivity;
         this.viewFragment = viewFragment;
         this.inflater = inflater;
         myJQuery = new MyJQuery();
         db = new DataBaseHelper(mainActivity);
-      //  rowCreator = new RowCreator(viewFragment, inflater);
         onInit();
     }
 
     abstract public void onInit();
-
-    /* public void onInit(){
-        onDraw();
-        editCommand();
-    }*/
-
-    private void onDraw(){
-
-    }
-    private void editCommand(){
-
-    }
 
 }

@@ -76,7 +76,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
                 communicator.setTextSelectObject(tvSelectObject);
                 communicator.initBtnSelectObj(btnSelectObj);
 
-                communicator.iniViewHome(view,inflater);
+                communicator.initViewHome(view, inflater);
                // TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
 
 
@@ -88,7 +88,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
             case 1:
                 communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
-                communicator.iniViewAllCommand(view, inflater);
+                communicator.initViewAllCommand(view, inflater);
 
 
                /* rowCreator = new RowCreator(view, inflater);

@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Created by mars on 4/8/15.
  */
-public class FragmentHome extends FragventView {
+public class FragmentHome extends MyFragmentView {
 
     FragmentHome(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         super(mainActivity, viewFragment, inflater);

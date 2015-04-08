@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by Администратор on 4/7/15.
  */
-public class FragmentAllCommand extends FragventView{
+public class FragmentAllCommand extends MyFragmentView {
 
     public FragmentAllCommand(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         super(mainActivity, viewFragment, inflater);

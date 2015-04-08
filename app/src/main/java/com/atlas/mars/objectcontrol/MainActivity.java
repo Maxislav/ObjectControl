@@ -363,12 +363,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
-    public void iniViewAllCommand(View view, LayoutInflater inflater){
+    public void initViewAllCommand(View view, LayoutInflater inflater){
         fragmentAllCommand = new  FragmentAllCommand(this, view, inflater);
     }
 
     @Override
-    public void iniViewHome(View view, LayoutInflater inflater){
+    public void initViewHome(View view, LayoutInflater inflater){
         fragmentHome = new FragmentHome(this, view, inflater);
     }
 
