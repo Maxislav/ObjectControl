@@ -32,6 +32,7 @@ public class FragmentHome extends MyFragmentView {
     DialogSelectObj selectObjDialog;
     String selectObject;
     View dialogView;
+    final String SELECT_FOR_SEND = "selectForSend";
     ArrayList<CheckBox> listCheckBox;
     static HashMap<String, String> mapSelectObjects;
     static ArrayList<HashMap> listDevices;
@@ -85,6 +86,7 @@ public class FragmentHome extends MyFragmentView {
         ArrayList<HashMap> arrayList = db.getFavoriteCommand();
         Log.d("dd", "");
         for(HashMap<String,String> map : arrayList){
+            map.put(SELECT_FOR_SEND, "0");
             createRow(map);
         }
     }
@@ -92,12 +94,31 @@ public class FragmentHome extends MyFragmentView {
     private void createRow(HashMap<String,String> map){
         FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_command, null);
         ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
+        ImageView imageBackground = (ImageView)arrayImgs.get(0);
+
         ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
         ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
         ((TextView)arrayTextView.get(2)).setText(map.get("valueDeviceName"));
         ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
+        setClickListenerRow(row, imageBackground, map);
+    }
+
+    private void setClickListenerRow(final FrameLayout row, final ImageView imageBackground, final HashMap<String, String> map){
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(map.get(SELECT_FOR_SEND).equals("0")){
+                    imageBackground.setBackgroundResource(R.drawable.bitmap_button_to_send);
+                    map.put(SELECT_FOR_SEND, "1");
+                }else{
+                    imageBackground.setBackgroundResource(R.drawable.bitmap_button);
+                    map.put(SELECT_FOR_SEND, "0");
+                }
+            }
+        });
     }
 
 
