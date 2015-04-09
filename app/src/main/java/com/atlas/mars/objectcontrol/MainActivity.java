@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
     static final public int CHOOSE_THIEF = 0;
+    MenuInflater menuInflater;
     MyJQuery myJQuery;
     LinearLayout lv;
     ViewPager pager;
@@ -54,13 +56,13 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     boolean saveToHistory;
     final public int TO_ADD_OBJECT = 0;
     final public int TO_ADD_COMMAND = 1;
-    static  final String FROM = "FROM";
+    static final String FROM = "FROM";
     TextView tvSelectObject;
-    RowCreator  rowCreator;
+    RowCreator rowCreator;
     View viewAllCommand;
     FragmentAllCommand fragmentAllCommand;
     FragmentHome fragmentHome;
-
+    Menu menu;
 
 
     @Override
@@ -77,6 +79,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
         _init();
     }
+
     @Override
     protected void onStart() {
         int i = pager.getCurrentItem();
@@ -84,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         super.onStart();
 
     }
+
     @Override
     public void setTextSelectObject(TextView textView) {
         setTextSelectedObj(textView);
@@ -101,15 +105,12 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             map = (HashMap) arrayList.get(k);
             mapSelectObjects.put(map.get(db.UID), map.get(db.VALUE_NAME));
         }
-        //  setTextSelectedObj();
-
         selectObjDialog = new SelectObjDialog00(this);
         myJQuery = new MyJQuery();
         fragmentView = new ArrayList<View>();
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-        //pagerAdapter.addToBackStack();
         action_bar_title = (LinearLayout) findViewById(R.id.action_bar_title);
 
         titleArrayList = myJQuery.getViewsByTag((ViewGroup) action_bar_title, LinearLayout.class);
@@ -120,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             @Override
             public void onPageSelected(int position) {
                 setActiveNavBar(position);
-
+                changeMenuByFragment(position);
                 Log.d(TAG, "onPageSelected, position = " + position);
             }
 
@@ -154,18 +155,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
 
-
-
     private void setActiveNavBar(int k) {
 
-        if (k == 0 && selectObjButton == null) {
-            //  View view  = pager.getChildAt(k);
-            //  selectObjButton = (Button)view.findViewById(R.id.selectButton);
-        }
-
-        //View v =fragmetMapView.get(4);
-        View v = pager.getChildAt(k);
-        // fragmetMapView.put(k, pager.getChildAt(k));
         for (int i = 0; i < titleArrayList.size(); i++) {
             if (k == i) {
                 titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
@@ -174,6 +165,32 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         }
 
+
+    }
+
+    public void changeMenuByFragment(int k) {
+
+
+        {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(false);
+        }
+
+        switch (k) {
+            case 0:
+                menu.findItem(R.id.action_settings).setVisible(true);
+                menu.findItem(R.id.action_add_objecte).setVisible(true);
+
+                break;
+            case 1:
+                menu.findItem(R.id.action_settings).setVisible(true);
+                menu.findItem(R.id.action_add_command).setVisible(true);
+                menu.findItem(R.id.action_remove_command).setVisible(true);
+                menu.findItem(R.id.action_add_favorite).setVisible(true);
+                break;
+            default:
+
+        }
     }
 
     public static void setSelectObjButton(Button v) {
@@ -230,29 +247,45 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        this.menu = menu;
+        this.menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        if(pagerAdapter!=null){
+            changeMenuByFragment(pager.getCurrentItem());
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
+        Intent questionIntent;
+        switch (item.getItemId()){
+            case R.id.action_add_objecte:
 
+                questionIntent = new Intent(MainActivity.this, AddObject.class);
+                questionIntent.putExtra(FROM, TO_ADD_OBJECT);
+                startActivityForResult(questionIntent, CHOOSE_THIEF);
 
-        if (id == R.id.action_add_objecte) {
-            Intent questionIntent = new Intent(MainActivity.this, AddObject.class);
-            questionIntent.putExtra(FROM, TO_ADD_OBJECT);
-            startActivityForResult(questionIntent, CHOOSE_THIEF);
-            return true;
-        }
+                return true;
+            case R.id.action_add_command:
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                questionIntent = new Intent( this, MakeCommandActivity.class);
+                questionIntent.putExtra(FROM, TO_ADD_COMMAND);
+                startActivityForResult(questionIntent, CHOOSE_THIEF);
+
+                return true;
+
+            case R.id.action_remove_command:
+                fragmentAllCommand.showMinus(View.VISIBLE);
+                return true;
+            case R.id.action_add_favorite:
+                fragmentAllCommand.showFavorite(View.VISIBLE);
+                return true;
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -266,10 +299,10 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if (requestCode == CHOOSE_THIEF) {
             if (resultCode == RESULT_OK) {
                 int k = data.getIntExtra(FROM, 0);
-                switch (k){
+                switch (k) {
                     case 0:
-                         //добавление нового Девайса
-                        Log.d(TAG, "RESULT +++ "+ k +"");
+                        //добавление нового Девайса
+                        Log.d(TAG, "RESULT +++ " + k + "");
                         String name = data.getStringExtra(AddObject.NAME);
                         String phone = data.getStringExtra(AddObject.PHONE);
                         if (phone.isEmpty() || name.isEmpty()) {
@@ -278,13 +311,13 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                             return;
                         }
                         //todo Раскоментировать
-                         long n  = db.addNewDevice(name,phone);
-                         Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+                        long n = db.addNewDevice(name, phone);
+                        Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         //добавление новой команды
-                        Log.d(TAG, "RESULT +++ "+ k +"");
-                     //   regenViewAllCommand();
+                        Log.d(TAG, "RESULT +++ " + k + "");
+                        //   regenViewAllCommand();
                         fragmentAllCommand.onRedraw();
                         break;
                 }
@@ -295,6 +328,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
     }
 
+
     public void setActiveObject(String name, String id, boolean bo) {
         if (bo) {
             mapSelectObjects.put(id, name);
@@ -304,7 +338,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         }
         View view = pager.getChildAt(0);
-       //TextView tvSelectObject = (TextView) view.findViewById(R.id.tvSelectObject);
+        //TextView tvSelectObject = (TextView) view.findViewById(R.id.tvSelectObject);
 
         setTextSelectedObj(tvSelectObject);
     }
@@ -323,8 +357,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
-    public void initBtnSelectObj(View view){
-        tvSelectObject =(TextView) myJQuery.getViewsByTagWithReset((ViewGroup)view, TextView.class).get(0);
+    public void initBtnSelectObj(View view) {
+        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) view, TextView.class).get(0);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,8 +366,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         });
     }
+
     @Override
-    public void initBtnAddObj(View view){
+    public void initBtnAddObj(View view) {
         final PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.inflate(R.menu.menu_add_obj);
         popupMenu
@@ -362,17 +397,18 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
-    public void initViewAllCommand(View view, LayoutInflater inflater){
-        fragmentAllCommand = new  FragmentAllCommand(this, view, inflater);
+    public void initViewAllCommand(View view, LayoutInflater inflater) {
+        fragmentAllCommand = new FragmentAllCommand(this, view, inflater);
     }
 
     @Override
-    public void initViewHome(View view, LayoutInflater inflater){
+    public void initViewHome(View view, LayoutInflater inflater) {
         fragmentHome = new FragmentHome(this, view, inflater);
     }
+
     @Override
-    public void connectionFragment(){
-        if(fragmentHome!=null){
+    public void connectionFragment() {
+        if (fragmentHome != null) {
             fragmentHome.regenScrollView();
         }
     }

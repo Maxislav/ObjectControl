@@ -35,7 +35,7 @@ public class PageFragment extends Fragment implements View.OnClickListener {
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
         pageFragment.setArguments(arguments);
-
+        //Log.d(TAG, "savedPageNumber");
         return pageFragment;
     }
 
@@ -67,41 +67,13 @@ public class PageFragment extends Fragment implements View.OnClickListener {
             case 0:
                 communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_0_home, null);
-
-
-
-              /*  FrameLayout btnSelectObj =(FrameLayout)myJQuery.getViewsByTagWithReset((ViewGroup)view,FrameLayout.class).get(0);
-                TextView tvSelectObject = (TextView)myJQuery.getViewsByTagWithReset((ViewGroup)btnSelectObj, TextView.class ).get(0);
-                FrameLayout btnAddObj = (FrameLayout)view.findViewById(R.id.addObj);
-                communicator.initBtnAddObj(btnAddObj);
-                communicator.setTextSelectObject(tvSelectObject);
-                communicator.initBtnSelectObj(btnSelectObj);*/
-
                 communicator.initViewHome(view, inflater);
-               // TextView tvSelectObject = (TextView)view.findViewById(R.id.tvSelectObject);
-
-
-
-
-
 
                 break;
             case 1:
                 communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
                 communicator.initViewAllCommand(view, inflater);
-
-
-               /* rowCreator = new RowCreator(view, inflater);
-                ArrayList <HashMap> arrayList = db.getAllCommand();
-                for (HashMap<String, String> map: arrayList){
-                    rowCreator.create(map);
-                }*/
-
-               // FrameLayout btnEdit = (FrameLayout)view.findViewById(R.id.btnEdit);
-               // communicator.editCommand(btnEdit);
-
-
                 break;
             default:
                 view = inflater.inflate(R.layout.fragment, null);

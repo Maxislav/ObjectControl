@@ -1,6 +1,5 @@
 package com.atlas.mars.objectcontrol;
 
-import android.content.Intent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -43,7 +42,7 @@ public class FragmentAllCommand extends MyFragmentView {
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
             setListenerDelRow(row, id);
-            ArrayList<View> viewArrayList = myJQuery.getViewsByTagWithReset(row, ImageView.class);
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass(row, ImageView.class);
             ImageView imgFavorite = (ImageView)viewArrayList.get(2);
             ImageView bacGroutdImg = (ImageView)viewArrayList.get(0);
             if(map.get(db.VALUE_FAVORITE).equals("1")){
@@ -82,7 +81,7 @@ public class FragmentAllCommand extends MyFragmentView {
 
     private void setListenerDelRow(FrameLayout _row, final String _id){
         final FrameLayout row = _row;
-        ImageView imgMinus = (ImageView)myJQuery.getViewsByTagWithReset( row, ImageView.class).get(1);
+        ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, ImageView.class).get(1);
 
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +91,8 @@ public class FragmentAllCommand extends MyFragmentView {
                     hashMapRow.remove(_id);
                     ((LinearLayout)row.getParent()).removeView(row);
                 }
+
+                mainActivity.connectionFragment();
             }
         });
     }
@@ -111,14 +112,20 @@ public class FragmentAllCommand extends MyFragmentView {
         });
     }
 
-    private void showMinus(int visible){
-
+    public void showMinus(int visible){
         for (Map.Entry entry : hashMapRow.entrySet()) {
-            ArrayList<View> viewArrayList = myJQuery.getViewsByTagWithReset((FrameLayout)entry.getValue(), ImageView.class);
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), ImageView.class);
             ImageView img = (ImageView)viewArrayList.get(1);
             img.setVisibility(visible);
+        }
+        dialogEndDelShow();
+    }
 
-           //System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+    public void showFavorite(int visible){
+        for (Map.Entry entry : hashMapRow.entrySet()) {
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), ImageView.class);
+            ImageView img = (ImageView)viewArrayList.get(2);
+            img.setVisibility(visible);
         }
         dialogEndDelShow();
     }
@@ -127,11 +134,12 @@ public class FragmentAllCommand extends MyFragmentView {
         if(dialog==null){
             dialog = inflater.inflate(R.layout.dialod_end_del, null);
             pw = new PopupWindow(dialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
-            FrameLayout btnEndDel = (FrameLayout)myJQuery.getViewsByTagWithReset((ViewGroup)dialog, FrameLayout.class).get(0);
+            FrameLayout btnEndDel = (FrameLayout)myJQuery.findViewByTagClass((ViewGroup) dialog, FrameLayout.class).get(0);
             btnEndDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showMinus(View.INVISIBLE);
+                    showFavorite(View.INVISIBLE);
                     pw.dismiss();
                 }
             });
@@ -148,9 +156,9 @@ public class FragmentAllCommand extends MyFragmentView {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.create:
-                                Intent questionIntent = new Intent( mainActivity, MakeCommandActivity.class);
-                                questionIntent.putExtra(mainActivity.FROM, mainActivity.TO_ADD_COMMAND);
-                                mainActivity.startActivityForResult(questionIntent, mainActivity.CHOOSE_THIEF);
+                               // Intent questionIntent = new Intent( mainActivity, MakeCommandActivity.class);
+                               // questionIntent.putExtra(mainActivity.FROM, mainActivity.TO_ADD_COMMAND);
+                               // mainActivity.startActivityForResult(questionIntent, mainActivity.CHOOSE_THIEF);
                                 return true;
                             case R.id.del:
                                 showMinus(View.VISIBLE);

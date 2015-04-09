@@ -30,7 +30,7 @@ public class RowCreator {
 
     public FrameLayout create(HashMap<String,String> map) {
         FrameLayout row = (FrameLayout) inflater.inflate(R.layout.row_command, null);
-        ArrayList<View> arrayList = myJQuery.getViewsByTagWithReset(row, TextView.class);
+        ArrayList<View> arrayList = myJQuery.findViewByTagClass(row, TextView.class);
         TextView tvCmd = (TextView)arrayList.get(0);
         tvCmd.setText(map.get(DataBaseHelper.VALUE_NAME));
 

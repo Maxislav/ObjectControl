@@ -15,7 +15,7 @@ public class MyJQuery {
     MyJQuery() {
         allViews = new ArrayList<View>();
     }
-    public ArrayList<View> getViewsByTagWithReset(ViewGroup root, Class type){
+    public ArrayList<View> findViewByTagClass(ViewGroup root, Class type){
         allViews = new ArrayList<View>();
 
         return  getViewsByTag(root, type);

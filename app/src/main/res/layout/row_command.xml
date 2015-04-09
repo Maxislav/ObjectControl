@@ -72,5 +72,6 @@
         android:layout_height="25dp"
         android:background="@drawable/btn_unfavorite"
         android:layout_marginLeft="10dp"
+        android:visibility="invisible"
         android:layout_gravity="left|center" />
 </FrameLayout>

@@ -50,8 +50,8 @@ public class FragmentHome extends MyFragmentView {
         selectObjDialog = new DialogSelectObj(mainActivity);
         mapSelectObjects = new HashMap<>();
         listCheckBox = new ArrayList<>();
-        btnSelectObj = (FrameLayout) myJQuery.getViewsByTagWithReset((ViewGroup) viewFragment, FrameLayout.class).get(0);
-        tvSelectObject = (TextView) myJQuery.getViewsByTagWithReset((ViewGroup) btnSelectObj, TextView.class).get(0);
+        btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, FrameLayout.class).get(0);
+        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) btnSelectObj, TextView.class).get(0);
         btnAddObj = (FrameLayout) viewFragment.findViewById(R.id.addObj);
         initBtnSelectObj(btnSelectObj);
 
@@ -91,11 +91,11 @@ public class FragmentHome extends MyFragmentView {
 
     private void createRow(HashMap<String,String> map){
         FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_command, null);
-        ArrayList<View> arrayTextView = myJQuery.getViewsByTagWithReset(row, TextView.class);
+        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
         ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
         ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
         ((TextView)arrayTextView.get(2)).setText(map.get("valueDeviceName"));
-        ArrayList<View> arrayImgView = myJQuery.getViewsByTagWithReset(row, ImageView.class);
+        ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
     }
@@ -152,7 +152,7 @@ public class FragmentHome extends MyFragmentView {
     }
 
     public void initBtnSelectObj(View view) {
-        tvSelectObject = (TextView) myJQuery.getViewsByTagWithReset((ViewGroup) view, TextView.class).get(0);
+        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) view, TextView.class).get(0);
         dialogView = selectObjDialog.onCreate();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
