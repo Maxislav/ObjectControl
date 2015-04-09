@@ -10,7 +10,9 @@
     <item name="endColor" type="color">#ffeaf3f6</item>
 
     <item name="borderColor" type="color">#8ca4b5</item>
+    <item name="listBorder" type="color">#198ca4b5</item>
     <item name="btnPressColor" type="color">#facacdda</item>
+    <item name="transparent" type="color">#00000000</item>
 
 
     <item name="btnBackgroundDefault" type="color">#D5E0DF</item>

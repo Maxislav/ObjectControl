@@ -45,14 +45,17 @@ public class FragmentAllCommand extends MyFragmentView {
             setListenerDelRow(row, id);
             ArrayList<View> viewArrayList = myJQuery.getViewsByTagWithReset(row, ImageView.class);
             ImageView imgFavorite = (ImageView)viewArrayList.get(2);
+            ImageView bacGroutdImg = (ImageView)viewArrayList.get(0);
             if(map.get(db.VALUE_FAVORITE).equals("1")){
-                imgFavorite.setBackgroundResource(R.drawable.btn_favorite);
+               imgFavorite.setBackgroundResource(R.drawable.btn_favorite);
+            }else{
+                bacGroutdImg.setBackgroundResource(R.drawable.bitmap_button_unfaforite);
             }
-            setListenerFavorite(imgFavorite, map);
+            setListenerFavorite(imgFavorite,bacGroutdImg, map);
         }
     }
 
-    private void setListenerFavorite(final ImageView imgFavorite, final HashMap<String, String> map){
+    private void setListenerFavorite(final ImageView imgFavorite, final ImageView bacGroutdImg, final HashMap<String, String> map){
         final String id = map.get(db.UID);
 
         imgFavorite.setOnClickListener(new View.OnClickListener() {
@@ -62,12 +65,18 @@ public class FragmentAllCommand extends MyFragmentView {
                     db.setValueFavorite(id, false);
                     map.put(db.VALUE_FAVORITE, "0");
                     imgFavorite.setBackgroundResource(R.drawable.btn_unfavorite);
+                    bacGroutdImg.setBackgroundResource(R.drawable.bitmap_button_unfaforite);
                 }else{
                     db.setValueFavorite(id, true);
                     map.put(db.VALUE_FAVORITE, "1");
                     imgFavorite.setBackgroundResource(R.drawable.btn_favorite);
+                    bacGroutdImg.setBackgroundResource(R.drawable.bitmap_button);
                 }
+
+                mainActivity.connectionFragment();
             }
+
+
         });
     }
 

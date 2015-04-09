@@ -370,5 +370,10 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     public void initViewHome(View view, LayoutInflater inflater){
         fragmentHome = new FragmentHome(this, view, inflater);
     }
-
+    @Override
+    public void connectionFragment(){
+        if(fragmentHome!=null){
+            fragmentHome.regenScrollView();
+        }
+    }
 }

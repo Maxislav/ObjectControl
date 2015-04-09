@@ -13,6 +13,6 @@ public interface Communicator {
     public void initBtnAddObj(View view);
     public void initViewAllCommand(View view, LayoutInflater inflater);
     public void initViewHome(View view, LayoutInflater inflater);
-
+    public void connectionFragment();
 
 }

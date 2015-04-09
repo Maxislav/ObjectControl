@@ -135,25 +135,43 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap> getFavoriteCommand(){
         ArrayList<HashMap> arrayList = new ArrayList<HashMap>();
         sdb = this.getWritableDatabase();
-        String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+ " WHERE "+VALUE_FAVORITE+"=1"+" AND "+VALUE_ID_DEVICE+"=(SELECT " +UID+ " FROM "+TABLE_NAME_DEVICES+" WHERE "+VALUE_SELECTED+"="+1+")";
-        Cursor cursor = sdb.rawQuery(jquery,null);
-        while (cursor.moveToNext()) {
-            String id = cursor.getString(cursor.getColumnIndex(UID));
-            String name = cursor.getString(cursor.getColumnIndex(VALUE_NAME));
-            String idDev = cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
-            String favorite = cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
 
-            String nameDevice = getNameDevice(idDev, sdb);
+        Cursor cursor;
+        //String jquery;
 
-            HashMap<String,String> map = new HashMap<>();
-            map.put(VALUE_NAME, name);
-            map.put(UID, id);
-            map.put(VALUE_ID_DEVICE, idDev);
-            map.put(VALUE_FAVORITE, favorite);
-            map.put("valueDeviceName", nameDevice);
-            arrayList.add(map);
 
+        //String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+ " WHERE "+VALUE_FAVORITE+"=1"+" AND "+VALUE_ID_DEVICE+"= (SELECT " +UID+ " FROM "+TABLE_NAME_DEVICES+" WHERE "+VALUE_SELECTED+"="+1+")";
+
+
+        String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
+               +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";
+
+
+         //jquery = "SELECT * FROM commands INNER JOIN devices ON commands.valueIdDevice=devices._id WHERE commands.valueFavorite=1 AND devices.valueSelected=1";
+
+        try {
+            cursor =  sdb.rawQuery(jquery,null);
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(0);
+                String nameCommand = cursor.getString(1);
+                String valueCommand = cursor.getString(2);
+                String idDev = cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
+                String favorite = cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
+                String nameDevice = cursor.getString(6);;
+                HashMap<String,String> map = new HashMap<>();
+                map.put(VALUE_NAME, nameCommand);
+                map.put(UID, id);
+                map.put(VALUE_COMMAND, valueCommand);
+                map.put(VALUE_ID_DEVICE, idDev);
+                map.put(VALUE_FAVORITE, favorite);
+                map.put("valueDeviceName", nameDevice);
+                arrayList.add(map);
+
+            }
+        }catch (SQLException e){
+            Log.e(TAG, e.toString());
         }
+
 
         sdb.close();
         return arrayList;

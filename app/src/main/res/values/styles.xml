@@ -8,13 +8,26 @@
         <item name="android:titleTextStyle">@style/titleStyle</item>
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
         <!--<item name="android:windowBackground">@color/blackColor</item>-->
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
+        <!--<item name="android:popupBackground">@drawable/gradient_dialog</item>-->
+        <!--<item name="android:panelFullBackground">@drawable/gradient_dialog</item>-->
+        <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
+
+        <item name="android:popupBackground">@drawable/gradient_dialog</item>
+        <item name="android:itemBackground">@drawable/list_style</item>
+        <!--<item name="android:itemBackground">@style/PopupMenu</item>-->
+        <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
 
     </style>
 
 
-    <style name="PopupMenu">
+
+
+    <style name="PopupMenu" >
         <item name="android:popupBackground">@drawable/gradient_dialog</item>
+        <item name="android:itemBackground">@drawable/gradient_dialog</item>
+        <item name="android:popupMenuStyle">@drawable/gradient_dialog</item>
+        <item name="android:panelColorBackground">@drawable/gradient_dialog</item>
     </style>
 
     <style name="Dialog" parent="@android:style/Theme.Dialog">

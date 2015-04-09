@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -75,9 +76,28 @@ public class FragmentHome extends MyFragmentView {
         dialogInflate(dialogView);
     }
 
+    public void regenScrollView(){
+        mainLayout.removeAllViews();
+        getFavoriteCommand();
+    }
+
     private void getFavoriteCommand(){
-            ArrayList<HashMap> arrayList = db.getFavoriteCommand();
+        ArrayList<HashMap> arrayList = db.getFavoriteCommand();
         Log.d("dd", "");
+        for(HashMap<String,String> map : arrayList){
+            createRow(map);
+        }
+    }
+
+    private void createRow(HashMap<String,String> map){
+        FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_command, null);
+        ArrayList<View> arrayTextView = myJQuery.getViewsByTagWithReset(row, TextView.class);
+        ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
+        ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
+        ((TextView)arrayTextView.get(2)).setText(map.get("valueDeviceName"));
+        ArrayList<View> arrayImgView = myJQuery.getViewsByTagWithReset(row, ImageView.class);
+        arrayImgView.get(2).setVisibility(View.INVISIBLE);
+        mainLayout.addView(row);
     }
 
 
@@ -171,9 +191,9 @@ public class FragmentHome extends MyFragmentView {
                     map.put(db.VALUE_SELECTED, "0");
                 }
                 setTextSelectedObj();
+                regenScrollView();
             }
         });
-
     }
 
     private void okCancelListener(View dialogView) {
