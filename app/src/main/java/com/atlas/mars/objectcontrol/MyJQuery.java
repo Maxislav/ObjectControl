@@ -12,7 +12,7 @@ public class MyJQuery {
 
     ArrayList<View> allViews;
 
-    MyJQuery() {
+    public MyJQuery() {
         allViews = new ArrayList<View>();
     }
     public ArrayList<View> findViewByTagClass(ViewGroup root, Class type){

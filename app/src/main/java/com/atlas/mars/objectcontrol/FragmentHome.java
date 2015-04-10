@@ -1,9 +1,7 @@
 package com.atlas.mars.objectcontrol;
 
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -11,10 +9,11 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.dialogs.DialogSelectObj;
+import com.atlas.mars.objectcontrol.dialogs.DialogSend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,15 +26,18 @@ import java.util.HashMap;
 public class FragmentHome extends MyFragmentView {
 
     FrameLayout btnSelectObj; //Кнопка выбрать объект
+    FrameLayout btnSend;
     TextView tvSelectObject; //Текст этой кнопки
-    FrameLayout btnAddObj; //Кнопка создать обект
-    DialogSelectObj selectObjDialog;
+    DialogSelectObj dialogSelectObj;
+    DialogSend dialogSend;
     String selectObject;
-    View dialogView;
-    final String SELECT_FOR_SEND = "selectForSend";
+    View viewDialogSelectObj; //View диалог выбора объекта
+    View viewDialogSend; //View диалог отправки
+    public final String SELECT_FOR_SEND = "selectForSend";
     ArrayList<CheckBox> listCheckBox;
     static HashMap<String, String> mapSelectObjects;
-    static ArrayList<HashMap> listDevices;
+    public static ArrayList<HashMap> listDevices;
+    public static ArrayList<HashMap> favoriteCommand;
     LinearLayout mainLayout;
 
 
@@ -48,22 +50,26 @@ public class FragmentHome extends MyFragmentView {
     public void onInit() {
         //rowCreator = new RowCreator(viewFragment, inflater);
 
-        selectObjDialog = new DialogSelectObj(mainActivity);
+        dialogSelectObj = new DialogSelectObj(mainActivity);
+        dialogSend = new DialogSend(mainActivity);
+        viewDialogSend = dialogSend.onCreate();
+        dialogSend.initFragment(this);
+
+
         mapSelectObjects = new HashMap<>();
         listCheckBox = new ArrayList<>();
         btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, FrameLayout.class).get(0);
         tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) btnSelectObj, TextView.class).get(0);
-        btnAddObj = (FrameLayout) viewFragment.findViewById(R.id.addObj);
+        btnSend = (FrameLayout)viewFragment.findViewById(R.id.send);
+        initBtnSend();
+        //initOkCancelSend(viewDialogSend);
+       // getViewDialogSend();
+       // viewDialogSend = getViewDialogSend();
         initBtnSelectObj(btnSelectObj);
-
-        initBtnAddObj(btnAddObj);
-
         getListDevices();
         setTextSelectedObj();
-
-        dialogInflate(dialogView);
-        okCancelListener(dialogView);
-
+        dialogInflate(viewDialogSelectObj);
+        okCancelListener(viewDialogSelectObj);
         mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
         getFavoriteCommand();
 
@@ -72,10 +78,23 @@ public class FragmentHome extends MyFragmentView {
     @Override
     public void regenParams() {
         listDevices = db.getListDevices();
-        View content = dialogView.findViewById(R.id.contentDialog);
+        View content = viewDialogSelectObj.findViewById(R.id.contentDialog);
         ((LinearLayout)content).removeAllViews();
-        dialogInflate(dialogView);
+        dialogInflate(viewDialogSelectObj);
     }
+
+
+
+    private void initBtnSend(){
+       btnSend.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               dialogSend.vHide(v);
+           }
+       });
+    }
+
+
 
     public void regenScrollView(){
         mainLayout.removeAllViews();
@@ -83,9 +102,9 @@ public class FragmentHome extends MyFragmentView {
     }
 
     private void getFavoriteCommand(){
-        ArrayList<HashMap> arrayList = db.getFavoriteCommand();
+        favoriteCommand = db.getFavoriteCommand();
         Log.d("dd", "");
-        for(HashMap<String,String> map : arrayList){
+        for(HashMap<String,String> map : favoriteCommand){
             map.put(SELECT_FOR_SEND, "0");
             createRow(map);
         }
@@ -96,6 +115,7 @@ public class FragmentHome extends MyFragmentView {
         ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
         ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
         ImageView imageBackground = (ImageView)arrayImgs.get(0);
+        ImageView imageSms = (ImageView)arrayImgs.get(3);
 
         ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
         ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
@@ -103,23 +123,39 @@ public class FragmentHome extends MyFragmentView {
         ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
-        setClickListenerRow(row, imageBackground, map);
+        setClickListenerRow(row, imageBackground, imageSms ,map);
     }
 
-    private void setClickListenerRow(final FrameLayout row, final ImageView imageBackground, final HashMap<String, String> map){
+    private void setClickListenerRow(final FrameLayout row, final ImageView imageBackground, final  ImageView imageSms, final HashMap<String, String> map){
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(map.get(SELECT_FOR_SEND).equals("0")){
                     imageBackground.setBackgroundResource(R.drawable.bitmap_button_to_send);
+                    imageSms.setVisibility(View.VISIBLE);
                     map.put(SELECT_FOR_SEND, "1");
                 }else{
                     imageBackground.setBackgroundResource(R.drawable.bitmap_button);
+                    imageSms.setVisibility(View.INVISIBLE);
                     map.put(SELECT_FOR_SEND, "0");
                 }
             }
         });
+        //нажатие смс картинки
+        imageSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(mainActivity, map.get(db.UID), Toast.LENGTH_LONG);
+                toast.show();
+                imageBackground.setBackgroundResource(R.drawable.bitmap_button);
+                imageSms.setVisibility(View.INVISIBLE);
+                map.put(SELECT_FOR_SEND, "0");
+            }
+        });
+
     }
+
+
 
 
     private void getListDevices() {
@@ -128,32 +164,7 @@ public class FragmentHome extends MyFragmentView {
     }
 
 
-    private void initBtnAddObj(View view) {
-        final PopupMenu popupMenu = new PopupMenu(mainActivity, view);
-        popupMenu.inflate(R.menu.menu_add_obj);
-        popupMenu
-                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.addObj:
-                                Intent questionIntent = new Intent(mainActivity, AddObject.class);
-                                questionIntent.putExtra(mainActivity.FROM, mainActivity.TO_ADD_OBJECT);
-                                mainActivity.startActivityForResult(questionIntent, mainActivity.CHOOSE_THIEF);
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
-                });
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupMenu.show();
-            }
-        });
-    }
 
     private void setTextSelectedObj() {
         //listDevices = db.getListDevices();
@@ -174,11 +185,11 @@ public class FragmentHome extends MyFragmentView {
 
     public void initBtnSelectObj(View view) {
         tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) view, TextView.class).get(0);
-        dialogView = selectObjDialog.onCreate();
+        viewDialogSelectObj = dialogSelectObj.onCreate();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectObjDialog.vHide(v);
+                dialogSelectObj.vHide(v);
             }
         });
     }
@@ -223,7 +234,7 @@ public class FragmentHome extends MyFragmentView {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectObjDialog.onDismiss();
+                dialogSelectObj.onDismiss();
             }
         });
 
@@ -233,7 +244,7 @@ public class FragmentHome extends MyFragmentView {
                 for (CheckBox checkBox : listCheckBox) {
                     checkBox.setChecked(false);
                 }
-                selectObjDialog.onDismiss();
+                dialogSelectObj.onDismiss();
             }
         });
     }

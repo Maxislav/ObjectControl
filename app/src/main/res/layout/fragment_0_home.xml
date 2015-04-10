@@ -44,7 +44,7 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:layout_gravity="center"
-                android:id="@+id/addObj"
+                android:id="@+id/send"
                 android:background="@drawable/btn_style">
                 <TextView
                     android:layout_width="wrap_content"
