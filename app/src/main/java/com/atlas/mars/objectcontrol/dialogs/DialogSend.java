@@ -1,6 +1,8 @@
 package com.atlas.mars.objectcontrol.dialogs;
 
 import android.app.Activity;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,19 +25,33 @@ public class DialogSend extends MyDialog {
     LinearLayout contentDialog;
     MyJQuery myJQuery;
     final static String TAG = "myLog";
+    DisplayMetrics displayMetrics;
+    private float dpHeight, dpWidth, density;
 
     public DialogSend(Activity activity) {
+
         super(activity);
     }
 
     @Override
     public View onCreate() {
-        viewDialog = inflater.inflate(R.layout.dialog_select_obj, null);
-        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        displayMetrics = activity.getResources().getDisplayMetrics();
+        density = displayMetrics.density;
+        dpHeight = displayMetrics.heightPixels / density;
+        dpWidth = displayMetrics.widthPixels / density;
+        Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
+
+
+        viewDialog = inflater.inflate(R.layout.dialog_send, null);
+        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
         pw.setOutsideTouchable(false);
         contentDialog = (LinearLayout)viewDialog.findViewById(R.id.contentDialog);
         initOkCancelSend();
         myJQuery = new MyJQuery();
+        LinearLayout block =(LinearLayout) viewDialog.findViewById(R.id.block);
+
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(310*density),FrameLayout.LayoutParams.WRAP_CONTENT);
+        block.setLayoutParams(parms);
         return viewDialog;
     }
 
@@ -81,7 +97,14 @@ public class DialogSend extends MyDialog {
             if(map.get(fragmentHome.SELECT_FOR_SEND)!=null &&  map.get(fragmentHome.SELECT_FOR_SEND).equals("1")){
                 FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_send,null);
                 ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
-                TextView deviceText = (TextView)arrayTextView.get(0);
+               // TextView deviceText = (TextView)arrayTextView.get(0);
+
+                TextView commandText = (TextView)arrayTextView.get(0);
+                TextView codeText = (TextView)arrayTextView.get(1);
+                TextView deviceText = (TextView)arrayTextView.get(2);
+                commandText.setText(map.get(db.VALUE_NAME));
+                codeText.setText(map.get(db.VALUE_COMMAND));
+                codeText.setText(map.get(db.VALUE_COMMAND));
                 deviceText.setText(map.get("valueDeviceName"));
                 contentDialog.addView(row);
             }
