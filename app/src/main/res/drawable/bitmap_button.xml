@@ -5,7 +5,7 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:gravity="fill"
 
-            android:src="@drawable/romb00">
+            android:src="@drawable/romb_normal">
         </bitmap>
     </item>
 </layer-list>

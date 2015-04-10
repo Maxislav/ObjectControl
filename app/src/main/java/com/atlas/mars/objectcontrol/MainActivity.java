@@ -170,7 +170,10 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     public void changeMenuByFragment(int k) {
 
-
+      //  menu == null ? return : null;
+        if(menu==null){
+            return;
+        }
         {
             for (int i = 0; i < menu.size(); i++)
                 menu.getItem(i).setVisible(false);
