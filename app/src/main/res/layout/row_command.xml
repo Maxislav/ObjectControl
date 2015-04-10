@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-
+                android:textStyle="bold"
                 android:layout_weight="1"
                 android:text="Команда" />
 
@@ -49,6 +49,7 @@
                 android:gravity="left"
                 android:layout_marginLeft="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/grayText"
                 android:text="Код" />
             <TextView
                 android:layout_width="match_parent"

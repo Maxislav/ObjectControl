@@ -4,7 +4,6 @@
         <bitmap
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:gravity="fill"
-
             android:src="@drawable/romb_unfavorite">
         </bitmap>
     </item>
