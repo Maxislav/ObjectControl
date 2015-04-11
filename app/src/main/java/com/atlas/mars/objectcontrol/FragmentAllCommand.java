@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,15 +22,78 @@ import java.util.Map;
  * Created by Администратор on 4/7/15.
  */
 public class FragmentAllCommand extends MyFragmentView {
-
+    public SearchView  searchView;
+    final static String TAG = "myLog";
+    LinearLayout mainLayout;
+    String searchText;
     public FragmentAllCommand(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         super(mainActivity, viewFragment, inflater);
     }
     @Override
     public void onInit(){
         rowCreator = new RowCreator(viewFragment, inflater);
+        searchText ="";
+        searchView =(SearchView)viewFragment.findViewById(R.id.searchView);
+        mainLayout = (LinearLayout)mainActivity.findViewById(R.id.mainLayout);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: " + query);
+                searchView.clearFocus();
+                //searchView.onActionViewCollapsed();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchText = newText;
+                Log.d(TAG, "onQueryTextChange: " + newText);
+
+                //todo Запрос параметров
+               // getListDataLike(newText);
+                /*if(newText.isEmpty()){
+                    searchView.onActionViewCollapsed();
+                    searchView.setQuery("", false);
+                }*/
+                return false;
+            }
+        });
+
+        searchView.setOnFocusChangeListener(new SearchView.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "onFocusChange: " + hasFocus);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.d(TAG, " searchView onClose");
+
+                regenParams();
+                return false;
+            }
+        });
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "searchView onClick "+ searchView.isFocused());
+                searchView.onActionViewExpanded();
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused && searchText.isEmpty()) {
+                    searchView.onActionViewCollapsed();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
         onDraw();
-        editCommand();
+
     }
     @Override
     public void regenParams() {
@@ -102,15 +168,6 @@ public class FragmentAllCommand extends MyFragmentView {
         onDraw();
     }
 
-    private void editCommand(){
-        final FrameLayout btnEdit = (FrameLayout)viewFragment.findViewById(R.id.btnEdit);
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopupMenuEditCommands(v);
-            }
-        });
-    }
 
     public void showMinus(int visible){
         for (Map.Entry entry : hashMapRow.entrySet()) {

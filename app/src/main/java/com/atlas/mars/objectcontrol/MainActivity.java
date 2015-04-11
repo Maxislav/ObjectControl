@@ -332,6 +332,23 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             }
         }
     }
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG,"back bress");
+       /* searchView.clearFocus();
+
+        getListData();*/
+        //relativeLayout.requestFocus();
+        if(fragmentAllCommand!=null && fragmentAllCommand.searchView.isFocused()){
+            Log.d(TAG, "searchView back btn "+ fragmentAllCommand.searchView.isFocused());
+            fragmentAllCommand.searchView.onActionViewExpanded();
+            fragmentAllCommand.mainLayout.requestFocus();
+            fragmentAllCommand.searchView.onActionViewCollapsed();
+        }else{
+            super.onBackPressed();
+        }
+
+    }
 
 
     public void setActiveObject(String name, String id, boolean bo) {

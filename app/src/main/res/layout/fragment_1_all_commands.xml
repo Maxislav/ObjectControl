@@ -34,7 +34,7 @@
                     android:id="@+id/searchView"
                     android:layout_gravity="center_horizontal|top" />
             </FrameLayout>
-            <FrameLayout
+            <!--<FrameLayout
                 android:layout_width="2dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/border_vertical">
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Редактировать" />
-            </FrameLayout>
+            </FrameLayout>-->
 
         </LinearLayout>
 
