@@ -31,6 +31,8 @@
     <item name="grayText" type="color">#fa8b8d9a</item>
     <item name="dark" type="color">#fa656774</item>
     <item name="mask" type="color">#7b000000</item>
+    <item name="white" type="color">#FFF</item>
+
 
     <item name="redBorderDark" type="color">#ffff0000</item>
     <item name="redBorderLight" type="color">#ffffa9a7</item>

@@ -11,4 +11,10 @@
     <string name="action_remove_command">Del command</string>
     <string name="action_add_favorite">Add to favorite</string>
 
+    <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
+    <string name="multiple_send_help">Позволяет выбрать несколько команд</string>
+    <string name="multiple_send">Можественная отправка</string>
+    <string name="confirm_send">Запрашивать подттверждение</string>
+    <string name="confirm_send_help">Запрашивать подттверждение при отправке sms</string>
+
 </resources>

@@ -288,6 +288,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 fragmentAllCommand.showFavorite(View.VISIBLE);
                 return true;
             case R.id.action_settings:
+                Intent intent = new Intent(this, ActivitySetting.class);
+                startActivity(intent);
                 return true;
         }
 
