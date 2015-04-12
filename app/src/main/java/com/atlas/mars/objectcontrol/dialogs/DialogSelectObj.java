@@ -23,6 +23,7 @@ public class DialogSelectObj extends MyDialog {
         viewDialog = inflater.inflate(R.layout.dialog_select_obj, null);
         pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         pw.setOutsideTouchable(false);
+        pw.setFocusable(true);
         return viewDialog;
     }
 

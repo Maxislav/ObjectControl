@@ -49,14 +49,8 @@ public class FragmentAllCommand extends MyFragmentView {
             public boolean onQueryTextChange(String newText) {
                 searchText = newText;
                 Log.d(TAG, "onQueryTextChange: " + newText);
-
                 //todo Запрос параметров
-
                 getListDataLike(newText);
-                /*if(newText.isEmpty()){
-                    searchView.onActionViewCollapsed();
-                    searchView.setQuery("", false);
-                }*/
                 return false;
             }
         });
@@ -211,9 +205,6 @@ public class FragmentAllCommand extends MyFragmentView {
                 @Override
                 public void onClick(View v) {
                     endEdit();
-                   /* showMinus(View.INVISIBLE);
-                    showFavorite(View.INVISIBLE);
-                    pw.dismiss();*/
                 }
             });
         }

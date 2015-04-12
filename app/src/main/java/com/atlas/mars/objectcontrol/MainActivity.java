@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static ArrayList<View> fragmentView;
     static LinearLayout action_bar_title;
     static final public int CHOOSE_THIEF = 0;
+    static final public int LIST_OBJECT = 1;
     MenuInflater menuInflater;
     MyJQuery myJQuery;
     LinearLayout lv;
@@ -183,6 +185,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             case 0:
                 menu.findItem(R.id.action_settings).setVisible(true);
                 menu.findItem(R.id.action_add_objecte).setVisible(true);
+                menu.findItem(R.id.action_list_object).setVisible(true);
 
                 break;
             case 1:
@@ -191,6 +194,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 menu.findItem(R.id.action_remove_command).setVisible(true);
                 menu.findItem(R.id.action_add_favorite).setVisible(true);
                 break;
+
             default:
 
         }
@@ -267,20 +271,15 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         Intent questionIntent;
         switch (item.getItemId()){
             case R.id.action_add_objecte:
-
                 questionIntent = new Intent(MainActivity.this, AddObject.class);
                 questionIntent.putExtra(FROM, TO_ADD_OBJECT);
                 startActivityForResult(questionIntent, CHOOSE_THIEF);
-
                 return true;
             case R.id.action_add_command:
-
                 questionIntent = new Intent( this, MakeCommandActivity.class);
                 questionIntent.putExtra(FROM, TO_ADD_COMMAND);
                 startActivityForResult(questionIntent, CHOOSE_THIEF);
-
                 return true;
-
             case R.id.action_remove_command:
                 fragmentAllCommand.showMinus(View.VISIBLE);
                 return true;
@@ -291,6 +290,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 Intent intent = new Intent(this, ActivitySetting.class);
                 startActivity(intent);
                 return true;
+            case R.id.action_list_object:
+                questionIntent = new Intent(MainActivity.this, ListObjectActivity.class);
+                startActivityForResult(questionIntent, LIST_OBJECT);
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -329,6 +333,14 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
             } else {
 
+            }
+        }
+
+        if(requestCode == LIST_OBJECT){
+            if (resultCode == RESULT_OK) {
+
+            }else{
+                Log.d(TAG, "RESULT +++ LIST_OBJECT NULL");
             }
         }
     }
