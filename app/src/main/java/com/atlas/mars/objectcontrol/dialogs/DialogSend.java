@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.FragmentHome;
 import com.atlas.mars.objectcontrol.MyJQuery;
@@ -26,6 +27,7 @@ public class DialogSend extends MyDialog {
     MyJQuery myJQuery;
     final static String TAG = "myLog";
     DisplayMetrics displayMetrics;
+    ArrayList<HashMap> arraySelectForSend;
     private float dpHeight, dpWidth, density;
 
     public DialogSend(Activity activity) {
@@ -89,10 +91,20 @@ public class DialogSend extends MyDialog {
                 pw.dismiss();
             }
         });
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(activity, "Тут могла быть ваша реклама", Toast.LENGTH_LONG);
+                toast.show();
+                pw.dismiss();
+            }
+        });
+
 
     }
     private void inflateContent(){
         contentDialog.removeAllViews();
+        arraySelectForSend = new ArrayList<>();
         for (HashMap<String, String> map : fragmentHome.favoriteCommand) {
 
             if(map.get(fragmentHome.SELECT_FOR_SEND)!=null &&  map.get(fragmentHome.SELECT_FOR_SEND).equals("1")){
@@ -108,9 +120,13 @@ public class DialogSend extends MyDialog {
                 codeText.setText(map.get(db.VALUE_COMMAND));
                 deviceText.setText(map.get("valueDeviceName"));
                 contentDialog.addView(row);
+                arraySelectForSend.add(map);
             }
 
            // Log.d(TAG, "inflateContent +++");
+        }
+        if(arraySelectForSend.isEmpty()){
+            LinearLayout row = (LinearLayout)inflater.inflate(R.layout.empty_for_send,contentDialog);
         }
     }
 }

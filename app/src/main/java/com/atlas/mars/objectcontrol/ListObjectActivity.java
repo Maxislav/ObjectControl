@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -49,7 +50,6 @@ public class ListObjectActivity extends ActionBarActivity {
         db = new DataBaseHelper(this);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         myJQuery = new MyJQuery();
-
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         showEdit = false;
         flagShowMinus = false;
@@ -69,6 +69,7 @@ public class ListObjectActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_edit:
                 showDelMinus(View.INVISIBLE);
+                menu.findItem(R.id.action_del).setTitle(R.string.del_object);
                 flagShowMinus = false;
                 if (showEdit) {
                     showEdit(View.INVISIBLE);
@@ -84,24 +85,57 @@ public class ListObjectActivity extends ActionBarActivity {
                 showEdit(View.INVISIBLE);
                 menu.findItem(R.id.action_edit).setTitle(R.string.edit);
                 showEdit = false;
-
                 if (flagShowMinus) {
                     showDelMinus(View.INVISIBLE);
+                    item.setTitle(R.string.del_object);
                     flagShowMinus = false;
                 } else {
+                    item.setTitle(R.string.end_del);
                     showDelMinus(View.VISIBLE);
                     flagShowMinus = true;
                 }
-
+                return true;
+            case R.id.action_add_object:
+                showEdit(View.INVISIBLE);
+                showDelMinus(View.INVISIBLE);
+                menu.findItem(R.id.action_edit).setTitle(R.string.edit);
+                menu.findItem(R.id.action_del).setTitle(R.string.del_object);
+                Intent questionIntent = new Intent( this, AddObject.class);
+                startActivityForResult(questionIntent, 0);
                 return true;
 
         }
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+
+                String name = data.getStringExtra(AddObject.NAME);
+                String phone = data.getStringExtra(AddObject.PHONE);
+                if (phone.isEmpty() || name.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Пустое значение поля",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //todo Раскоментировать
+                long n = db.addNewDevice(name, phone);
+                Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
+                onRegen();
+            }
+        }
+    }
 
     private void onInit() {
+        showEdit = false;
+        flagShowMinus = false;
         arrayListDevices = db.getListDevices();
-
+    }
+    private void onRegen(){
+        mainLayout.removeAllViews();
+        onInit();
+        onDraw();
     }
 
     private void showEdit(int visible) {
@@ -222,6 +256,7 @@ public class ListObjectActivity extends ActionBarActivity {
 
     private void clearRow(HashMap<String, String> map, LinearLayout row) {
         String id = map.get(db.UID);
+        db.delObject(id);
         for (int i = 0; i < arrayListDevices.size(); i++) {
             if (arrayListDevices.get(i) == map) {
                 arrayListDevices.remove(i);

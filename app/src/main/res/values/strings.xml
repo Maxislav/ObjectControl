@@ -16,7 +16,10 @@
     <string name="phone_number">Phone number:</string>
     <string name="edit">Edit</string>
     <string name="end_edit">End edit</string>
-    <string name="del_object">Del object</string>
+    <string name="end_del">End del</string>
+    <string name="del_object">Del</string>
+    <string name="empty_for_send">Empty</string>
+    <string name="send_immediately">Send immediately</string>
 
     <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>

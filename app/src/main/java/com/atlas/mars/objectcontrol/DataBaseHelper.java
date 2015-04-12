@@ -297,11 +297,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         try {
             sdb.execSQL(jquery);
         }catch (Exception e){
+            Log.e(TAG, e.toString());
             e.printStackTrace();
             sdb.close();
             return false;
         }
         sdb.close();
         return true;
+    }
+
+    public void delObject(String id){
+        sdb = getWritableDatabase();
+        String jquery = "DELETE FROM "+TABLE_NAME_DEVICES+" WHERE _id="+id;
+        try {
+            sdb.execSQL(jquery);
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+            e.printStackTrace();
+            sdb.close();
+
+        }
+        jquery = "DELETE FROM "+TABLE_NAME_COMMANDS+" WHERE "+VALUE_ID_DEVICE+"="+id;
+
+        try {
+            sdb.execSQL(jquery);
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+            e.printStackTrace();
+            sdb.close();
+
+        }
+
+        sdb.close();
+
     }
 }

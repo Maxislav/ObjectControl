@@ -11,4 +11,8 @@
         android:title="@string/del_object"
         android:orderInCategory="1"
         app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_add_object"
+        android:title="@string/action_add_object"
+        android:orderInCategory="2"
+        app:showAsAction="ifRoom" />
 </menu>

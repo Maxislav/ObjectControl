@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="Отправить команды"
+                    android:text="@string/send_immediately"
                     android:textColor="@color/grayText"
                     android:textSize="16dp"
                     android:textStyle="bold" />

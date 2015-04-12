@@ -1,6 +1,5 @@
 package com.atlas.mars.objectcontrol;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -183,7 +182,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         switch (k) {
             case 0:
                 menu.findItem(R.id.action_settings).setVisible(true);
-                menu.findItem(R.id.action_add_objecte).setVisible(true);
+                menu.findItem(R.id.action_add_object).setVisible(true);
                 menu.findItem(R.id.action_list_object).setVisible(true);
 
                 break;
@@ -269,7 +268,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         int id = item.getItemId();
         Intent questionIntent;
         switch (item.getItemId()){
-            case R.id.action_add_objecte:
+            case R.id.action_add_object:
                 questionIntent = new Intent(MainActivity.this, AddObject.class);
                 questionIntent.putExtra(FROM, TO_ADD_OBJECT);
                 startActivityForResult(questionIntent, CHOOSE_THIEF);
