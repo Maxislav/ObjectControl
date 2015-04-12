@@ -38,6 +38,7 @@ public class FragmentHome extends MyFragmentView {
     static HashMap<String, String> mapSelectObjects;
     public static ArrayList<HashMap> listDevices;
     public static ArrayList<HashMap> favoriteCommand;
+    public static HashMap<String,View> viewHashMap;
     LinearLayout mainLayout;
 
 
@@ -55,7 +56,7 @@ public class FragmentHome extends MyFragmentView {
         viewDialogSend = dialogSend.onCreate();
         dialogSend.initFragment(this);
 
-
+        viewHashMap = new HashMap<>();
         mapSelectObjects = new HashMap<>();
         listCheckBox = new ArrayList<>();
         btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, FrameLayout.class).get(0);
@@ -129,6 +130,7 @@ public class FragmentHome extends MyFragmentView {
         ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
+        viewHashMap.put(map.get(db.UID), row);
         setClickListenerRow(row, imageBackground, imageSms ,map);
     }
 
