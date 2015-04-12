@@ -110,6 +110,17 @@ public class FragmentHome extends MyFragmentView {
         }
     }
 
+    public void onRedraw(){
+        regenScrollView();
+        getListDevices();
+        setTextSelectedObj();
+
+        dialogSelectObj = new DialogSelectObj(mainActivity);
+        dialogSend = new DialogSend(mainActivity);
+        viewDialogSend = dialogSend.onCreate();
+        dialogSend.initFragment(this);
+    }
+
     private void createRow(HashMap<String,String> map){
         FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_command, null);
         ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);

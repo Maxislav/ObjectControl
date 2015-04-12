@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.atlas.mars.objectcontrol.ListObjectActivity;
 import com.atlas.mars.objectcontrol.R;
 
 import java.util.HashMap;
@@ -17,19 +18,35 @@ import java.util.HashMap;
  */
 public class DialogEditObj extends MyDialog {
     View content;
-
+    HashMap <String,String> map;
+    EditText edTextName, edTextPhone;
+    View row;
+    ListObjectActivity listObjectActivity;
     public DialogEditObj(Activity activity) {
         super(activity);
     }
 
     @Override
     public View onCreate() {
-        viewDialog = inflater.inflate(R.layout.dialog_select_obj,null);
-        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        viewDialog = inflater.inflate(R.layout.dialog_select_obj, null);
+        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         pw.setOutsideTouchable(false);
         pw.setFocusable(true);
-        FrameLayout btnOk = (FrameLayout)viewDialog.findViewById(R.id.btn_ok);
-        FrameLayout btnCancel = (FrameLayout)viewDialog.findViewById(R.id.btn_cancel);
+        pw.setAnimationStyle(R.style.Animation);
+        FrameLayout btnOk = (FrameLayout) viewDialog.findViewById(R.id.btn_ok);
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.put(db.VALUE_NAME,edTextName.getText().toString() );
+                map.put(db.VALUE_PHONE,edTextPhone.getText().toString() );
+                db.updateObject(map);
+
+                listObjectActivity.updateRow(row,map);
+                pw.dismiss();
+            }
+        });
+        FrameLayout btnCancel = (FrameLayout) viewDialog.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,18 +58,16 @@ public class DialogEditObj extends MyDialog {
     }
 
     @Override
-    public  void vHide(View view) {
-        if(pw==null){
+    public void vHide(View view) {
+
+        if (pw == null) {
             onCreate();
         }
-        if(pw.isShowing()){
+        if (pw.isShowing()) {
             pw.dismiss();
             return;
-        }else{
-
-                pw.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-
+        } else {
+            pw.showAtLocation(view, Gravity.CENTER, 0, 0);
         }
     }
 
@@ -61,14 +76,19 @@ public class DialogEditObj extends MyDialog {
         pw.dismiss();
     }
 
-    public void dialogInflate(HashMap<String,String>map, LinearLayout row){
-       // ((LinearLayout)viewDialog.findViewById(R.id.contentDialog)).removeAllViews();
-        content = inflater.inflate(R.layout.contend_dialog_edit_obj,null);
-        EditText edTextName = (EditText)content.findViewById(R.id.edTextName);
+    public void dialogInflate(HashMap<String, String> map, LinearLayout row, ListObjectActivity listObjectActivity) {
+        // ((LinearLayout)viewDialog.findViewById(R.id.contentDialog)).removeAllViews();
+        this.map = map;
+        this.row = row;
+        this.listObjectActivity = listObjectActivity;
+        content = inflater.inflate(R.layout.contend_dialog_edit_obj, null);
+        edTextName = (EditText) content.findViewById(R.id.edTextName);
         edTextName.setText(map.get(db.VALUE_NAME));
-        EditText edTextPhone = (EditText)content.findViewById(R.id.edTextPhone);
+        edTextPhone = (EditText) content.findViewById(R.id.edTextPhone);
         edTextPhone.setText(map.get(db.VALUE_PHONE));
-        ((LinearLayout)viewDialog.findViewById(R.id.contentDialog)).addView(content);
-
+        ((LinearLayout) viewDialog.findViewById(R.id.contentDialog)).addView(content);
     }
+
+
+
 }

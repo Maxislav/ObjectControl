@@ -31,7 +31,7 @@ public class ListObjectActivity extends ActionBarActivity {
     DialogEditObj dialogEditObj;
     View dialodView;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_object);
         db = new DataBaseHelper(this);
@@ -111,11 +111,17 @@ public class ListObjectActivity extends ActionBarActivity {
             dialogEditObj.onDismiss();
             dialogEditObj = null;
         }
-        dialogEditObj = new DialogEditObj(this);
+         dialogEditObj = new DialogEditObj(this);
          dialodView = dialogEditObj.onCreate();
-         dialogEditObj.dialogInflate(map, row);
+         dialogEditObj.dialogInflate(map, row, this);
          dialogEditObj.vHide(v);
     }
 
+    public void updateRow(View row, HashMap<String, String> map){
+        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass((LinearLayout)row, TextView.class);
+        ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
+        ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
+
+    }
 
 }

@@ -87,7 +87,6 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         int i = pager.getCurrentItem();
         setActiveNavBar(i);
         super.onStart();
-
     }
 
     @Override
@@ -337,6 +336,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
 
         if(requestCode == LIST_OBJECT){
+           if(fragmentAllCommand!=null) fragmentAllCommand.onRedraw();
+           if(fragmentHome!=null) fragmentHome.onRedraw();
             if (resultCode == RESULT_OK) {
 
             }else{

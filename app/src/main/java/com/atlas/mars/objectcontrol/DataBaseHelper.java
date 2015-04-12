@@ -114,6 +114,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.execSQL(jquery);
         sdb.close();
     }
+    public void updateObject(HashMap<String, String> map){
+        String jquery;
+        sdb = getWritableDatabase();
+        String id = map.get(UID);
+        String name = map.get(VALUE_NAME);
+        String phone = map.get(VALUE_PHONE);
+        jquery = "UPDATE " + TABLE_NAME_DEVICES+" SET "+VALUE_NAME+"='"+name+"', "+VALUE_PHONE+"='"+phone+"' WHERE "+UID+"="+id;
+
+        Log.d(TAG, "name: "+name+" phone: "+ phone+ " id: "+id);
+        sdb.execSQL(jquery);
+        sdb.close();
+    }
 
     public ArrayList<HashMap>  getValueSelected() {
         ArrayList<HashMap> arrayList = new ArrayList<HashMap>();

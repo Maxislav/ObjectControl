@@ -45,6 +45,7 @@ public class DialogSend extends MyDialog {
         viewDialog = inflater.inflate(R.layout.dialog_send, null);
         pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
         pw.setOutsideTouchable(false);
+        pw.setAnimationStyle(R.style.Animation);
         contentDialog = (LinearLayout)viewDialog.findViewById(R.id.contentDialog);
         initOkCancelSend();
         myJQuery = new MyJQuery();
