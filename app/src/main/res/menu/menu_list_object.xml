@@ -7,5 +7,8 @@
         android:title="@string/edit"
         android:orderInCategory="0"
         app:showAsAction="ifRoom" />
-
+    <item android:id="@+id/action_del"
+        android:title="@string/del_object"
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom" />
 </menu>

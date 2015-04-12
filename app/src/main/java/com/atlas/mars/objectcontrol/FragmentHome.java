@@ -111,14 +111,9 @@ public class FragmentHome extends MyFragmentView {
     }
 
     public void onRedraw(){
-        regenScrollView();
-        getListDevices();
-        setTextSelectedObj();
+        mainLayout.removeAllViews();
+        onInit();
 
-        dialogSelectObj = new DialogSelectObj(mainActivity);
-        dialogSend = new DialogSend(mainActivity);
-        viewDialogSend = dialogSend.onCreate();
-        dialogSend.initFragment(this);
     }
 
     private void createRow(HashMap<String,String> map){
@@ -173,9 +168,6 @@ public class FragmentHome extends MyFragmentView {
         listDevices = db.getListDevices();
         Log.d("dd", "");
     }
-
-
-
 
     private void setTextSelectedObj() {
         //listDevices = db.getListDevices();

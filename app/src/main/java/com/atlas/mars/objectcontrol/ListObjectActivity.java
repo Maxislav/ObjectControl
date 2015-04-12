@@ -2,14 +2,22 @@ package com.atlas.mars.objectcontrol;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.widget.TintButton;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.dialogs.DialogEditObj;
 
@@ -22,106 +30,224 @@ import java.util.Map;
  */
 public class ListObjectActivity extends ActionBarActivity {
     LayoutInflater inflater;
+    final private String TAG = "myLog";
     DataBaseHelper db;
     public LinearLayout mainLayout;
     ArrayList<HashMap> arrayListDevices;
     HashMap<String, View> hashMapView;
     MyJQuery myJQuery;
     boolean showEdit = false;
+    boolean flagShowMinus = false;
     DialogEditObj dialogEditObj;
     View dialodView;
+    Menu menu;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_object);
         db = new DataBaseHelper(this);
-        mainLayout = (LinearLayout)findViewById(R.id.mainLayout);
+        mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         myJQuery = new MyJQuery();
 
-        inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         showEdit = false;
+        flagShowMinus = false;
         onInit();
         onDraw();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list_object, menu);
+        this.menu = menu;
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_edit:
-                //item.setTitle("END");
-                if(showEdit){
+                showDelMinus(View.INVISIBLE);
+                flagShowMinus = false;
+                if (showEdit) {
                     showEdit(View.INVISIBLE);
                     item.setTitle(R.string.edit);
                     showEdit = false;
-                }else{
+                } else {
                     showEdit(View.VISIBLE);
                     item.setTitle(R.string.end_edit);
                     showEdit = true;
                 }
+                return true;
+            case R.id.action_del:
+                showEdit(View.INVISIBLE);
+                menu.findItem(R.id.action_edit).setTitle(R.string.edit);
+                showEdit = false;
+
+                if (flagShowMinus) {
+                    showDelMinus(View.INVISIBLE);
+                    flagShowMinus = false;
+                } else {
+                    showDelMinus(View.VISIBLE);
+                    flagShowMinus = true;
+                }
 
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void onInit(){
+    private void onInit() {
         arrayListDevices = db.getListDevices();
 
     }
-    private void showEdit(int visible){
+
+    private void showEdit(int visible) {
         for (Map.Entry entry : hashMapView.entrySet()) {
-            ImageView imgEdit = (ImageView)myJQuery.findViewByTagClass((LinearLayout)entry.getValue(), ImageView.class).get(0);
+            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), ImageView.class).get(0);
             imgEdit.setVisibility(visible);
             //System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
         }
     }
 
-    private void onDraw(){
+    private void showDelMinus(int visible) {
+        for (Map.Entry entry : hashMapView.entrySet()) {
+            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), ImageView.class).get(1);
+            imgEdit.setVisibility(visible);
+
+            if(visible == View.INVISIBLE){
+                ArrayList<View> butnDelView = myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), TintButton.class);
+                Button btnDel = (Button) butnDelView.get(0);
+                btnDel.setVisibility(visible);
+                imgEdit.setBackgroundResource(R.drawable.btn_minus);
+            }
+        }
+    }
+
+    private void onDraw() {
         hashMapView = new HashMap<>();
-        for(HashMap<String,String> map : arrayListDevices){
-            LinearLayout row = (LinearLayout)inflater.inflate(R.layout.row_list_object, null);
+        for (HashMap<String, String> map : arrayListDevices) {
+            LinearLayout row = (LinearLayout) inflater.inflate(R.layout.row_list_object, null);
             ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
             ArrayList<View> arrayImageView = myJQuery.findViewByTagClass(row, ImageView.class);
-            ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
-            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
+            ArrayList<View> butnDelView = myJQuery.findViewByTagClass(row, TintButton.class);
+            Button btnDel = (Button) butnDelView.get(0);
+            ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
+            ((TextView) arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
             hashMapView.put(map.get(db.UID), row);
             mainLayout.addView(row);
             setOnClickListenerEdit((ImageView) arrayImageView.get(0), map, row);
+            setOnClickListenerMinus((ImageView) arrayImageView.get(1), btnDel, map, row);
+            setOnClickListenerBtnDel(btnDel, row, map);
         }
     }
 
-    private void setOnClickListenerEdit(final ImageView imageView, final HashMap<String, String> map, final LinearLayout row){
+    private void setOnClickListenerEdit(final ImageView imageView, final HashMap<String, String> map, final LinearLayout row) {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogShow(v,map, row);
-
-              //  if(dialodView==null) dialodView = dialogEditObj.onCreate();
-              //  dialogEditObj.dialogInflate(map, row);
-              //  dialogEditObj.vHide(v);
+                dialogShow(v, map, row);
             }
         });
     }
-    private void dialogShow(View v, HashMap<String,String>map, LinearLayout row){
-        if(dialogEditObj!=null){
+
+    private void setOnClickListenerMinus(final ImageView imageView, final Button btnDel, final HashMap<String, String> map, final LinearLayout row) {
+        final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
+        final Animation animOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!btnDel.isShown()) {
+                    btnDel.setVisibility(View.VISIBLE);
+                    btnDel.startAnimation(animIn);
+                    imageView.setBackgroundResource(R.drawable.btn_minus_open);
+                } else {
+                    btnDel.startAnimation(animOut);
+                    imageView.setBackgroundResource(R.drawable.btn_minus);
+
+                    animOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            btnDel.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    private void setOnClickListenerBtnDel(final Button btn, final LinearLayout row, final HashMap<String, String> map) {
+        final Animation animOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_right);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clearRow(map, row);
+                row.startAnimation(animOut);
+                animOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        new Handler().post(new Runnable() {
+                            public void run() {
+                                clearRow(map, row);
+                            }
+                        });
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void clearRow(HashMap<String, String> map, LinearLayout row) {
+        String id = map.get(db.UID);
+        for (int i = 0; i < arrayListDevices.size(); i++) {
+            if (arrayListDevices.get(i) == map) {
+                arrayListDevices.remove(i);
+            }
+        }
+        hashMapView.remove(id);
+        ((LinearLayout) row.getParent()).removeView(row);
+        Log.d(TAG, "+++");
+    }
+
+
+    private void dialogShow(View v, HashMap<String, String> map, LinearLayout row) {
+        if (dialogEditObj != null) {
             dialogEditObj.onDismiss();
             dialogEditObj = null;
         }
-         dialogEditObj = new DialogEditObj(this);
-         dialodView = dialogEditObj.onCreate();
-         dialogEditObj.dialogInflate(map, row, this);
-         dialogEditObj.vHide(v);
+        dialogEditObj = new DialogEditObj(this);
+        dialodView = dialogEditObj.onCreate();
+        dialogEditObj.dialogInflate(map, row, this);
+        dialogEditObj.vHide(v);
     }
 
-    public void updateRow(View row, HashMap<String, String> map){
-        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass((LinearLayout)row, TextView.class);
-        ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
-        ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
-
+    public void updateRow(View row, HashMap<String, String> map) {
+        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass((LinearLayout) row, TextView.class);
+        ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
+        ((TextView) arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
     }
 
 }
