@@ -210,7 +210,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         sdb.close();
         return true;
+
     }
+
+
+
     public ArrayList<HashMap> getAllCommand(){
         sdb = this.getWritableDatabase();
         ArrayList<HashMap> arrayList = new ArrayList<>();
@@ -237,6 +241,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return  arrayList;
     }
+    public ArrayList<HashMap> getAllCommand(String like){
+        sdb = this.getWritableDatabase();
+        ArrayList<HashMap> arrayList = new ArrayList<>();
+
+        String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS +" WHERE "+ VALUE_NAME+" LIKE '%"+like+"%'";
+        Cursor cursor = sdb.rawQuery(jquery,null);
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex(VALUE_NAME));
+            String id = cursor.getString(cursor.getColumnIndex(UID));
+            String command =  cursor.getString(cursor.getColumnIndex(VALUE_COMMAND));
+            String idDev =  cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
+            String favorite =  cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
+
+            HashMap<String,String> map = new HashMap<>();
+            map.put(VALUE_NAME, name);
+            map.put(UID, id);
+            map.put(VALUE_COMMAND, command);
+            map.put(VALUE_ID_DEVICE, idDev);
+            map.put(VALUE_FAVORITE, favorite);
+            String nameDevice = getNameDevice(idDev, sdb);
+            map.put(VALUE_NAME_DEVICE, nameDevice);
+            arrayList.add(map);
+        }
+        sdb.close();
+        return  arrayList;
+    }
+
+
     private String getNameDevice(String id, SQLiteDatabase sdb){
         String name = "";
         String jquery = "SELECT * FROM "+TABLE_NAME_DEVICES+ " WHERE "+UID+"=" + id;

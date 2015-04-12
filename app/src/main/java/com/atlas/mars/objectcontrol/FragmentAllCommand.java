@@ -24,6 +24,7 @@ import java.util.Map;
 public class FragmentAllCommand extends MyFragmentView {
     public SearchView  searchView;
     final static String TAG = "myLog";
+    ArrayList<HashMap> arrayListAllCommand;
     LinearLayout mainLayout;
     String searchText;
     public FragmentAllCommand(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
@@ -50,7 +51,8 @@ public class FragmentAllCommand extends MyFragmentView {
                 Log.d(TAG, "onQueryTextChange: " + newText);
 
                 //todo Запрос параметров
-               // getListDataLike(newText);
+
+                getListDataLike(newText);
                 /*if(newText.isEmpty()){
                     searchView.onActionViewCollapsed();
                     searchView.setQuery("", false);
@@ -79,6 +81,7 @@ public class FragmentAllCommand extends MyFragmentView {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "searchView onClick "+ searchView.isFocused());
+                if(pw!=null)   endEdit();
                 searchView.onActionViewExpanded();
             }
         });
@@ -92,6 +95,7 @@ public class FragmentAllCommand extends MyFragmentView {
                 }
             }
         });
+        getListData();
         onDraw();
 
     }
@@ -100,10 +104,20 @@ public class FragmentAllCommand extends MyFragmentView {
         onRedraw();
     }
 
+    private void getListDataLike(String newText){
+        if(pw!=null)   endEdit();
+        ((LinearLayout)viewFragment.findViewById(R.id.mainLayout)).removeAllViews();
+        arrayListAllCommand =   db.getAllCommand(newText);
+        onDraw();
+    }
+
+    private void getListData(){
+        arrayListAllCommand = db.getAllCommand();
+    }
+
     private void onDraw(){
         hashMapRow = new HashMap<>();
-        ArrayList<HashMap> arrayList = db.getAllCommand();
-        for (HashMap<String, String> map: arrayList){
+        for (HashMap<String, String> map: arrayListAllCommand){
             FrameLayout row = rowCreator.create(map);
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
@@ -165,6 +179,7 @@ public class FragmentAllCommand extends MyFragmentView {
 
     public void onRedraw(){
         ((LinearLayout)viewFragment.findViewById(R.id.mainLayout)).removeAllViews();
+        getListData();
         onDraw();
     }
 
@@ -195,13 +210,20 @@ public class FragmentAllCommand extends MyFragmentView {
             btnEndDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showMinus(View.INVISIBLE);
+                    endEdit();
+                   /* showMinus(View.INVISIBLE);
                     showFavorite(View.INVISIBLE);
-                    pw.dismiss();
+                    pw.dismiss();*/
                 }
             });
         }
         pw.showAtLocation(viewFragment, Gravity.TOP, 0, 40);
+    }
+
+    private void endEdit(){
+        showMinus(View.INVISIBLE);
+        showFavorite(View.INVISIBLE);
+        pw.dismiss();
     }
 
     private void showPopupMenuEditCommands(View v){

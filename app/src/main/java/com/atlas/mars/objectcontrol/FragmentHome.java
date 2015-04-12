@@ -241,9 +241,9 @@ public class FragmentHome extends MyFragmentView {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (CheckBox checkBox : listCheckBox) {
+                /*for (CheckBox checkBox : listCheckBox) {
                     checkBox.setChecked(false);
-                }
+                }*/
                 dialogSelectObj.onDismiss();
             }
         });
