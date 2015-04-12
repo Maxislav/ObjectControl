@@ -1,17 +1,21 @@
 package com.atlas.mars.objectcontrol;
 
+import android.os.Handler;
+import android.support.v7.internal.widget.TintButton;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
@@ -115,7 +119,10 @@ public class FragmentAllCommand extends MyFragmentView {
             FrameLayout row = rowCreator.create(map);
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
-            setListenerDelRow(row, id);
+            Button btnDel = (Button)myJQuery.findViewByTagClass(row, TintButton.class).get(0);
+
+            setListenerMinus(row, btnDel, id);
+            setListenerDel(btnDel, row, map);
             ArrayList<View> viewArrayList = myJQuery.findViewByTagClass(row, ImageView.class);
             ImageView imgFavorite = (ImageView)viewArrayList.get(2);
             ImageView bacGroutdImg = (ImageView)viewArrayList.get(0);
@@ -153,22 +160,87 @@ public class FragmentAllCommand extends MyFragmentView {
         });
     }
 
-    private void setListenerDelRow(FrameLayout _row, final String _id){
+    private void setListenerMinus(FrameLayout _row, final Button btnDel, final String _id){
         final FrameLayout row = _row;
-        ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, ImageView.class).get(1);
+        final Animation animIn = AnimationUtils.loadAnimation(mainActivity.getApplicationContext(), R.anim.show_left);
+        final Animation animOut = AnimationUtils.loadAnimation(mainActivity.getApplicationContext(), R.anim.hide_left);
+
+
+        final ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, ImageView.class).get(1);
 
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //db.delCommand(_id);
-                if(db.delCommand(_id)){
+                if(btnDel.isShown()){
+                    imgMinus.setBackgroundResource(R.drawable.btn_minus);
+                    btnDel.startAnimation(animOut);
+                    animOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            btnDel.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                }else{
+                    imgMinus.setBackgroundResource(R.drawable.btn_minus_open);
+                    btnDel.setVisibility(View.VISIBLE);
+                    btnDel.startAnimation(animIn);
+                }
+
+/*                if(db.delCommand(_id)){
                     hashMapRow.remove(_id);
                     ((LinearLayout)row.getParent()).removeView(row);
                 }
-
-                mainActivity.connectionFragment();
+                mainActivity.connectionFragment();*/
             }
         });
+    }
+
+    public void setListenerDel(final Button btnDel, final FrameLayout row, final HashMap<String, String>map ) {
+        final  String id = map.get(db.UID);
+        final Animation animOut = AnimationUtils.loadAnimation(mainActivity.getApplicationContext(), R.anim.hide_right);
+        btnDel.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               row.startAnimation(animOut);
+               animOut.setAnimationListener(new Animation.AnimationListener() {
+                   @Override
+                   public void onAnimationStart(Animation animation) {
+
+                   }
+
+                   @Override
+                   public void onAnimationEnd(Animation animation) {
+                       new Handler().post(new Runnable() {
+                           public void run() {
+                               if(db.delCommand(id)){
+                                   hashMapRow.remove(id);
+                                   ((LinearLayout)row.getParent()).removeView(row);
+                               }
+                               mainActivity.connectionFragment();
+                               //clearRow(map, row);
+                           }
+                       });
+                   }
+                   @Override
+                   public void onAnimationRepeat(Animation animation) {
+
+                   }
+               });
+
+           }
+       });
+
+
     }
 
     public void onRedraw(){
@@ -183,6 +255,12 @@ public class FragmentAllCommand extends MyFragmentView {
             ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), ImageView.class);
             ImageView img = (ImageView)viewArrayList.get(1);
             img.setVisibility(visible);
+
+            if(visible == View.INVISIBLE){
+                img.setBackgroundResource(R.drawable.btn_minus);
+                ((Button)myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), TintButton.class).get(0)).setVisibility(visible);
+            }
+
         }
         dialogEndDelShow();
     }
