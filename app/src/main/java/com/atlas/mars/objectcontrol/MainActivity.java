@@ -319,6 +319,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                         }
                         //todo Раскоментировать
                         long n = db.addNewDevice(name, phone);
+
+                        if(fragmentHome!=null) fragmentHome.onRedraw();
                         Toast.makeText(getApplicationContext(), "ID : " + n + "", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:

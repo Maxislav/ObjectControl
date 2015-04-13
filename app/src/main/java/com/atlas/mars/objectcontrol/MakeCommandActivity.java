@@ -68,7 +68,7 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickBtnOkClose();
+
                 Intent answerInent = new Intent();
                 String nameCommand = etNameCommand.getText().toString();
                 String code = etCode.getText().toString();
@@ -76,7 +76,8 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
                 answerInent.putExtra(NAME_COMMAND, nameCommand);
                 answerInent.putExtra(CODE, code);
                 setResult(RESULT_OK, answerInent);
-                finish();
+                clickBtnOkClose();
+               // finish();
             }
         });
         btnSelectDevice.setOnClickListener(new View.OnClickListener() {
@@ -160,5 +161,6 @@ public class MakeCommandActivity extends ActionBarActivity implements MakeComman
         }
 
         db.addCommand(arrayList);
+        finish();
     }
 }

@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -39,11 +39,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_DEVICES = "CREATE TABLE if not exists "
            + TABLE_NAME_DEVICES +" (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + VALUE_NAME + " VARCHAR(255), " + VALUE_PHONE + " VARCHAR(255), " + VALUE_PARAM + " VARCHAR(255) "+");";
+            + VALUE_NAME + " VARCHAR(255), " + VALUE_PHONE + " VARCHAR(255), " + VALUE_PARAM + " VARCHAR(255), "+ VALUE_SELECTED +" VARCHAR(255) "+ ");";
 
     private static final String SQL_CREATE_TABLE_COMMANDS = "CREATE TABLE if not exists "
             +TABLE_NAME_COMMANDS+" (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + VALUE_NAME + " VARCHAR(255), " + VALUE_COMMAND +  " VARCHAR(255), " + VALUE_ID_DEVICE +" INTEGER " +VALUE_FAVORITE+ " INTEGER"+ ");";
+            + VALUE_NAME + " VARCHAR(255), " + VALUE_COMMAND +  " VARCHAR(255), " + VALUE_ID_DEVICE +" INTEGER, " +VALUE_FAVORITE+ " INTEGER"+ ");";
 
 
     public DataBaseHelper(Context context) {
@@ -67,6 +67,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(jquery);
         jquery = "UPDATE " + TABLE_NAME_COMMANDS+" SET "+VALUE_FAVORITE+"="+0+" WHERE "+VALUE_FAVORITE+" IS NULL";
         db.execSQL(jquery);*/
+       // db.execSQL(SQL_CREATE_TABLE_DEVICES);
+       // db.execSQL(SQL_CREATE_TABLE_COMMANDS);
     }
 
     public long addNewDevice(String name, String phone){
@@ -208,12 +210,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv;
         try {
             for(HashMap<String,String> map : arrayList){
-                cv = new ContentValues();
+               /* cv = new ContentValues();
                 cv.put(VALUE_NAME, map.get("name"));
                 cv.put(VALUE_COMMAND, map.get("code"));
                 cv.put(VALUE_ID_DEVICE, map.get("idDev"));
                 cv.put(VALUE_FAVORITE, "0");
-                long id = sdb.insert(TABLE_NAME_COMMANDS, null, cv);
+                long id = sdb.insert(TABLE_NAME_COMMANDS, null, cv);*/
+
+                String jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
+                        "VALUES ('"+map.get("name")+"','"+map.get("code")+"','"+map.get("idDev")+"','0');";
+                sdb.execSQL(jquery);
             }
         }catch (SQLException e){
             Log.e(TAG, e.toString());
