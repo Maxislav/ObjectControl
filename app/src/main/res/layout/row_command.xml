@@ -25,69 +25,82 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textStyle="bold"
                 android:layout_weight="1"
-                android:text="Команда" />
+                android:gravity="center"
+                android:text="Команда"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="left"
                 android:layout_marginLeft="40dp"
                 android:layout_weight="1"
-                android:textColor="@color/grayText"
-                android:text="Код" />
+                android:gravity="left"
+                android:text="Код"
+                android:textColor="@color/grayText" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="Устройство" />
         </LinearLayout>
 
     </LinearLayout>
+
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_gravity="right|center"
+        android:layout_marginRight="10dp"
         android:background="@drawable/btn_minus"
-        android:layout_marginRight="10dp"
-        android:visibility="invisible"
-        android:layout_gravity="right|center" />
+        android:visibility="invisible" />
+
     <ImageView
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:background="@drawable/btn_unfavorite"
+        android:layout_gravity="left|center"
         android:layout_marginLeft="10dp"
-        android:visibility="invisible"
-        android:layout_gravity="left|center" />
-    <ImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:background="@drawable/bitmap_sms"
+        android:background="@drawable/btn_unfavorite"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="right|center"
         android:layout_marginRight="10dp"
-        android:visibility="invisible"
-        android:layout_gravity="right|center" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:visibility="invisible"
+            android:background="@drawable/bitmap_sms"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="200dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|center">
+        android:layout_gravity="left|center"
+        android:layout_marginLeft="10dp">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="30dp"

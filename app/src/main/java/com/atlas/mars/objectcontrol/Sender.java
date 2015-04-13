@@ -23,7 +23,7 @@ public class Sender {
     DataBaseHelper db;
     FragmentHome fragmentHome;
     Context context;
-    Handler h;
+    static Handler h;
     final static private String TAG = "myLog";
     public Sender(ArrayList<HashMap> arraySelectForSend, HashMap<String,View> viewHashMap, final FragmentHome fragmentHome , Context context){
         this.arraySelectForSend = arraySelectForSend;
@@ -66,7 +66,7 @@ public class Sender {
 
                 public void run() {
                     try{
-                        Thread.sleep(2200);
+                        Thread.sleep(5200);
                         Message msg = Message.obtain(h, 0);
                         msg.obj = id;
                         h.sendMessage(msg);
