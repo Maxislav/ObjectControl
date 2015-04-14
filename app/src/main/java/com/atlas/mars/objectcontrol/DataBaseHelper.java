@@ -290,7 +290,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         /*String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
                 +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";*/
 
-        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY;
+        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY +" ORDER BY "+VALUE_DATE+" DESC";
         Cursor cursor = sdb.rawQuery(jquery,null);
         while (cursor.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();

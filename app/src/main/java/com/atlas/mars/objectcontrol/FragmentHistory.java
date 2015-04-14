@@ -69,17 +69,19 @@ public class FragmentHistory extends MyFragmentView {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(mainActivity, new listenerFrom(), calFrom.get(Calendar.YEAR), calFrom.get(Calendar.MONTH), calFrom.get(Calendar.DAY_OF_MONTH));
-                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel", new CancelListener());
                 dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", dialog);
+                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel", new CancelListener());
+
                 dialog.show();
             }
         });
         btnTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(mainActivity, new listenerTo(), calTo.get(Calendar.YEAR), calTo.get(Calendar.MONTH), calTo.get(Calendar.DAY_OF_MONTH));
+                final DatePickerDialog dialog = new DatePickerDialog(mainActivity, new listenerTo(), calTo.get(Calendar.YEAR), calTo.get(Calendar.MONTH), calTo.get(Calendar.DAY_OF_MONTH));
                 dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel", new CancelListener());
                 dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", dialog);
+
                 dialog.show();
             }
         });
@@ -98,16 +100,8 @@ public class FragmentHistory extends MyFragmentView {
     private void onDraw(){
         for(HashMap<String, String> map : arrayList){
             FrameLayout row =(FrameLayout)inflater.inflate(R.layout.row_command_history, null);
-
             ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
-
-            /*((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
-            ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
-            ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_NAME_DEVICE));
-            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_DATE));*/
-
             ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_DATE));
-            //((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_NAME_DEVICE));
@@ -117,6 +111,12 @@ public class FragmentHistory extends MyFragmentView {
         }
     }
 
+    public void onRedraw(){
+        mainLayout.removeAllViews();
+        getListData();
+        onDraw();
+
+    }
     private  class CancelListener implements DialogInterface.OnClickListener{
         @Override
         public void onClick(DialogInterface dialog, int which) {

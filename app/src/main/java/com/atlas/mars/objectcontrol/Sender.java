@@ -48,7 +48,7 @@ public class Sender {
 
     final static private String TAG = "myLog";
 
-    public Sender(ArrayList<HashMap> arraySelectForSend, HashMap<String, View> viewHashMap, final FragmentHome fragmentHome, Context context, Activity activity) {
+    public Sender(ArrayList<HashMap> arraySelectForSend, HashMap<String, View> viewHashMap, final FragmentHome fragmentHome, Context context, final Activity activity) {
         this.arraySelectForSend = arraySelectForSend;
         this.viewHashMap = viewHashMap;
         this.fragmentHome = fragmentHome;
@@ -81,6 +81,7 @@ public class Sender {
                         ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
                         ImageView imageSms = (ImageView) arrayImgs.get(3);
                         imageSms.clearAnimation();
+                        ((MainActivity)activity).regenHistory();
                         break;
                     case 1:
                         toastShort(msg.obj.toString());
@@ -207,6 +208,7 @@ public class Sender {
                      Message msg = Message.obtain(h, 1);
                      msg.obj = mess;
                      h.sendMessage(msg);
+
 
 
                  } catch (Exception e) {

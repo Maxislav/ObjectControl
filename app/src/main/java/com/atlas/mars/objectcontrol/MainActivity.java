@@ -470,5 +470,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if(receiverDeliver!=null) unregisterReceiver(receiverDeliver);
         super.onDestroy();
     }
+    public void regenHistory(){
+        if(fragmentHistory!=null) fragmentHistory.onRedraw();
+    }
 
 }
