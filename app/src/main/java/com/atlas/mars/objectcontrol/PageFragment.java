@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,24 +60,28 @@ public class PageFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view;
+        View view = null;
         Communicator communicator;
+        communicator = (Communicator)getActivity();
         switch (pageNumber) {
             case 0:
-                communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_0_home, null);
                 communicator.initViewHome(view, inflater);
-
                 break;
             case 1:
-                communicator = (Communicator)getActivity();
                 view = inflater.inflate(R.layout.fragment_1_all_commands, null);
                 communicator.initViewAllCommand(view, inflater);
                 break;
+            case 2:
+                view = inflater.inflate(R.layout.fragment_history, null);
+                communicator.initViewHistory(view, inflater);
+                break;
             default:
-                view = inflater.inflate(R.layout.fragment, null);
+
+
+               /* view = inflater.inflate(R.layout.fragment, null);
                 TextView tvPage = (TextView) view.findViewById(R.id.tvPage);
-                tvPage.setText("Page " + (pageNumber + 1));
+                tvPage.setText("Page " + (pageNumber + 1));*/
                 break;
 
         }

@@ -64,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     View viewAllCommand;
     FragmentAllCommand fragmentAllCommand;
     FragmentHome fragmentHome;
+    FragmentHistory fragmentHistory;
     Menu menu;
     BroadcastReceiver receiver, receiverDeliver;
 
@@ -446,6 +447,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     }
 
     @Override
+    public void initViewHistory(View view, LayoutInflater inflater){
+        fragmentHistory = new FragmentHistory(this, view, inflater);
+    }
+
+    @Override
     public void connectionFragment() {
         if (fragmentHome != null) {
             fragmentHome.regenScrollView();
@@ -464,4 +470,5 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if(receiverDeliver!=null) unregisterReceiver(receiverDeliver);
         super.onDestroy();
     }
+
 }
