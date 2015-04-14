@@ -28,7 +28,7 @@
 
     <item name="gradientStart" type="color">#facacdda</item>
     <item name="gradientEnd" type="color">#ffffffff</item>
-    <item name="grayText" type="color">#fa8b8d9a</item>
+    <item name="grayText" type="color">#fab5b7c6</item>
     <item name="dark" type="color">#fa656774</item>
     <item name="mask" type="color">#7b000000</item>
     <item name="white" type="color">#FFF</item>

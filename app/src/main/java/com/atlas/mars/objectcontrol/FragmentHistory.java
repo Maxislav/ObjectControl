@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 /**
@@ -21,13 +24,15 @@ public class FragmentHistory extends MyFragmentView {
     FrameLayout btnFrom;
     FrameLayout btnTo;
     TextView textBtnFrom, textBtnTo;
+    LinearLayout mainLayout;
 
     final static String MONTH = "M";
     final static String YEAR = "y";
     final static String DAY_OF_MONTH = "d";
-
     final static String TAG = "myLog";
 
+
+    ArrayList<HashMap> arrayList;
     Calendar calFrom, calTo;
 
     FragmentHistory(MainActivity mainActivity, View viewFragment, LayoutInflater inflater) {
@@ -36,6 +41,7 @@ public class FragmentHistory extends MyFragmentView {
 
     @Override
     public void onInit() {
+        mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
         btnFrom =(FrameLayout) viewFragment.findViewById(R.id.btnFrom);
         textBtnFrom =(TextView) myJQuery.findViewByTagClass(btnFrom, TextView.class).get(0);
         btnTo =(FrameLayout) viewFragment.findViewById(R.id.btnTo);
@@ -79,6 +85,29 @@ public class FragmentHistory extends MyFragmentView {
         });
 
 
+        getListData();
+        onDraw();
+    }
+
+
+    private void getListData(){
+        arrayList = db.getHistoryCommand();
+
+    }
+
+    private void onDraw(){
+        for(HashMap<String, String> map : arrayList){
+          LinearLayout row =(LinearLayout)inflater.inflate(R.layout.row_command, mainLayout);
+
+            ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
+
+            ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
+            ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
+            ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_NAME_DEVICE));
+            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_DATE));
+            ((TextView)arrayTextView.get(3)).setVisibility(View.VISIBLE);
+
+        }
     }
 
     private  class CancelListener implements DialogInterface.OnClickListener{

@@ -151,18 +151,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb = this.getWritableDatabase();
 
         Cursor cursor;
-        //String jquery;
-
-
-        //String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+ " WHERE "+VALUE_FAVORITE+"=1"+" AND "+VALUE_ID_DEVICE+"= (SELECT " +UID+ " FROM "+TABLE_NAME_DEVICES+" WHERE "+VALUE_SELECTED+"="+1+")";
-
-
         String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
                +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";
-
-
-         //jquery = "SELECT * FROM commands INNER JOIN devices ON commands.valueIdDevice=devices._id WHERE commands.valueFavorite=1 AND devices.valueSelected=1";
-
         try {
             cursor =  sdb.rawQuery(jquery,null);
             while (cursor.moveToNext()) {
@@ -292,6 +282,50 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         sdb.close();
         return  arrayList;
+    }
+
+    public ArrayList<HashMap> getHistoryCommand(){
+        ArrayList<HashMap> arrayList = new ArrayList<>();
+        sdb = this.getWritableDatabase();
+        /*String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
+                +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";*/
+
+        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY;
+        Cursor cursor = sdb.rawQuery(jquery,null);
+        while (cursor.moveToNext()) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(UID,cursor.getString(cursor.getColumnIndex(UID)));
+            map.put(VALUE_DATE,cursor.getString(cursor.getColumnIndex(VALUE_DATE)));
+            map.put(VALUE_ID_COMMAND,cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)));
+            HashMap<String, String> mapCommand = getCommand(cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)), sdb);
+
+            map.put(VALUE_NAME, mapCommand.get(VALUE_NAME));
+            map.put(VALUE_COMMAND, mapCommand.get(VALUE_COMMAND));
+            map.put(VALUE_ID_DEVICE, mapCommand.get(VALUE_ID_DEVICE));
+            map.put(VALUE_NAME_DEVICE, mapCommand.get(VALUE_NAME_DEVICE));
+            arrayList.add(map);
+        }
+        sdb.close();
+        return  arrayList;
+
+    }
+
+    private HashMap<String,String> getCommand(String id, SQLiteDatabase sdb){
+        String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+ " WHERE " + UID +"=" +id ;
+        HashMap<String,String> map = new HashMap<>();
+        Cursor cursor = sdb.rawQuery(jquery,null);
+        while (cursor.moveToNext()) {
+            map.put(VALUE_NAME, cursor.getString(cursor.getColumnIndex(VALUE_NAME)));
+            map.put(VALUE_COMMAND, cursor.getString(cursor.getColumnIndex(VALUE_COMMAND)));
+            map.put(VALUE_ID_DEVICE, cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE)));
+            HashMap<String,String> mapDev;
+            mapDev = getNameDevice(cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE)), sdb);
+            map.put(VALUE_NAME_DEVICE, mapDev.get(VALUE_NAME));
+            map.put(VALUE_PHONE, mapDev.get(VALUE_PHONE));
+
+        }
+        return map;
+
     }
 
 
