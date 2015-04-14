@@ -451,8 +451,5 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
             fragmentHome.regenScrollView();
         }
     }
-    @Override
-    public void registerReceiver( BroadcastReceiver receiver){
 
-    }
 }

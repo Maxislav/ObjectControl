@@ -124,7 +124,7 @@ public class FragmentHome extends MyFragmentView {
 
         ((TextView) arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
         ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
-        ((TextView) arrayTextView.get(2)).setText(map.get("valueDeviceName"));
+        ((TextView) arrayTextView.get(2)).setText(map.get(db.VALUE_NAME_DEVICE));
         ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);

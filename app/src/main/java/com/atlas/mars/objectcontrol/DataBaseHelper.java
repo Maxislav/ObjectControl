@@ -172,13 +172,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String idDev = cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE));
                 String favorite = cursor.getString(cursor.getColumnIndex(VALUE_FAVORITE));
                 String nameDevice = cursor.getString(6);;
+                String phone = cursor.getString(cursor.getColumnIndex(VALUE_PHONE));;
                 HashMap<String,String> map = new HashMap<>();
                 map.put(VALUE_NAME, nameCommand);
                 map.put(UID, id);
                 map.put(VALUE_COMMAND, valueCommand);
                 map.put(VALUE_ID_DEVICE, idDev);
                 map.put(VALUE_FAVORITE, favorite);
-                map.put("valueDeviceName", nameDevice);
+                map.put(VALUE_NAME_DEVICE, nameDevice);
+                map.put(VALUE_PHONE, phone);
                 arrayList.add(map);
 
             }
@@ -252,8 +254,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(VALUE_COMMAND, command);
             map.put(VALUE_ID_DEVICE, idDev);
             map.put(VALUE_FAVORITE, favorite);
-            String nameDevice = getNameDevice(idDev, sdb);
-            map.put(VALUE_NAME_DEVICE, nameDevice);
+
+            HashMap<String, String> mapDevice = getNameDevice(idDev, sdb);
+            map.put(VALUE_NAME_DEVICE, mapDevice.get(VALUE_NAME));
+            map.put(VALUE_PHONE, mapDevice.get(VALUE_PHONE));
+            //map.put(VALUE_NAME_DEVICE, nameDevice);
             arrayList.add(map);
         }
         sdb.close();
@@ -278,8 +283,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(VALUE_COMMAND, command);
             map.put(VALUE_ID_DEVICE, idDev);
             map.put(VALUE_FAVORITE, favorite);
-            String nameDevice = getNameDevice(idDev, sdb);
-            map.put(VALUE_NAME_DEVICE, nameDevice);
+
+           // String nameDevice = getNameDevice(idDev, sdb);
+            HashMap<String, String> mapDevice = getNameDevice(idDev, sdb);
+
+            map.put(VALUE_NAME_DEVICE, mapDevice.get(VALUE_NAME));
+            map.put(VALUE_PHONE, mapDevice.get(VALUE_PHONE));
             arrayList.add(map);
         }
         sdb.close();
@@ -287,14 +296,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    private String getNameDevice(String id, SQLiteDatabase sdb){
+    private HashMap<String, String> getNameDevice(String id, SQLiteDatabase sdb){
+        HashMap<String, String> map = new HashMap<>();
         String name = "";
+        String phone = "";
         String jquery = "SELECT * FROM "+TABLE_NAME_DEVICES+ " WHERE "+UID+"=" + id;
         Cursor cursor = sdb.rawQuery(jquery,null);
         while (cursor.moveToNext()) {
-            name = cursor.getString(cursor.getColumnIndex(this.VALUE_NAME));
+            map.put(VALUE_NAME, cursor.getString(cursor.getColumnIndex(VALUE_NAME)));
+            map.put(VALUE_PHONE, cursor.getString(cursor.getColumnIndex(VALUE_PHONE)));
+          //  name = cursor.getString(cursor.getColumnIndex(this.VALUE_NAME));
+           // phone = cursor.getString(cursor.getColumnIndex(this.VALUE_PHONE));
         }
-        return name;
+        return map;
     }
 
     public boolean delCommand(String id){

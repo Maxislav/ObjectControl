@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.FragmentHome;
 import com.atlas.mars.objectcontrol.MyJQuery;
@@ -98,11 +97,11 @@ public class DialogSend extends MyDialog {
 
 
 
-                Sender sender = new Sender(arraySelectForSend, fragmentHome.viewHashMap, fragmentHome, activity.getApplicationContext());
+                Sender sender = new Sender(arraySelectForSend, fragmentHome.viewHashMap, fragmentHome, activity.getApplicationContext(), activity);
                 sender.send();
 
-                Toast toast = Toast.makeText(activity, "Тут могла быть ваша реклама", Toast.LENGTH_LONG);
-                toast.show();
+              /*  Toast toast = Toast.makeText(activity, "Тут могла быть ваша реклама", Toast.LENGTH_LONG);
+                toast.show();*/
                 pw.dismiss();
             }
         });
