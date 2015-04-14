@@ -97,15 +97,22 @@ public class FragmentHistory extends MyFragmentView {
 
     private void onDraw(){
         for(HashMap<String, String> map : arrayList){
-          LinearLayout row =(LinearLayout)inflater.inflate(R.layout.row_command, mainLayout);
+            FrameLayout row =(FrameLayout)inflater.inflate(R.layout.row_command_history, null);
 
             ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
 
-            ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
+            /*((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_NAME_DEVICE));
-            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_DATE));
-            ((TextView)arrayTextView.get(3)).setVisibility(View.VISIBLE);
+            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_DATE));*/
+
+            ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_DATE));
+            //((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
+            ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
+            ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
+            ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_NAME_DEVICE));
+
+            mainLayout.addView(row);
 
         }
     }
