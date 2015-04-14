@@ -17,8 +17,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * Created by Администратор on 4/12/15.
@@ -32,6 +35,7 @@ public class Sender {
     FragmentHome fragmentHome;
     Context context;
     static Handler h;
+    static Handler toastMess;
     private static final String SENT = "SMS_SENT";
     private static final String DELIVERED = "SMS_DELIVERED";
     private static final String EXTRA_NAME = "name";
@@ -63,21 +67,31 @@ public class Sender {
         db = new DataBaseHelper(fragmentHome.mainActivity);
         h = new Handler() {
             public static final int ID_0 = 0;
+            public static final int ID_1 = 1;
             final FragmentHome _fragmentHome = fragmentHome;
-
             @Override
             public void handleMessage(android.os.Message msg) {
-                Log.d(TAG, "+++" + msg.obj.toString());
-                String id = msg.obj.toString();
-                FrameLayout row = (FrameLayout) _fragmentHome.viewHashMap.get(id);
-                HashMap<String, String> map = getMap(id);
-                _fragmentHome.rowUnSelect(row, map);
-                ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
-                ImageView imageSms = (ImageView) arrayImgs.get(3);
-                imageSms.clearAnimation();
+                switch (msg.what){
+                    case 0:
+                        Log.d(TAG, "+++" + msg.obj.toString());
+                        String id = msg.obj.toString();
+                        FrameLayout row = (FrameLayout) _fragmentHome.viewHashMap.get(id);
+                        HashMap<String, String> map = getMap(id);
+                        _fragmentHome.rowUnSelect(row, map);
+                        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
+                        ImageView imageSms = (ImageView) arrayImgs.get(3);
+                        imageSms.clearAnimation();
+                        break;
+                    case 1:
+                        toastShort(msg.obj.toString());
+                        break;
+                }
+
 
             }
         };
+
+
     }
 
 
@@ -143,11 +157,71 @@ public class Sender {
         sentIntent.putExtra(EXTRA_NAME, conName);
         sentIntent.putExtra(EXTRA_ID, idCommand);
 
+        deliveredIntent.putExtra(EXTRA_NUMBER, conNumber);
+        deliveredIntent.putExtra(EXTRA_NAME, conName);
+        deliveredIntent.putExtra(EXTRA_ID, idCommand);
+
         PendingIntent sentPI = PendingIntent.getBroadcast(activity, requestCode, sentIntent, 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(activity, requestCode, deliveredIntent, 0);
 
-        smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
+        //Todo раскоментировать
+       // smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
+
+        //Todo закоментировать
+        capSend(conNumber, mess, conName, idCommand);
+
     }
+
+     private void capSend(String number, final String mess, final String name, final String id){
+         Date now = new Date();
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+         String s = formatter.format(now);
+         Log.d(TAG, "+++"+s);
+         HashMap<String,String> map = new HashMap<>();
+         map.put(db.VALUE_DATE, s);
+         map.put(db.VALUE_ID_COMMAND, id);
+         db.insertHistory(map);
+
+
+         Thread send = new Thread(new Runnable() {
+             public void run() {
+                 try {
+                     Thread.sleep(1000);
+                     Message msg = Message.obtain(h, 0);
+                     msg.obj = id;
+                     h.sendMessage(msg);
+                 } catch (Exception e) {
+                     Log.e(TAG, e.toString());
+                 }
+
+             }
+         });
+         send.start();
+         Thread deliver = new Thread(new Runnable() {
+             public void run() {
+                 try {
+                     Thread.sleep(5000);
+
+                     String mess = name+ " Команда доставлена id: "+id;
+                     Message msg = Message.obtain(h, 1);
+                     msg.obj = mess;
+                     h.sendMessage(msg);
+
+
+                 } catch (Exception e) {
+                     Log.e(TAG, e.toString());
+                 }
+
+             }
+         });
+         deliver.start();
+
+     }
+
+
+
+
 
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -201,12 +275,14 @@ public class Sender {
 
     private BroadcastReceiver receiverDeliver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context arg0, Intent arg1) {
+        public void onReceive(Context arg0, Intent intent) {
+            String name = intent.getStringExtra("name");
+            String number = intent.getStringExtra("number");
+            String id =  intent.getStringExtra(EXTRA_ID);
             switch (getResultCode())
             {
                 case Activity.RESULT_OK:
-
-                    toastShort( "Команда доставлена");
+                    toastShort( name+ " Команда доставлена id: "+id);
                     break;
                 case Activity.RESULT_CANCELED:
 
@@ -219,6 +295,4 @@ public class Sender {
     private void toastShort(String msg) {
            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
     }
-
-
 }

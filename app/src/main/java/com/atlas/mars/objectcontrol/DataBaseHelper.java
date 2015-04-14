@@ -22,10 +22,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
+    private static final String TABLE_NAME_HISTORY = "history";
     public static final String UID = "_id";
     public static final String VALUE_NAME = "valueName";
     public static final String VALUE_NAME_DEVICE = "valueNameDevice";
@@ -34,6 +35,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String VALUE_COMMAND = "valueCommand";
     public static final String VALUE_ID_DEVICE = "valueIdDevice";
     public static final String VALUE_FAVORITE = "valueFavorite";
+    public static final String VALUE_DATE = "valueDate";
+    public static final String VALUE_ID_COMMAND = "valueIdCommand";
+
 
     public static final String VALUE_SELECTED = "valueSelected";
 
@@ -45,6 +49,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             +TABLE_NAME_COMMANDS+" (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + VALUE_NAME + " VARCHAR(255), " + VALUE_COMMAND +  " VARCHAR(255), " + VALUE_ID_DEVICE +" INTEGER, " +VALUE_FAVORITE+ " INTEGER"+ ");";
 
+    private static final String SQL_CREATE_TABLE_HISTORY = "CREATE TABLE if not exists "
+            +TABLE_NAME_HISTORY+ " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + VALUE_DATE + " TIMESTAMP, " + VALUE_ID_COMMAND + " INTEGER" + ");";
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,19 +63,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE_DEVICES);
         db.execSQL(SQL_CREATE_TABLE_COMMANDS);
+        db.execSQL(SQL_CREATE_TABLE_HISTORY);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-      //  db.execSQL(SQL_CREATE_TABLE_COMMANDS);
-       // String jquery  = "UPDATE " + TABLE_NAME_DEVICES+" SET "+VALUE_SELECTED+"="+0+" WHERE "+VALUE_SELECTED+" IS NULL";
-        //db.execSQL(jquery);
-       /* String jquery = "ALTER TABLE "+TABLE_NAME_COMMANDS+" ADD COLUMN "+VALUE_FAVORITE+" "+"INTEGER";
-        db.execSQL(jquery);
-        jquery = "UPDATE " + TABLE_NAME_COMMANDS+" SET "+VALUE_FAVORITE+"="+0+" WHERE "+VALUE_FAVORITE+" IS NULL";
-        db.execSQL(jquery);*/
-       // db.execSQL(SQL_CREATE_TABLE_DEVICES);
-       // db.execSQL(SQL_CREATE_TABLE_COMMANDS);
+
     }
 
     public long addNewDevice(String name, String phone){
@@ -182,7 +182,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 map.put(VALUE_NAME_DEVICE, nameDevice);
                 map.put(VALUE_PHONE, phone);
                 arrayList.add(map);
-
             }
         }catch (SQLException e){
             Log.e(TAG, e.toString());
@@ -338,7 +337,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         }
         jquery = "DELETE FROM "+TABLE_NAME_COMMANDS+" WHERE "+VALUE_ID_DEVICE+"="+id;
-
         try {
             sdb.execSQL(jquery);
         }catch (Exception e){
@@ -347,8 +345,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             sdb.close();
 
         }
-
         sdb.close();
+    }
+
+    public synchronized void  insertHistory(HashMap<String, String> map){
+        sdb = getWritableDatabase();
+        String jquery = "INSERT INTO "+ TABLE_NAME_HISTORY + " ("+ VALUE_DATE +", "+ VALUE_ID_COMMAND+" )"
+                +"VALUES ('" +map.get(VALUE_DATE)+"' , '"+ map.get(VALUE_ID_COMMAND)+"');";
+        sdb.execSQL(jquery);
 
     }
 }
