@@ -38,7 +38,7 @@ public class FragmentHome extends MyFragmentView {
     static HashMap<String, String> mapSelectObjects;
     public static ArrayList<HashMap> listDevices;
     public static ArrayList<HashMap> favoriteCommand;
-    public static HashMap<String,View> viewHashMap;
+    public static HashMap<String, View> viewHashMap;
     LinearLayout mainLayout;
 
 
@@ -61,17 +61,17 @@ public class FragmentHome extends MyFragmentView {
         listCheckBox = new ArrayList<>();
         btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, FrameLayout.class).get(0);
         tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) btnSelectObj, TextView.class).get(0);
-        btnSend = (FrameLayout)viewFragment.findViewById(R.id.send);
+        btnSend = (FrameLayout) viewFragment.findViewById(R.id.send);
         initBtnSend();
         //initOkCancelSend(viewDialogSend);
-       // getViewDialogSend();
-       // viewDialogSend = getViewDialogSend();
+        // getViewDialogSend();
+        // viewDialogSend = getViewDialogSend();
         initBtnSelectObj(btnSelectObj);
         getListDevices();
         setTextSelectedObj();
         dialogInflate(viewDialogSelectObj);
         okCancelListener(viewDialogSelectObj);
-        mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
+        mainLayout = (LinearLayout) viewFragment.findViewById(R.id.mainLayout);
         getFavoriteCommand();
 
     }
@@ -80,72 +80,68 @@ public class FragmentHome extends MyFragmentView {
     public void regenParams() {
         listDevices = db.getListDevices();
         View content = viewDialogSelectObj.findViewById(R.id.contentDialog);
-        ((LinearLayout)content).removeAllViews();
+        ((LinearLayout) content).removeAllViews();
         dialogInflate(viewDialogSelectObj);
     }
 
 
-
-    private void initBtnSend(){
-       btnSend.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               dialogSend.vHide(v);
-           }
-       });
+    private void initBtnSend() {
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogSend.vHide(v);
+            }
+        });
     }
 
 
-
-    public void regenScrollView(){
+    public void regenScrollView() {
         mainLayout.removeAllViews();
         getFavoriteCommand();
     }
 
-    private void getFavoriteCommand(){
+    private void getFavoriteCommand() {
         favoriteCommand = db.getFavoriteCommand();
         Log.d("dd", "");
-        for(HashMap<String,String> map : favoriteCommand){
+        for (HashMap<String, String> map : favoriteCommand) {
             map.put(SELECT_FOR_SEND, "0");
             createRow(map);
         }
     }
 
-    public void onRedraw(){
+    public void onRedraw() {
         mainLayout.removeAllViews();
         onInit();
 
     }
 
-    private void createRow(HashMap<String,String> map){
-        FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_command, null);
+    private void createRow(HashMap<String, String> map) {
+        FrameLayout row = (FrameLayout) inflater.inflate(R.layout.row_command, null);
         ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
         ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
-        ImageView imageBackground = (ImageView)arrayImgs.get(0);
-        ImageView imageSms = (ImageView)arrayImgs.get(3);
+        ImageView imageBackground = (ImageView) arrayImgs.get(0);
+        ImageView imageSms = (ImageView) arrayImgs.get(3);
 
-        ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
-        ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
-        ((TextView)arrayTextView.get(2)).setText(map.get("valueDeviceName"));
+        ((TextView) arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
+        ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
+        ((TextView) arrayTextView.get(2)).setText(map.get("valueDeviceName"));
         ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
         viewHashMap.put(map.get(db.UID), row);
-        setClickListenerRow(row, imageBackground, imageSms ,map);
+        setClickListenerRow(row, imageBackground, imageSms, map);
     }
 
-    private void setClickListenerRow(final FrameLayout row, final ImageView imageBackground, final  ImageView imageSms, final HashMap<String, String> map){
+    //нажатие на лебел
+    private void setClickListenerRow(final FrameLayout row, final ImageView imageBackground, final ImageView imageSms, final HashMap<String, String> map) {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(map.get(SELECT_FOR_SEND).equals("0")){
-                    imageBackground.setBackgroundResource(R.drawable.bitmap_button_to_send);
-                    imageSms.setVisibility(View.VISIBLE);
-                    map.put(SELECT_FOR_SEND, "1");
-                }else{
-                    imageBackground.setBackgroundResource(R.drawable.bitmap_button);
-                    imageSms.setVisibility(View.INVISIBLE);
-                    map.put(SELECT_FOR_SEND, "0");
+
+                if (map.get(SELECT_FOR_SEND).equals("0")) {
+                    rowSelect(row, map);
+                } else {
+                    rowUnSelect(row, map);
                 }
             }
         });
@@ -163,10 +159,28 @@ public class FragmentHome extends MyFragmentView {
 
     }
 
+    public void rowSelect(FrameLayout row, HashMap<String, String> map) {
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
+        ImageView imageBackground = (ImageView)arrayImgs.get(0);
+        ImageView imageSms = (ImageView)arrayImgs.get(3);
+        imageBackground.setBackgroundResource(R.drawable.bitmap_button_to_send);
+        imageSms.setVisibility(View.VISIBLE);
+        map.put(SELECT_FOR_SEND, "1");
+    }
+
+    public void rowUnSelect(FrameLayout row, HashMap<String, String> map) {
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
+        ImageView imageBackground = (ImageView)arrayImgs.get(0);
+        ImageView imageSms = (ImageView)arrayImgs.get(3);
 
 
+        imageBackground.setBackgroundResource(R.drawable.bitmap_button);
+        imageSms.setVisibility(View.INVISIBLE);
+        map.put(SELECT_FOR_SEND, "0");
+    }
 
-    private void getListDevices() {
+
+    public void getListDevices() {
         listDevices = db.getListDevices();
         Log.d("dd", "");
     }
@@ -175,8 +189,8 @@ public class FragmentHome extends MyFragmentView {
         //listDevices = db.getListDevices();
         selectObject = "";
         for (HashMap<String, String> map : listDevices) {
-            if(map.get(db.VALUE_SELECTED)!= null){
-                if (  map.get(db.VALUE_SELECTED).equals("1")) {
+            if (map.get(db.VALUE_SELECTED) != null) {
+                if (map.get(db.VALUE_SELECTED).equals("1")) {
                     selectObject += map.get(db.VALUE_NAME) + " | ";
                 }
             }

@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol;
 
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     FragmentAllCommand fragmentAllCommand;
     FragmentHome fragmentHome;
     Menu menu;
+    BroadcastReceiver receiver;
 
 
     @Override
@@ -83,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     @Override
     protected void onStart() {
+
         int i = pager.getCurrentItem();
         setActiveNavBar(i);
         super.onStart();
@@ -447,5 +450,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if (fragmentHome != null) {
             fragmentHome.regenScrollView();
         }
+    }
+    @Override
+    public void registerReceiver( BroadcastReceiver receiver){
+
     }
 }

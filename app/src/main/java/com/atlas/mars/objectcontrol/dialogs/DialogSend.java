@@ -5,10 +5,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -21,7 +18,6 @@ import com.atlas.mars.objectcontrol.Sender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by mars on 4/8/15.
@@ -100,24 +96,11 @@ public class DialogSend extends MyDialog {
             @Override
             public void onClick(View v) {
 
-                      /*  for( HashMap<String, String> map:  arraySelectForSend){
-                            String id = map.get(db.UID);
-                            FrameLayout row = (FrameLayout)fragmentHome.viewHashMap.get(id);*/
+
 
                 Sender sender = new Sender(arraySelectForSend, fragmentHome.viewHashMap, fragmentHome, activity.getApplicationContext());
                 sender.send();
-                           /* ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
-                            ImageView imageSms = (ImageView)arrayImgs.get(3);
-                            Animation animOut = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.hide_right);
-                            animOut.setRepeatCount(Animation.INFINITE);
-                            imageSms.startAnimation(animOut);*/
 
-//                        }
-
-              /*  for (Map.Entry entry :fragmentHome.viewHashMap.entrySet()) {
-
-                   // System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
-                }*/
                 Toast toast = Toast.makeText(activity, "Тут могла быть ваша реклама", Toast.LENGTH_LONG);
                 toast.show();
                 pw.dismiss();
