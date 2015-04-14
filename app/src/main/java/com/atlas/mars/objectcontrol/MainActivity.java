@@ -65,7 +65,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     FragmentAllCommand fragmentAllCommand;
     FragmentHome fragmentHome;
     Menu menu;
-    BroadcastReceiver receiver;
+    BroadcastReceiver receiver, receiverDeliver;
 
 
     @Override
@@ -452,4 +452,16 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
     }
 
+    @Override
+    public void initReceivers(BroadcastReceiver receiver, BroadcastReceiver receiverDeliver){
+        this.receiver = receiver;
+        this.receiverDeliver = receiverDeliver;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(receiver!=null) unregisterReceiver(receiver);
+        if(receiverDeliver!=null) unregisterReceiver(receiverDeliver);
+        super.onDestroy();
+    }
 }

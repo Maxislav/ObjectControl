@@ -153,18 +153,14 @@ public class Sender {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String name = intent.getStringExtra("name");
+            String number = intent.getStringExtra("number");
+            String id =  intent.getStringExtra(EXTRA_ID);
             if (SENT.equals(intent.getAction())) {
-                String name = intent.getStringExtra("name");
-                String number = intent.getStringExtra("number");
-                String id =  intent.getStringExtra(EXTRA_ID);
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         //Команда отправлена
                         toastShort("SMS sent to " + name + " & " + number);
-                        Message msg = Message.obtain(h, 0);
-                        msg.obj = id;
-                        h.sendMessage(msg);
-
                         break;
 
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
@@ -183,6 +179,7 @@ public class Sender {
                         toastShort("Radio off");
                         break;
                 }
+
             } else if (DELIVERED.equals(intent.getAction())) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
@@ -194,6 +191,11 @@ public class Sender {
                         break;
                 }
             }
+            Message msg = Message.obtain(h, 0);
+            msg.obj = id;
+            h.sendMessage(msg);
+
+
         }
     };
 
