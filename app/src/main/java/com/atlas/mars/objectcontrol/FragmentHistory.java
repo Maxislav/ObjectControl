@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -106,17 +107,18 @@ public class FragmentHistory extends MyFragmentView {
 
             String sDate = map.get(db.VALUE_DATE);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date;
+            format.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = null;
             try {
-                 date = format.parse(""+sDate);
+                 date = format.parse(sDate);
             } catch (ParseException e) {
-                e.printStackTrace();
+                Log.e(TAG,e.toString());
             }
-            //formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            //2015-04-15 13:33:59
-           // Date date = (Date)formatter.parse(sDate);
-            Log.d(TAG, "");
-            ((TextView)arrayTextView.get(0)).setText(map.get(db.VALUE_DATE));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            String toDate = dateFormat.format(date);
+
+            Log.d(TAG, String.valueOf(date));
+            ((TextView)arrayTextView.get(0)).setText(toDate);
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_NAME_DEVICE));
