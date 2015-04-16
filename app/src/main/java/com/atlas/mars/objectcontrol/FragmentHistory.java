@@ -10,13 +10,11 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -36,6 +34,8 @@ public class FragmentHistory extends MyFragmentView {
 
 
     ArrayList<HashMap> arrayList;
+    public HashMap<String, View> hashViews; // id в истории / View - row
+
     Calendar calFrom, calTo;
 
     FragmentHistory(MainActivity mainActivity, View viewFragment, LayoutInflater inflater) {
@@ -101,10 +101,10 @@ public class FragmentHistory extends MyFragmentView {
     }
 
     private void onDraw(){
+        hashViews = new HashMap<>();
         for(HashMap<String, String> map : arrayList){
             FrameLayout row =(FrameLayout)inflater.inflate(R.layout.row_command_history, null);
             ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
-
             String sDate = map.get(db.VALUE_DATE);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -122,9 +122,8 @@ public class FragmentHistory extends MyFragmentView {
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_NAME_DEVICE));
-
             mainLayout.addView(row);
-
+            hashViews.put(map.get(db.UID), row);
         }
     }
 
@@ -191,6 +190,14 @@ public class FragmentHistory extends MyFragmentView {
         String s = formatter.format(dateFrom);
         textBtnTo.setText(s);
     }
+
+    public  void setDelivered(String id){
+        FrameLayout row = (FrameLayout)hashViews.get(id);
+
+        TextView dateText  =(TextView) myJQuery.findViewByTagClass(row, TextView.class).get(0);
+        dateText.setTextColor(mainActivity.getResources().getColor(R.color.colorDelivered));
+    }
+
     @Override
     public void regenParams() {
 

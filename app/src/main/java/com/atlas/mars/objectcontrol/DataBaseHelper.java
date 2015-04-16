@@ -382,11 +382,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
     }
 
-    public synchronized void  insertHistory(HashMap<String, String> map){
+    public synchronized long  insertHistory(HashMap<String, String> map){
         sdb = getWritableDatabase();
-        String jquery = "INSERT INTO "+ TABLE_NAME_HISTORY + " ("+ VALUE_DATE +", "+ VALUE_ID_COMMAND+" )"
-                +"VALUES ('" +map.get(VALUE_DATE)+"' , '"+ map.get(VALUE_ID_COMMAND)+"');";
-        sdb.execSQL(jquery);
+       /* String jquery = "INSERT INTO "+ TABLE_NAME_HISTORY + " ("+ VALUE_DATE +", "+ VALUE_ID_COMMAND+" )"
+                +"VALUES ('" +map.get(VALUE_DATE)+"' , '"+ map.get(VALUE_ID_COMMAND)+"');";*/
+      //  sdb.execSQL(jquery);
 
+
+
+        ContentValues cv =  new ContentValues();
+        cv.put(VALUE_DATE,map.get(VALUE_DATE));
+        cv.put(VALUE_ID_COMMAND,map.get(VALUE_ID_COMMAND));
+        long id = sdb.insert(TABLE_NAME_HISTORY, null, cv);
+
+        if(id<0){
+            Log.e(TAG, "Error INSERT to table:  "+TABLE_NAME_HISTORY);
+        }
+
+        sdb.close();
+        return  id;
     }
 }

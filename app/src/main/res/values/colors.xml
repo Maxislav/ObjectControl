@@ -40,6 +40,7 @@
 
     <item name="gradientStartDialog" type="color">#89ffffff</item>
     <item name="gradientEndDialog" type="color">#e9ffffff</item>
+    <item name="colorDelivered" type="color">#e9008d12</item>
 
 
 </resources>

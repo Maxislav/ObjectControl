@@ -471,7 +471,19 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         super.onDestroy();
     }
     public void regenHistory(){
-        if(fragmentHistory!=null) fragmentHistory.onRedraw();
+        try {
+            if(fragmentHistory!=null) fragmentHistory.onRedraw();
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
+
+    }
+    public void markSendOnHistory(String id){
+        try {
+            if(fragmentHistory!=null) fragmentHistory.setDelivered(id);
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
     }
 
 }

@@ -86,6 +86,9 @@ public class Sender {
                     case 1:
                         toastShort(msg.obj.toString());
                         break;
+                    case 2:
+                        ((MainActivity)activity).markSendOnHistory(msg.obj.toString());
+                        break;
                 }
 
 
@@ -151,6 +154,19 @@ public class Sender {
 
     private void sendText(String conNumber, String conName, String mess, String idCommand, int requestCode)
     {
+
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String s = formatter.format(now);
+        Log.d(TAG, "+++"+s);
+        HashMap<String,String> map = new HashMap<>();
+        map.put(db.VALUE_DATE, s);
+        map.put(db.VALUE_ID_COMMAND, idCommand);
+        long longIdHistory = db.insertHistory(map);
+        String idHistory = Long.toString(longIdHistory);
+
+
         Intent sentIntent = new Intent(SENT);
         Intent deliveredIntent = new Intent(DELIVERED);
 
@@ -165,16 +181,26 @@ public class Sender {
         PendingIntent sentPI = PendingIntent.getBroadcast(activity, requestCode, sentIntent, 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(activity, requestCode, deliveredIntent, 0);
 
+
+
+
+
+
+
         //Todo раскоментировать
        // smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
 
         //Todo закоментировать
-        capSend(conNumber, mess, conName, idCommand);
+        capSend(conNumber, mess, conName, idCommand, idHistory);
 
     }
 
-     private void capSend(String number, final String mess, final String name, final String id){
-         Date now = new Date();
+
+
+
+
+     private void capSend(String number, final String mess, final String name, final String id, final String idHistory){
+       /*  Date now = new Date();
          SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
          formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
          String s = formatter.format(now);
@@ -182,7 +208,7 @@ public class Sender {
          HashMap<String,String> map = new HashMap<>();
          map.put(db.VALUE_DATE, s);
          map.put(db.VALUE_ID_COMMAND, id);
-         db.insertHistory(map);
+         db.insertHistory(map);*/
 
 
          Thread send = new Thread(new Runnable() {
@@ -209,7 +235,9 @@ public class Sender {
                      msg.obj = mess;
                      h.sendMessage(msg);
 
-
+                     Message msg2 = Message.obtain(h, 2);
+                     msg2.obj = idHistory;
+                     h.sendMessage(msg2);
 
                  } catch (Exception e) {
                      Log.e(TAG, e.toString());
