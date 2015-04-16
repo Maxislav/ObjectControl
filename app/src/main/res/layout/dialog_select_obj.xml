@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title"
+                android:text="@string/title_select_obj"
                 android:padding="10dp"
                 android:textStyle="bold"
                 android:textSize="16dp"
@@ -64,26 +64,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_style"
-                    android:id="@+id/btn_ok"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Ok" />
-                </FrameLayout>
-                <FrameLayout
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/border_vertical">
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:padding="10dp"
                     android:clickable="true"
                     android:id="@+id/btn_cancel"
@@ -95,6 +75,28 @@
                         android:layout_gravity="center"
                         android:text="Cancel" />
                 </FrameLayout>
+                <FrameLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/border_vertical">
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_style"
+                    android:id="@+id/btn_ok"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Ok" />
+                </FrameLayout>
+
+
 
 
             </LinearLayout>
