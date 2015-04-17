@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -37,6 +37,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String VALUE_FAVORITE = "valueFavorite";
     public static final String VALUE_DATE = "valueDate";
     public static final String VALUE_ID_COMMAND = "valueIdCommand";
+    public static final String VALUE_DELIVERED = "valueDelivered";
 
 
     public static final String VALUE_SELECTED = "valueSelected";
@@ -51,7 +52,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_HISTORY = "CREATE TABLE if not exists "
             +TABLE_NAME_HISTORY+ " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + VALUE_DATE + " TIMESTAMP, " + VALUE_ID_COMMAND + " INTEGER" + ");";
+            + VALUE_DATE + " TIMESTAMP, " + VALUE_ID_COMMAND + " INTEGER, " +VALUE_DELIVERED + " INTEGER"+");";
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -69,6 +70,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+       /* String query = "ALTER TABLE "+TABLE_NAME_HISTORY+" ADD COLUMN "+VALUE_DELIVERED+" INTEGER";
+        db.execSQL(query);
+        query = "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+0;
+        db.execSQL(query);*/
     }
 
     public long addNewDevice(String name, String phone){
@@ -297,6 +302,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(UID,cursor.getString(cursor.getColumnIndex(UID)));
             map.put(VALUE_DATE,cursor.getString(cursor.getColumnIndex(VALUE_DATE)));
             map.put(VALUE_ID_COMMAND,cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)));
+            map.put(VALUE_DELIVERED,cursor.getString(cursor.getColumnIndex(VALUE_DELIVERED)));
             HashMap<String, String> mapCommand = getCommand(cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)), sdb);
 
             map.put(VALUE_NAME, mapCommand.get(VALUE_NAME));
