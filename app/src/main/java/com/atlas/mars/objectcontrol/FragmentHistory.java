@@ -122,6 +122,11 @@ public class FragmentHistory extends MyFragmentView {
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
             ((TextView)arrayTextView.get(3)).setText(map.get(db.VALUE_NAME_DEVICE));
+
+            if(map.get(db.VALUE_DELIVERED).equals("1")){
+                ((TextView)arrayTextView.get(0)).setTextColor(mainActivity.getResources().getColor(R.color.colorDelivered));
+            }
+
             mainLayout.addView(row);
             hashViews.put(map.get(db.UID), row);
         }
@@ -193,7 +198,6 @@ public class FragmentHistory extends MyFragmentView {
 
     public  void setDelivered(String id){
         FrameLayout row = (FrameLayout)hashViews.get(id);
-
         TextView dateText  =(TextView) myJQuery.findViewByTagClass(row, TextView.class).get(0);
         dateText.setTextColor(mainActivity.getResources().getColor(R.color.colorDelivered));
     }

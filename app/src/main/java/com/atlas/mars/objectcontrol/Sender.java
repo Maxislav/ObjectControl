@@ -34,18 +34,14 @@ public class Sender {
     DataBaseHelper db;
     FragmentHome fragmentHome;
     Context context;
-    static Handler h;
-    static Handler toastMess;
+    static Handler handler;
     private static final String SENT = "SMS_SENT";
     private static final String DELIVERED = "SMS_DELIVERED";
     private static final String EXTRA_NAME = "name";
     private static final String EXTRA_NUMBER = "number";
     private static final String EXTRA_ID = "idCommand";
-    Communicator communicator;
+    private static final String EXTRA_ID_HISTORY = "idHistory";
     SmsManager smsMgr;
-    IntentFilter filter;
-
-
     final static private String TAG = "myLog";
 
     public Sender(ArrayList<HashMap> arraySelectForSend, HashMap<String, View> viewHashMap, final FragmentHome fragmentHome, Context context, final Activity activity) {
@@ -55,17 +51,13 @@ public class Sender {
         this.context = context;
         this.activity = activity;
         myJQuery = new MyJQuery();
-        //communicator = (Communicator)getA
-
-        //communicator.registerReceiver(receiver);
         smsMgr = SmsManager.getDefault();
-       // filter = new IntentFilter(SENT);
-       // filter.addAction(DELIVERED);
         activity.registerReceiver(receiver, new IntentFilter(SENT));
         activity.registerReceiver(receiverDeliver, new IntentFilter(DELIVERED));
 
         db = new DataBaseHelper(fragmentHome.mainActivity);
-        h = new Handler() {
+        handler = new MyHandler(fragmentHome);
+        /*handler = new Handler() {
             public static final int ID_0 = 0;
             public static final int ID_1 = 1;
             final FragmentHome _fragmentHome = fragmentHome;
@@ -93,9 +85,42 @@ public class Sender {
 
 
             }
-        };
+        };*/
 
 
+
+        //toastMess = new MyHandler(fragmentHome);
+    }
+
+    private  class MyHandler extends Handler{
+        FragmentHome _fragmentHome;
+
+        public MyHandler(FragmentHome _fragmentHome){
+            super();
+            this._fragmentHome = _fragmentHome;
+        }
+
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what){
+                case 0:
+                    Log.d(TAG, "+++" + msg.obj.toString());
+                    String id = msg.obj.toString();
+                    FrameLayout row = (FrameLayout) _fragmentHome.viewHashMap.get(id);
+                    HashMap<String, String> map = getMap(id);
+                    _fragmentHome.rowUnSelect(row, map);
+                    ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
+                    ImageView imageSms = (ImageView) arrayImgs.get(3);
+                    imageSms.clearAnimation();
+                    ((MainActivity)activity).regenHistory();
+                    break;
+                case 1:
+                    toastShort(msg.obj.toString());
+                    break;
+                case 2:
+                    ((MainActivity)activity).markSendOnHistory(msg.obj.toString());
+                    break;
+            }
+        }
     }
 
 
@@ -114,27 +139,8 @@ public class Sender {
             name = map.get(db.VALUE_NAME_DEVICE);
             command = map.get(db.VALUE_COMMAND);
 
-            // imageSms.clearAnimation();
-           // toastShort(name+" : " + command);
-
-            //Todo отправка раскоментировать
             sendText(phone, name, command, id,0);
             toastShort("Sending to "+name+" : " + command);
-            /*Thread t = new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        Thread.sleep(5200);
-                        Message msg = Message.obtain(h, 0);
-                        msg.obj = id;
-                        h.sendMessage(msg);
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                    }
-
-                }
-            });
-            t.start();*/
 
 
         }
@@ -177,6 +183,7 @@ public class Sender {
         deliveredIntent.putExtra(EXTRA_NUMBER, conNumber);
         deliveredIntent.putExtra(EXTRA_NAME, conName);
         deliveredIntent.putExtra(EXTRA_ID, idCommand);
+        deliveredIntent.putExtra(EXTRA_ID_HISTORY, idCommand);
 
         PendingIntent sentPI = PendingIntent.getBroadcast(activity, requestCode, sentIntent, 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(activity, requestCode, deliveredIntent, 0);
@@ -215,9 +222,9 @@ public class Sender {
              public void run() {
                  try {
                      Thread.sleep(1000);
-                     Message msg = Message.obtain(h, 0);
+                     Message msg = Message.obtain(handler, 0);
                      msg.obj = id;
-                     h.sendMessage(msg);
+                     handler.sendMessage(msg);
                  } catch (Exception e) {
                      Log.e(TAG, e.toString());
                  }
@@ -231,13 +238,14 @@ public class Sender {
                      Thread.sleep(5000);
 
                      String mess = name+ " Команда доставлена id: "+id;
-                     Message msg = Message.obtain(h, 1);
+                     Message msg = Message.obtain(handler, 1);
                      msg.obj = mess;
-                     h.sendMessage(msg);
+                     handler.sendMessage(msg);
 
-                     Message msg2 = Message.obtain(h, 2);
+                     Message msg2 = Message.obtain(handler, 2);
+                     db.updateToDelivered(idHistory);
                      msg2.obj = idHistory;
-                     h.sendMessage(msg2);
+                     handler.sendMessage(msg2);
 
                  } catch (Exception e) {
                      Log.e(TAG, e.toString());
@@ -295,9 +303,9 @@ public class Sender {
                         break;
                 }
             }
-            Message msg = Message.obtain(h, 0);
+            Message msg = Message.obtain(handler, 0);
             msg.obj = id;
-            h.sendMessage(msg);
+            handler.sendMessage(msg);
 
 
         }
@@ -309,9 +317,15 @@ public class Sender {
             String name = intent.getStringExtra("name");
             String number = intent.getStringExtra("number");
             String id =  intent.getStringExtra(EXTRA_ID);
+            String  idHistory =  intent.getStringExtra(EXTRA_ID_HISTORY);
             switch (getResultCode())
             {
                 case Activity.RESULT_OK:
+                    db.updateToDelivered(idHistory);
+                    Message msg2 = Message.obtain(handler, 2);
+                    msg2.obj = idHistory;
+                    handler.sendMessage(msg2);
+                    db.updateToDelivered(idHistory);
                     toastShort( name+ " Команда доставлена id: "+id);
                     break;
                 case Activity.RESULT_CANCELED:

@@ -399,6 +399,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv =  new ContentValues();
         cv.put(VALUE_DATE,map.get(VALUE_DATE));
         cv.put(VALUE_ID_COMMAND,map.get(VALUE_ID_COMMAND));
+        cv.put(VALUE_DELIVERED,0);
         long id = sdb.insert(TABLE_NAME_HISTORY, null, cv);
 
         if(id<0){
@@ -407,5 +408,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         sdb.close();
         return  id;
+    }
+
+    public void updateToDelivered (String id){
+        sdb = getWritableDatabase();
+        String query =  "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+1+" WHERE "+UID+"="+id;
+        sdb.execSQL(query);
+        sdb.close();
     }
 }
