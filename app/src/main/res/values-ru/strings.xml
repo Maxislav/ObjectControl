@@ -2,32 +2,32 @@
 <resources>
 
     <string name="app_name">Inkey</string>
-    <string name="create_command">Create command</string>
-    <string name="create_object">Create object</string>
+    <string name="create_command">Содать команду</string>
+    <string name="create_object">Создать объект</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Настройки</string>
-    <string name="action_add_object">Create object</string>
-    <string name="action_list_object">List object</string>
-    <string name="action_add_command">Create command</string>
-    <string name="action_remove_command">Del command</string>
-    <string name="action_add_favorite">Add to favorite</string>
-    <string name="setting">Setting</string>
-    <string name="name_object">Name object:</string>
-    <string name="phone_number">Phone number:</string>
-    <string name="edit">Edit</string>
-    <string name="end_edit">End edit</string>
-    <string name="end_del">End del</string>
-    <string name="del_object">Del</string>
-    <string name="empty_for_send">Empty</string>
-    <string name="send_immediately">Send immediately</string>
-    <string name="title_select_obj">Select object</string>
-    <string name="device_name">Name object</string>
+    <string name="action_add_object">Создать объект</string>
+    <string name="action_list_object">Список объектов</string>
+    <string name="action_add_command">Создать команду</string>
+    <string name="action_remove_command">Удалить команду</string>
+    <string name="action_add_favorite">Добавить в избранные</string>
+    <string name="setting">Настройки</string>
+    <string name="name_object">Название объекта:</string>
+    <string name="phone_number">Телефонный номер:</string>
+    <string name="edit">Редактировать</string>
+    <string name="end_edit">Закончить</string>
+    <string name="end_del">Закончить</string>
+    <string name="del_object">Удалить</string>
+    <string name="empty_for_send">Нет команд для отправки</string>
+    <string name="send_immediately">Отправить немедленно</string>
+    <string name="title_select_obj">Выбрать объект</string>
+    <string name="device_name">Имя объекта</string>
     <string name="select_obj">Выбрать объект</string>
-    <string name="send">Send</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="save_and_close">Save and close</string>
+    <string name="send">Отправить</string>
+    <string name="btn_ok">Применить</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="save_and_close">Сохранить и закрыть</string>
 
     <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>

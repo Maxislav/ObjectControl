@@ -22,7 +22,7 @@
     <string name="send_immediately">Send immediately</string>
     <string name="title_select_obj">Select object</string>
     <string name="device_name">Name object</string>
-    <string name="select_obj">Выбрать объект</string>
+    <string name="select_obj">Select object</string>
     <string name="send">Send</string>
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
@@ -30,14 +30,12 @@
     <string name="save_and_close">Save and close</string>
 
     <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
-    <string name="multiple_send_help">Позволяет выбрать несколько команд</string>
-    <string name="multiple_send">Можественная отправка</string>
-    <string name="confirm_send">Запрашивать подттверждение</string>
-    <string name="confirm_send_help">Запрашивать подттверждение при отправке sms</string>
-    <string name="count_command_history_title">Количество команд в итории при старте</string>
-    <string name="count_command_history">Общее количество команд которые будет помнить история</string>
-    <string name="count_command_history_in_start_title">Количество команд в итории отображаемых при стате</string>
-    <string name="count_command_history_in_start">
-        Количество команд в итории отображаемых при стате приложения.
-        Чем больше команд, тем труднее приложению загрузиться в первый момент</string>
+    <string name="multiple_send_help">Allows you to select multiple commands</string>
+    <string name="multiple_send">Multiple sending</string>
+    <string name="confirm_send">Ask for confirmation</string>
+    <string name="confirm_send_help">Ask for confirmation when sending SMS</string>
+    <string name="count_command_history_title">The number of commands in the history at the start</string>
+    <string name="count_command_history">The total number of commands that will be remembered history</string>
+    <string name="count_command_history_in_start_title">The number of commands in the history displayed at startup</string>
+    <string name="count_command_history_in_start">The number of commands in the history displayed when the application starts. The more teams, the more difficult the application will load the first time</string>
 </resources>
