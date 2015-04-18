@@ -35,6 +35,7 @@
 
 
     <item name="redBorderDark" type="color">#ffff0000</item>
+    <item name="redTitleActive" type="color">#ff9e0003</item>
     <item name="redBorderLight" type="color">#ffffa9a7</item>
 
 

@@ -40,4 +40,7 @@
     <string name="count_command_history_in_start">
         Количество команд в итории отображаемых при стате приложения.
         Чем больше команд, тем труднее приложению загрузиться в первый момент</string>
+    <string name="all_commands">Все команды</string>
+    <string name="history">История</string>
+    <string name="home">Избранные</string>
 </resources>

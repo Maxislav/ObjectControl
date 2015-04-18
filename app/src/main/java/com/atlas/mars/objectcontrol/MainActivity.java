@@ -162,12 +162,20 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
 
     private void setActiveNavBar(int k) {
-
+        TextView textView;
+        LinearLayout title;
         for (int i = 0; i < titleArrayList.size(); i++) {
             if (k == i) {
                 titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_active, null));
+                title  = (LinearLayout)titleArrayList.get(i);
+                textView = (TextView)myJQuery.findViewByTagClass(title, TextView.class).get(0);
+                textView.setTextAppearance(getApplicationContext(), R.style.activeTile);
+
             } else {
                 titleArrayList.get(i).setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.title_bar, null));
+                title  = (LinearLayout)titleArrayList.get(i);
+                textView = (TextView)myJQuery.findViewByTagClass(title, TextView.class).get(0);
+                textView.setTextAppearance(getApplicationContext(), R.style.unActiveTile);
             }
         }
 
@@ -190,13 +198,15 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 menu.findItem(R.id.action_settings).setVisible(true);
                 menu.findItem(R.id.action_add_object).setVisible(true);
                 menu.findItem(R.id.action_list_object).setVisible(true);
-
                 break;
             case 1:
                 menu.findItem(R.id.action_settings).setVisible(true);
                 menu.findItem(R.id.action_add_command).setVisible(true);
                 menu.findItem(R.id.action_remove_command).setVisible(true);
                 menu.findItem(R.id.action_add_favorite).setVisible(true);
+                break;
+            case 2:
+                menu.findItem(R.id.action_settings).setVisible(true);
                 break;
 
             default:
@@ -343,6 +353,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if(requestCode == FROM_SETTING){
             if (resultCode == RESULT_OK) {
                 setMapSetting();
+                if(fragmentHome!=null) try{
+                    fragmentHome.onRedraw();
+                }catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }
             }
         }
     }

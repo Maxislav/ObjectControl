@@ -17,6 +17,7 @@ import com.atlas.mars.objectcontrol.dialogs.DialogSend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 //import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog00;
 
@@ -40,6 +41,7 @@ public class FragmentHome extends MyFragmentView {
     public static ArrayList<HashMap> favoriteCommand;
     public static HashMap<String, View> viewHashMap;
     LinearLayout mainLayout;
+    boolean multipleSend;
 
 
     FragmentHome(MainActivity mainActivity, View viewFragment, LayoutInflater inflater) {
@@ -50,7 +52,11 @@ public class FragmentHome extends MyFragmentView {
     @Override
     public void onInit() {
         //rowCreator = new RowCreator(viewFragment, inflater);
-
+        if(mainActivity.mapSetting.get(db.MULTIPLE_SEND).equals("1")){
+            multipleSend = true;
+        }else{
+            multipleSend = false;
+        }
         dialogSelectObj = new DialogSelectObj(mainActivity);
         dialogSend = new DialogSend(mainActivity);
         viewDialogSend = dialogSend.onCreate();
@@ -160,6 +166,18 @@ public class FragmentHome extends MyFragmentView {
     }
 
     public void rowSelect(FrameLayout row, HashMap<String, String> map) {
+        if(!multipleSend){ //
+            for (Map.Entry entry : viewHashMap.entrySet()) {
+                FrameLayout _row =(FrameLayout) entry.getValue();
+                String _id = entry.getKey().toString();
+                HashMap<String, String> _map = getMap(_id);
+                if(_row != row && _map.get(SELECT_FOR_SEND).equals("1")){
+                    Log.d(TAG,"+++");
+                    rowUnSelect(_row, _map);
+                }
+            }
+        }
+
         ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
         ImageView imageBackground = (ImageView)arrayImgs.get(0);
         ImageView imageSms = (ImageView)arrayImgs.get(3);
@@ -266,5 +284,15 @@ public class FragmentHome extends MyFragmentView {
                 dialogSelectObj.onDismiss();
             }
         });
+    }
+
+    private HashMap<String, String> getMap(String id){
+        for(HashMap<String, String> map : favoriteCommand){
+            if(map.get(db.UID).equals(id)){
+                return map;
+            }
+        }
+
+        return null;
     }
 }

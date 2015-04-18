@@ -119,12 +119,12 @@ public class ActivitySetting extends ActionBarActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) return;
-                String changesValue = commandInMemory.getText().toString();
+                String changesValue = commandInStart.getText().toString();
                 String result = changesValue.replaceAll("[^0-9]", "");
                 changesValue = result;
                 Log.d(TAG,"+++ "+ changesValue);
                 if(changesValue.isEmpty()){
-                    commandInMemory.setText("0");
+                    commandInStart.setText("0");
                 }
             }
         });

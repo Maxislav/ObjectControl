@@ -20,6 +20,7 @@ public abstract class MyFragmentView {
     View dialog;
     PopupWindow pw;
     MyJQuery myJQuery;
+    public static final String TAG = "myLog";
 
     public MyFragmentView(MainActivity mainActivity, View viewFragment, LayoutInflater inflater){
         this.mainActivity = mainActivity;
