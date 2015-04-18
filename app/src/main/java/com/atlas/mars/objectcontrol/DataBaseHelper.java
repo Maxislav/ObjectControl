@@ -20,13 +20,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     SQLiteDatabase sdb;
 
+
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 16;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
     private static final String TABLE_NAME_HISTORY = "history";
+    private static final String TABLE_NAME_SETTING = "setting";
     public static final String UID = "_id";
     public static final String VALUE_NAME = "valueName";
     public static final String VALUE_NAME_DEVICE = "valueNameDevice";
@@ -38,6 +40,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String VALUE_DATE = "valueDate";
     public static final String VALUE_ID_COMMAND = "valueIdCommand";
     public static final String VALUE_DELIVERED = "valueDelivered";
+    public static final String VALUE_NAME_SETTING_CODE = "valueNameSetting"; //confirmSend || multipleSend ||  countMemoryHistory || countDisplayHistory
+    public static final String VALUE_PARAMETER_SETTING = "valueParameterSetting";
+
+    public static final String CONFIRM_SEND = "confirmSend";
+    public static final String MULTIPLE_SEND = "multipleSend";
+    public static final String COUNT_MEMORY_HISTORY = "countMemoryHistory";
+    public static final String COUNT_DISPLAY_HISTORY = "countDisplayHistory";
 
 
     public static final String VALUE_SELECTED = "valueSelected";
@@ -54,6 +63,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             +TABLE_NAME_HISTORY+ " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + VALUE_DATE + " TIMESTAMP, " + VALUE_ID_COMMAND + " INTEGER, " +VALUE_DELIVERED + " INTEGER"+");";
 
+    private static final String SQL_CREATE_TABLE_SETTING = "CREATE TABLE if not exists "
+            +TABLE_NAME_SETTING+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + VALUE_NAME_SETTING_CODE + " VARCHAR(255), " + VALUE_PARAMETER_SETTING +  " VARCHAR(255) " + ");";
+
+
+
+
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -65,6 +81,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_DEVICES);
         db.execSQL(SQL_CREATE_TABLE_COMMANDS);
         db.execSQL(SQL_CREATE_TABLE_HISTORY);
+        db.execSQL(SQL_CREATE_TABLE_SETTING);
+        fillSetting(CONFIRM_SEND, "1",db);
+        fillSetting(MULTIPLE_SEND, "0", db);
+        fillSetting(COUNT_MEMORY_HISTORY, "100", db);
+        fillSetting(COUNT_DISPLAY_HISTORY, "10", db);
     }
 
     @Override
@@ -74,6 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
         query = "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+0;
         db.execSQL(query);*/
+
     }
 
     public long addNewDevice(String name, String phone){
@@ -414,6 +436,31 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb = getWritableDatabase();
         String query =  "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+1+" WHERE "+UID+"="+id;
         sdb.execSQL(query);
+        sdb.close();
+    }
+
+    public long fillSetting(String nameSetting, String param, SQLiteDatabase db){
+
+        ContentValues cv =  new ContentValues();
+        cv.put(VALUE_NAME_SETTING_CODE, nameSetting);
+        cv.put(VALUE_PARAMETER_SETTING, param);
+        long id = db.insert(TABLE_NAME_SETTING, null, cv);
+        if(id<0){
+            Log.e(TAG, "+++ERROR fillSetting");
+        }
+        return id;
+    }
+
+    public void getSetting(HashMap<String,String> map){
+        sdb = getWritableDatabase();
+        //HashMap<String,String> map = new HashMap<>();
+        String query =  "SELECT * FROM " + TABLE_NAME_SETTING;
+        Cursor cursor = sdb.rawQuery(query,null);
+        while (cursor.moveToNext()) {
+            String key = cursor.getString(cursor.getColumnIndex(VALUE_NAME_SETTING_CODE));
+            String value = cursor.getString(cursor.getColumnIndex(VALUE_PARAMETER_SETTING));
+            map.put(key,value);
+        }
         sdb.close();
     }
 }

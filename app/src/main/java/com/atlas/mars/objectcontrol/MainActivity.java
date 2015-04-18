@@ -2,7 +2,6 @@ package com.atlas.mars.objectcontrol;
 
 import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     static LinearLayout action_bar_title;
     static final public int CHOOSE_THIEF = 0;
     static final public int LIST_OBJECT = 1;
+    static final public int FROM_SETTING = 2;
     MenuInflater menuInflater;
     MyJQuery myJQuery;
     LinearLayout lv;
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     FragmentHistory fragmentHistory;
     Menu menu;
     BroadcastReceiver receiver, receiverDeliver;
-
+    public HashMap<String, String> mapSetting;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -99,10 +99,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     private void _init() {
         mapSelectObjects = new HashMap<>();
-
-
+        mapSetting = new HashMap<>();
         db = new DataBaseHelper(this);
-
+        setMapSetting();
         ArrayList arrayList = db.getValueSelected();
         HashMap<String, String> map = new HashMap<>();
         for (int k = 0; k < arrayList.size(); k++) {
@@ -146,6 +145,9 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
     }
 
+    public void setMapSetting(){
+        db.getSetting(mapSetting);
+    }
 
     private void setTitleClickListener(View view, int _i) {
         final int i = _i;
@@ -215,19 +217,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         });
     }
 
-    public static Context getContext() {
-        try {
-            return (Context) Class.forName("android.app.ActivityThread")
-                    .getMethod("currentApplication").invoke(null, (Object[]) null);
-        } catch (final Exception e1) {
-            try {
-                return (Context) Class.forName("android.app.AppGlobals")
-                        .getMethod("getInitialApplication").invoke(null, (Object[]) null);
-            } catch (final Exception e2) {
-                throw new RuntimeException("Failed to get application instance");
-            }
-        }
-    }
+
 
 
     public void goToNewObjCreate() {
@@ -290,7 +280,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 return true;
             case R.id.action_settings:
                 Intent intent = new Intent(this, ActivitySetting.class);
-                startActivity(intent);
+
+                startActivityForResult(intent, FROM_SETTING);
                 return true;
             case R.id.action_list_object:
                 questionIntent = new Intent(MainActivity.this, ListObjectActivity.class);
@@ -347,6 +338,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
 
             }else{
                 Log.d(TAG, "RESULT +++ LIST_OBJECT NULL");
+            }
+        }
+        if(requestCode == FROM_SETTING){
+            if (resultCode == RESULT_OK) {
+                setMapSetting();
             }
         }
     }
