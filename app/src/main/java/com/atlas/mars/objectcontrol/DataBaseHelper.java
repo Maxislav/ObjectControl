@@ -311,13 +311,28 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return  arrayList;
     }
 
-    public ArrayList<HashMap> getHistoryCommand(){
+    private void clearUpLimitHistory(){
+        HashMap<String,String> map = new HashMap<>();
+        getSetting(map);
+        String limit = map.get(COUNT_MEMORY_HISTORY);
+        sdb = getWritableDatabase();
+        String query = "DELETE  FROM "+TABLE_NAME_HISTORY + " WHERE "+UID +" NOT IN "+"(SELECT "+UID+" FROM " +TABLE_NAME_HISTORY+" ORDER BY " + VALUE_DATE + " DESC LIMIT "+limit+")";
+       // String query = "DELETE  FROM "+TABLE_NAME_HISTORY + " WHERE "+UID +" NOT IN "+"(SELECT "+UID+" FROM " +TABLE_NAME_HISTORY+" ORDER BY " + VALUE_DATE + " DESC LIMIT "+5+")";
+        sdb.execSQL(query);
+        sdb.close();
+    }
+
+    public ArrayList<HashMap> getHistoryCommand(String limit){
+       // clearUpLimitHistory();
+
+
+
         ArrayList<HashMap> arrayList = new ArrayList<>();
         sdb = this.getWritableDatabase();
         /*String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
                 +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";*/
 
-        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY +" ORDER BY "+VALUE_DATE+" DESC";
+        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY +" ORDER BY "+VALUE_DATE+" DESC LIMIT "+ limit;
         Cursor cursor = sdb.rawQuery(jquery,null);
         while (cursor.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();
@@ -350,7 +365,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             mapDev = getNameDevice(cursor.getString(cursor.getColumnIndex(VALUE_ID_DEVICE)), sdb);
             map.put(VALUE_NAME_DEVICE, mapDev.get(VALUE_NAME));
             map.put(VALUE_PHONE, mapDev.get(VALUE_PHONE));
-
         }
         return map;
 
@@ -411,6 +425,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public synchronized long  insertHistory(HashMap<String, String> map){
+        clearUpLimitHistory();
         sdb = getWritableDatabase();
        /* String jquery = "INSERT INTO "+ TABLE_NAME_HISTORY + " ("+ VALUE_DATE +", "+ VALUE_ID_COMMAND+" )"
                 +"VALUES ('" +map.get(VALUE_DATE)+"' , '"+ map.get(VALUE_ID_COMMAND)+"');";*/

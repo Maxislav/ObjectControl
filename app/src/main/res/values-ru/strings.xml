@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Inkey</string>
     <string name="create_command">Содать команду</string>
     <string name="create_object">Создать объект</string>
     <string name="hello_world">Hello world!</string>

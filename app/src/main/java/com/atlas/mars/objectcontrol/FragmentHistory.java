@@ -44,6 +44,7 @@ public class FragmentHistory extends MyFragmentView {
 
     @Override
     public void onInit() {
+
         mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
         btnFrom =(FrameLayout) viewFragment.findViewById(R.id.btnFrom);
         textBtnFrom =(TextView) myJQuery.findViewByTagClass(btnFrom, TextView.class).get(0);
@@ -96,8 +97,7 @@ public class FragmentHistory extends MyFragmentView {
 
 
     private void getListData(){
-        arrayList = db.getHistoryCommand();
-
+        arrayList = db.getHistoryCommand(mainActivity.mapSetting.get(db.COUNT_DISPLAY_HISTORY));
     }
 
     private void onDraw(){

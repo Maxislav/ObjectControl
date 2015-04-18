@@ -122,9 +122,9 @@ public class DialogSend extends MyDialog {
                 TextView codeText = (TextView)arrayTextView.get(1);
                 TextView deviceText = (TextView)arrayTextView.get(2);
                 commandText.setText(map.get(db.VALUE_NAME));
+
                 codeText.setText(map.get(db.VALUE_COMMAND));
-                codeText.setText(map.get(db.VALUE_COMMAND));
-                deviceText.setText(map.get("valueDeviceName"));
+                deviceText.setText(map.get(db.VALUE_NAME_DEVICE));
                 contentDialog.addView(row);
                 arraySelectForSend.add(map);
             }
