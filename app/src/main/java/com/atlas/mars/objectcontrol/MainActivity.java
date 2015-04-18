@@ -358,6 +358,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 }catch (Exception e){
                     Log.e(TAG, e.toString());
                 }
+                if(fragmentHistory!=null) try{
+                    fragmentHistory.onRedraw();
+                }catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }
             }
         }
     }
