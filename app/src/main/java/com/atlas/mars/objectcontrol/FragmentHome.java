@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,10 +93,28 @@ public class FragmentHome extends MyFragmentView {
 
 
     private void initBtnSend() {
+        final FragmentHome fragmentHome = this;
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogSend.vHide(v);
+                if(mainActivity.mapSetting.get(db.CONFIRM_SEND).equals("1")){
+                    dialogSend.vHide(v);
+                }else{
+                    ArrayList<HashMap>  arraySelectForSend = new ArrayList<>();
+                    for (HashMap<String, String> map : favoriteCommand) {
+                        if(map.get(SELECT_FOR_SEND)!=null &&  map.get(SELECT_FOR_SEND).equals("1")){
+                            arraySelectForSend.add(map);
+                        }
+                    }
+                    if(arraySelectForSend.isEmpty()){
+                        Toast toast = Toast.makeText(mainActivity, mainActivity.getResources().getString(R.string.empty_for_send) , Toast.LENGTH_LONG);
+                        toast.show();
+                    }else{
+                        Sender sender = new Sender(arraySelectForSend, viewHashMap, fragmentHome, mainActivity.getApplicationContext(), mainActivity);
+                        sender.send();
+                    }
+
+                }
             }
         });
     }

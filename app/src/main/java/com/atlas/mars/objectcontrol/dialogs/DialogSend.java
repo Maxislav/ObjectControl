@@ -95,8 +95,6 @@ public class DialogSend extends MyDialog {
             @Override
             public void onClick(View v) {
 
-
-
                 Sender sender = new Sender(arraySelectForSend, fragmentHome.viewHashMap, fragmentHome, activity.getApplicationContext(), activity);
                 sender.send();
 
@@ -116,13 +114,10 @@ public class DialogSend extends MyDialog {
             if(map.get(fragmentHome.SELECT_FOR_SEND)!=null &&  map.get(fragmentHome.SELECT_FOR_SEND).equals("1")){
                 FrameLayout row = (FrameLayout)inflater.inflate(R.layout.row_send,null);
                 ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
-               // TextView deviceText = (TextView)arrayTextView.get(0);
-
                 TextView commandText = (TextView)arrayTextView.get(0);
                 TextView codeText = (TextView)arrayTextView.get(1);
                 TextView deviceText = (TextView)arrayTextView.get(2);
                 commandText.setText(map.get(db.VALUE_NAME));
-
                 codeText.setText(map.get(db.VALUE_COMMAND));
                 deviceText.setText(map.get(db.VALUE_NAME_DEVICE));
                 contentDialog.addView(row);

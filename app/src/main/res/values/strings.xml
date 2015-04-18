@@ -18,7 +18,7 @@
     <string name="end_edit">End edit</string>
     <string name="end_del">End del</string>
     <string name="del_object">Del</string>
-    <string name="empty_for_send">Empty</string>
+    <string name="empty_for_send">Empty commands</string>
     <string name="send_immediately">Send immediately</string>
     <string name="title_select_obj">Select object</string>
     <string name="device_name">Name object</string>
@@ -28,7 +28,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="save_and_close">Save and close</string>
-    <string name="home">Favorits</string>
+    <string name="home">Favorites</string>
     <string name="all_commands">All commands</string>
     <string name="history">History</string>
 
