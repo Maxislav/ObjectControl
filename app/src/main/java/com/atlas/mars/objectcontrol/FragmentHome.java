@@ -122,6 +122,7 @@ public class FragmentHome extends MyFragmentView {
 
     public void regenScrollView() {
         mainLayout.removeAllViews();
+        viewHashMap.clear();
         getFavoriteCommand();
     }
 
@@ -190,7 +191,7 @@ public class FragmentHome extends MyFragmentView {
                 FrameLayout _row =(FrameLayout) entry.getValue();
                 String _id = entry.getKey().toString();
                 HashMap<String, String> _map = getMap(_id);
-                if(_row != row && _map.get(SELECT_FOR_SEND).equals("1")){
+                if(_map !=null &&_row != row && _map.get(SELECT_FOR_SEND).equals("1")){
                     Log.d(TAG,"+++");
                     rowUnSelect(_row, _map);
                 }
