@@ -130,6 +130,47 @@ public class ActivitySetting extends ActionBarActivity {
         });
     }
     private void saveSetting(){
+        HashMap <String,String> changesSettingMap = new HashMap<>();
+        /*fillSetting(CONFIRM_SEND, "1",db);
+        fillSetting(MULTIPLE_SEND, "0", db);
+        fillSetting(COUNT_MEMORY_HISTORY, "100", db);
+        fillSetting(COUNT_DISPLAY_HISTORY, "10", db);*/
+        if(multipleSend.isChecked()){
+            changesSettingMap.put(db.MULTIPLE_SEND,"1");
+        }else{
+            changesSettingMap.put(db.MULTIPLE_SEND,"0");
+        }
 
+        if(confirmSend.isChecked()){
+            changesSettingMap.put(db.CONFIRM_SEND,"1");
+        }else{
+            changesSettingMap.put(db.CONFIRM_SEND,"0");
+        }
+
+        String inMemory = commandInMemory.getText().toString();
+        if(inMemory.isEmpty()){
+            inMemory ="0";
+        }
+        int intInMemory = Integer.parseInt(inMemory);
+        if(intInMemory<0){
+            intInMemory = 0;
+        }
+        inMemory = Integer.toString(intInMemory);
+        changesSettingMap.put(db.COUNT_MEMORY_HISTORY, inMemory);
+
+        String inDisplay = commandInStart.getText().toString();
+
+        if(inDisplay.isEmpty()){
+            inDisplay ="0";
+        }
+        int intInDisplay  = Integer.parseInt(inDisplay);
+        if(intInDisplay<0){
+            intInDisplay = 0;
+        }
+        inDisplay = Integer.toString(intInDisplay);
+
+        changesSettingMap.put(db.COUNT_DISPLAY_HISTORY,inDisplay );
+
+        db.setSetting(changesSettingMap);
     }
 }

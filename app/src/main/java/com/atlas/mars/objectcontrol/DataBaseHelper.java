@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -449,6 +449,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Log.e(TAG, "+++ERROR fillSetting");
         }
         return id;
+    }
+
+    public void setSetting(HashMap<String,String>map){
+        String query;
+        sdb = getWritableDatabase();
+        for (Map.Entry entry : map.entrySet()) {
+
+            query = "UPDATE " + TABLE_NAME_SETTING + " SET " + VALUE_PARAMETER_SETTING + "='"+ entry.getValue()+"'" + " WHERE " + VALUE_NAME_SETTING_CODE +"='"+entry.getKey()+"'";
+            Log.d(TAG, query);
+            sdb.execSQL(query);
+           // System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
+        }
+        sdb.close();
+
     }
 
     public void getSetting(HashMap<String,String> map){
