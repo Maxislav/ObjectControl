@@ -28,7 +28,6 @@
     <string name="save">Сохранить</string>
     <string name="save_and_close">Сохранить и закрыть</string>
 
-    <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>
     <string name="multiple_send">Можественная отправка</string>
     <string name="confirm_send">Запрашивать подтверждение</string>

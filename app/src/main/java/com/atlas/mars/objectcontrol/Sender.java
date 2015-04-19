@@ -192,10 +192,10 @@ public class Sender {
         PendingIntent deliveredPI = PendingIntent.getBroadcast(activity, requestCode, deliveredIntent, 0);
 
         //Todo раскоментировать prod
-        //smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
+        smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
 
         //Todo закоментировать разработка затычка
-        capSend(conNumber, mess, conName, idCommand, idHistory);
+       // capSend(conNumber, mess, conName, idCommand, idHistory);
 
     }
 
