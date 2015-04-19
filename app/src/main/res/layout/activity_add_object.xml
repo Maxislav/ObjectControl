@@ -28,7 +28,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Имя" />
+                        android:text="@string/name_object" />
 
                     <EditText
                         style="@style/editTextStyle"
@@ -52,7 +52,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Номер" />
+                        android:text="@string/phone_number" />
 
                     <EditText
                         style="@style/editTextStyle"

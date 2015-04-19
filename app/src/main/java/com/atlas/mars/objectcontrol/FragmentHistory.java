@@ -2,6 +2,7 @@ package com.atlas.mars.objectcontrol;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ public class FragmentHistory extends MyFragmentView {
     final static String YEAR = "y";
     final static String DAY_OF_MONTH = "d";
     final static String TAG = "myLog";
+    static Resources resources;
 
 
     ArrayList<HashMap> arrayList;
@@ -44,7 +46,7 @@ public class FragmentHistory extends MyFragmentView {
 
     @Override
     public void onInit() {
-
+        resources = mainActivity.getResources();
         mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
         btnFrom =(FrameLayout) viewFragment.findViewById(R.id.btnFrom);
         textBtnFrom =(TextView) myJQuery.findViewByTagClass(btnFrom, TextView.class).get(0);
@@ -56,8 +58,11 @@ public class FragmentHistory extends MyFragmentView {
 
         calFrom = Calendar.getInstance();
         calFrom.set(Calendar.YEAR, c.get(Calendar.YEAR));
-        calFrom.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
-        calFrom.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
+        calFrom.set(Calendar.MONTH, c.get(Calendar.MONTH));
+        calFrom.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH)-1);
+        calFrom.set(Calendar.HOUR, 0);
+        calFrom.set(Calendar.MINUTE, 0);
+        calFrom.set(Calendar.SECOND, 0);
         setTextFrom();
 
 
@@ -65,6 +70,9 @@ public class FragmentHistory extends MyFragmentView {
         calTo.set(Calendar.YEAR, c.get(Calendar.YEAR));
         calTo.set(Calendar.MONTH, c.get(Calendar.MONTH));
         calTo.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
+        calTo.set(Calendar.HOUR,0);
+        calTo.set(Calendar.MINUTE,0);
+        calTo.set(Calendar.SECOND,0);
         setTextBtnTo();
 
 
@@ -73,9 +81,8 @@ public class FragmentHistory extends MyFragmentView {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(mainActivity, new listenerFrom(), calFrom.get(Calendar.YEAR), calFrom.get(Calendar.MONTH), calFrom.get(Calendar.DAY_OF_MONTH));
-                dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", dialog);
-                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel", new CancelListener());
-
+                dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, resources.getString(R.string.btn_ok), dialog);
+                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, resources.getString(R.string.btn_cancel), new CancelListener());
                 dialog.show();
             }
         });
@@ -83,9 +90,8 @@ public class FragmentHistory extends MyFragmentView {
             @Override
             public void onClick(View v) {
                 final DatePickerDialog dialog = new DatePickerDialog(mainActivity, new listenerTo(), calTo.get(Calendar.YEAR), calTo.get(Calendar.MONTH), calTo.get(Calendar.DAY_OF_MONTH));
-                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel", new CancelListener());
-                dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", dialog);
-
+                dialog.setButton(DatePickerDialog.BUTTON_POSITIVE, resources.getString(R.string.btn_ok), dialog);
+                dialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, resources.getString(R.string.btn_cancel), new CancelListener());
                 dialog.show();
             }
         });
@@ -98,6 +104,10 @@ public class FragmentHistory extends MyFragmentView {
 
     private void getListData(){
         arrayList = db.getHistoryCommand(mainActivity.mapSetting.get(db.COUNT_DISPLAY_HISTORY));
+    }
+
+    private void getListDataFromTo(){
+        arrayList = db.getHistoryCommand(calFrom, calTo);
     }
 
     private void onDraw(){
@@ -114,7 +124,7 @@ public class FragmentHistory extends MyFragmentView {
             } catch (ParseException e) {
                 Log.e(TAG,e.toString());
             }
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
             String toDate = dateFormat.format(date);
 
             Log.d(TAG, String.valueOf(date));
@@ -132,11 +142,16 @@ public class FragmentHistory extends MyFragmentView {
         }
     }
 
+    private void onRedrawFromTo(){
+        mainLayout.removeAllViews();
+        getListDataFromTo();
+        onDraw();
+    }
+
     public void onRedraw(){
         mainLayout.removeAllViews();
         getListData();
         onDraw();
-
     }
     private  class CancelListener implements DialogInterface.OnClickListener{
         @Override
@@ -160,7 +175,11 @@ public class FragmentHistory extends MyFragmentView {
             calFrom.set(Calendar.YEAR, year);
             calFrom.set(Calendar.MONTH,mMonth);
             calFrom.set(Calendar.DAY_OF_MONTH,mDay);
+            calFrom.set(Calendar.HOUR,0);
+            calFrom.set(Calendar.MINUTE,0);
+            calFrom.set(Calendar.SECOND,0);
             setTextFrom();
+            onRedrawFromTo();
         }
     }
 
@@ -177,20 +196,24 @@ public class FragmentHistory extends MyFragmentView {
             calTo.set(Calendar.YEAR, year);
             calTo.set(Calendar.MONTH,mMonth);
             calTo.set(Calendar.DAY_OF_MONTH,mDay);
+            calTo.set(Calendar.HOUR,0);
+            calTo.set(Calendar.MINUTE,0);
+            calTo.set(Calendar.SECOND,0);
             setTextBtnTo();
+            onRedrawFromTo();
         }
     }
 
     private void setTextFrom( ){
         Date dateFrom = calFrom.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         formatter.setTimeZone(TimeZone.getDefault());
         String s = formatter.format(dateFrom);
         textBtnFrom.setText(s);
     }
     private void setTextBtnTo( ){
         Date dateFrom = calTo.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         formatter.setTimeZone(TimeZone.getDefault());
         String s = formatter.format(dateFrom);
         textBtnTo.setText(s);

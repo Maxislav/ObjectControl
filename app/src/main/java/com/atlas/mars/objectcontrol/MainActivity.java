@@ -2,7 +2,10 @@ package com.atlas.mars.objectcontrol;
 
 import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +14,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -263,6 +267,21 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         if(pagerAdapter!=null){
             changeMenuByFragment(pager.getCurrentItem());
         }
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflater.inflate(R.layout.action_bar_layout, null);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setHomeButtonEnabled(true);
+       // actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_background));
+        actionBar.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.actionbar_background, null));
+       // actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
+      //  actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        //actionBar.setIcon(R.drawable.ic_launcher);
+       actionBar.setCustomView(v);
+
         return true;
     }
 

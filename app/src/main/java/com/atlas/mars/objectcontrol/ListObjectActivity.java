@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.widget.TintButton;
 import android.util.Log;
@@ -61,6 +63,9 @@ public class ListObjectActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list_object, menu);
         this.menu = menu;
+        // getMenuInflater().inflate(R.menu.menu_setting, menu);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.actionbar_background, null));
         return true;
     }
 

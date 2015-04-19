@@ -32,6 +32,9 @@
     <item name="dark" type="color">#fa656774</item>
     <item name="mask" type="color">#7b000000</item>
     <item name="white" type="color">#FFF</item>
+    <item name="titleStart" type="color">#000000</item>
+    <item name="titleEnd" type="color">#bd3e4245</item>
+    <item name="titleCenter" type="color">#ff3e4245</item>
 
 
     <item name="redBorderDark" type="color">#ffff0000</item>

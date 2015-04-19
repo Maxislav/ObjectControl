@@ -8,9 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 
 /**
@@ -323,17 +327,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<HashMap> getHistoryCommand(String limit){
-       // clearUpLimitHistory();
-
-
-
-        ArrayList<HashMap> arrayList = new ArrayList<>();
+       // ArrayList<HashMap> arrayList = new ArrayList<>();
         sdb = this.getWritableDatabase();
-        /*String jquery = "SELECT * FROM "+TABLE_NAME_COMMANDS+" INNER JOIN " + TABLE_NAME_DEVICES +" ON " + TABLE_NAME_COMMANDS+"."+VALUE_ID_DEVICE+"="+TABLE_NAME_DEVICES+"."+UID
-                +" WHERE "+ TABLE_NAME_COMMANDS+"."+VALUE_FAVORITE+"=1 AND "+TABLE_NAME_DEVICES+ "."+VALUE_SELECTED+"=1";*/
-
         String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY +" ORDER BY "+VALUE_DATE+" DESC LIMIT "+ limit;
-        Cursor cursor = sdb.rawQuery(jquery,null);
+        ArrayList<HashMap> arrayList = getHistoryCommand(jquery, sdb);
+        sdb.close();
+        return  arrayList;
+    }
+    public ArrayList<HashMap> getHistoryCommand(Calendar calFrom, Calendar calTo){
+        Date dateFrom = calFrom.getTime();
+        Calendar _calTo = Calendar.getInstance();
+        _calTo.set(Calendar.YEAR, calTo.get(Calendar.YEAR));
+        _calTo.set(Calendar.MONTH, calTo.get(Calendar.MONTH));
+        _calTo.set(Calendar.DAY_OF_MONTH, calTo.get(Calendar.DAY_OF_MONTH));
+        _calTo.set(Calendar.HOUR,24);
+        _calTo.set(Calendar.MINUTE,0);
+        _calTo.set(Calendar.SECOND,0);
+        Date dateTo = _calTo.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String TO_DATE = formatter.format(dateTo);
+        String FROM_DATE = formatter.format(dateFrom);
+
+        sdb = this.getWritableDatabase();
+        String jquery = "SELECT * FROM "+TABLE_NAME_HISTORY +  " WHERE "+ VALUE_DATE+ " <= '"+ TO_DATE+ "' AND " +VALUE_DATE +">='"+ FROM_DATE + "' ORDER BY "+VALUE_DATE+" DESC ";
+        ArrayList<HashMap> arrayList = getHistoryCommand(jquery, sdb);
+        sdb.close();
+        return  arrayList;
+    }
+
+    private ArrayList<HashMap> getHistoryCommand(String query, SQLiteDatabase sdb){
+        ArrayList<HashMap> arrayList = new ArrayList<>();
+        Cursor cursor = sdb.rawQuery(query, null);
         while (cursor.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();
             map.put(UID,cursor.getString(cursor.getColumnIndex(UID)));
@@ -341,16 +366,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(VALUE_ID_COMMAND,cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)));
             map.put(VALUE_DELIVERED,cursor.getString(cursor.getColumnIndex(VALUE_DELIVERED)));
             HashMap<String, String> mapCommand = getCommand(cursor.getString(cursor.getColumnIndex(VALUE_ID_COMMAND)), sdb);
-
             map.put(VALUE_NAME, mapCommand.get(VALUE_NAME));
             map.put(VALUE_COMMAND, mapCommand.get(VALUE_COMMAND));
             map.put(VALUE_ID_DEVICE, mapCommand.get(VALUE_ID_DEVICE));
             map.put(VALUE_NAME_DEVICE, mapCommand.get(VALUE_NAME_DEVICE));
             arrayList.add(map);
         }
-        sdb.close();
+        cursor.close();
         return  arrayList;
-
     }
 
     private HashMap<String,String> getCommand(String id, SQLiteDatabase sdb){
@@ -366,6 +389,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             map.put(VALUE_NAME_DEVICE, mapDev.get(VALUE_NAME));
             map.put(VALUE_PHONE, mapDev.get(VALUE_PHONE));
         }
+        cursor.close();
         return map;
 
     }
@@ -490,6 +514,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String value = cursor.getString(cursor.getColumnIndex(VALUE_PARAMETER_SETTING));
             map.put(key,value);
         }
+        cursor.close();
         sdb.close();
     }
 }
