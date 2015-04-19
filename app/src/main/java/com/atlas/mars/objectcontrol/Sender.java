@@ -132,17 +132,20 @@ public class Sender {
             ImageView imageSms = (ImageView) arrayImgs.get(3);
             Animation animOut = AnimationUtils.loadAnimation(context, R.anim.sender);
             animOut.setRepeatCount(Animation.INFINITE);
-            imageSms.startAnimation(animOut);
+
             String phone, command, name;
 
             phone= map.get(db.VALUE_PHONE);
             name = map.get(db.VALUE_NAME_DEVICE);
             command = map.get(db.VALUE_COMMAND);
+            if(phone.equals("0000")){
+                toastShort(activity.getResources().getString(R.string.edit_default_value));
+                return;
+            }
+            imageSms.startAnimation(animOut);
 
             sendText(phone, name, command, id,0);
             toastShort("Sending to "+name+" : " + command);
-
-
         }
     }
 
@@ -183,21 +186,15 @@ public class Sender {
         deliveredIntent.putExtra(EXTRA_NUMBER, conNumber);
         deliveredIntent.putExtra(EXTRA_NAME, conName);
         deliveredIntent.putExtra(EXTRA_ID, idCommand);
-        deliveredIntent.putExtra(EXTRA_ID_HISTORY, idCommand);
+        deliveredIntent.putExtra(EXTRA_ID_HISTORY, idHistory);
 
         PendingIntent sentPI = PendingIntent.getBroadcast(activity, requestCode, sentIntent, 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(activity, requestCode, deliveredIntent, 0);
 
+        //Todo раскоментировать prod
+        //smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
 
-
-
-
-
-
-        //Todo раскоментировать
-       // smsMgr.sendTextMessage(conNumber, null, mess, sentPI, deliveredPI);
-
-        //Todo закоментировать
+        //Todo закоментировать разработка затычка
         capSend(conNumber, mess, conName, idCommand, idHistory);
 
     }
@@ -207,21 +204,12 @@ public class Sender {
 
 
      private void capSend(String number, final String mess, final String name, final String id, final String idHistory){
-       /*  Date now = new Date();
-         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-         String s = formatter.format(now);
-         Log.d(TAG, "+++"+s);
-         HashMap<String,String> map = new HashMap<>();
-         map.put(db.VALUE_DATE, s);
-         map.put(db.VALUE_ID_COMMAND, id);
-         db.insertHistory(map);*/
 
 
          Thread send = new Thread(new Runnable() {
              public void run() {
                  try {
-                     Thread.sleep(1000);
+                     Thread.sleep(2000);
                      Message msg = Message.obtain(handler, 0);
                      msg.obj = id;
                      handler.sendMessage(msg);
@@ -272,7 +260,7 @@ public class Sender {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         //Команда отправлена
-                        toastShort("SMS sent to " + name + " & " + number);
+                        toastShort("SMS sent to " + name + " : " + number);
                         break;
 
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:

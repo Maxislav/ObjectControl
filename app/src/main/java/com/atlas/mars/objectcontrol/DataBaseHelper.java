@@ -90,6 +90,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         fillSetting(MULTIPLE_SEND, "0", db);
         fillSetting(COUNT_MEMORY_HISTORY, "100", db);
         fillSetting(COUNT_DISPLAY_HISTORY, "10", db);
+        fillDefaultParam(db);
     }
 
     @Override
@@ -485,9 +486,41 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(VALUE_PARAMETER_SETTING, param);
         long id = db.insert(TABLE_NAME_SETTING, null, cv);
         if(id<0){
-            Log.e(TAG, "+++ERROR fillSetting");
+            Log.e(TAG, "+++ ERROR fillSetting");
         }
         return id;
+    }
+    private long fillDefaultParam(SQLiteDatabase db){
+        ContentValues cv = new ContentValues();
+        cv.put(VALUE_NAME, "My Lambo car" );
+        cv.put(VALUE_PHONE, "0000" );
+        cv.put(VALUE_SELECTED, "1" );
+        long idDev = db.insert(TABLE_NAME_DEVICES, null, cv);
+        if(idDev<0){
+            Log.e(TAG, "+++ ERROR fillDefaultParam");
+        }
+        String jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
+                "VALUES ('Поставить на охрану','123401','"+idDev+"','1');";
+        db.execSQL(jquery);
+        jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
+                "VALUES ('Снять с охраны','123400','"+idDev+"','1');";
+        db.execSQL(jquery);
+
+        cv = new ContentValues();
+        cv.put(VALUE_NAME, "My home" );
+        cv.put(VALUE_PHONE, "0000" );
+        cv.put(VALUE_SELECTED, "0" );
+        idDev = db.insert(TABLE_NAME_DEVICES, null, cv);
+        if(idDev<0){
+            Log.e(TAG, "+++ ERROR fillDefaultParam");
+        }
+        jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
+                "VALUES ('Call me','123407','"+idDev+"','1');";
+        db.execSQL(jquery);
+        jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
+                "VALUES ('Set APN','123463internet','"+idDev+"','0');";
+        db.execSQL(jquery);
+        return idDev;
     }
 
     public void setSetting(HashMap<String,String>map){

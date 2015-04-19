@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name" translatable="false">Keymaster</string>
+    <string name="app_name" translatable="false">AnyControl</string>
     <string name="create_command">Create command</string>
     <string name="create_object">Create object</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_object">Create object</string>
-    <string name="action_list_object">List object</string>
+    <string name="action_list_object">List objects</string>
     <string name="action_add_command">Create command</string>
     <string name="action_remove_command">Del command</string>
     <string name="action_add_favorite">Add to favorite</string>
@@ -22,6 +22,9 @@
     <string name="send_immediately">Send immediately</string>
     <string name="title_select_obj">Select object</string>
     <string name="device_name">Name object</string>
+    <string name="command_name">Name command</string>
+    <string name="code_command">Code</string>
+    <string name="select_enabled_device">Select enabled device</string>
     <string name="select_obj">Select object</string>
     <string name="send">Send</string>
     <string name="btn_ok">Ok</string>
@@ -31,12 +34,14 @@
     <string name="home">Favorites</string>
     <string name="all_commands">All commands</string>
     <string name="history">History</string>
+    <string name="edit_default_value">Please edit default number</string>
 
     <string name="web" translatable="false"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Allows you to select multiple commands</string>
     <string name="multiple_send">Multiple sending</string>
-    <string name="confirm_send">Ask for confirmation</string>
-    <string name="confirm_send_help">Ask for confirmation when sending SMS</string>
+    <string name="confirm_send">Request confirmation</string>
+    <string name="confirm_send_help">Ask for confirmation before sending SMS</string>
+    <string name="total_in_history_title">Amount commands in the history memory </string>
     <string name="count_command_history_title">The number of commands in the history at the start</string>
     <string name="count_command_history">The total number of commands that will be remembered history</string>
     <string name="count_command_history_in_start_title">The number of commands in the history displayed at startup</string>

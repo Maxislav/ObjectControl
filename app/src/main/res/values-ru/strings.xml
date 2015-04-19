@@ -31,7 +31,7 @@
     <string name="web"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>
     <string name="multiple_send">Можественная отправка</string>
-    <string name="confirm_send">Запрашивать подттверждение</string>
+    <string name="confirm_send">Запрашивать подтверждение</string>
     <string name="confirm_send_help">Запрашивать подттверждение при отправке sms</string>
     <string name="count_command_history_title">Количество команд в итории при старте</string>
     <string name="count_command_history">Общее количество команд которые будет помнить история</string>
@@ -42,4 +42,9 @@
     <string name="all_commands">Все команды</string>
     <string name="history">История</string>
     <string name="home">Избранные</string>
+    <string name="edit_default_value">Пожалуйста измените номер заданный по умолчанию</string>
+    <string name="code_command">Код команды</string>
+    <string name="command_name">Название команды</string>
+    <string name="select_enabled_device">Выберите совместимое устройство</string>
+    <string name="total_in_history_title">Количество команд в памяти итории</string>
 </resources>

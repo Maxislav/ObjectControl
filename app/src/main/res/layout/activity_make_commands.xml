@@ -30,7 +30,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Название команды" />
+                        android:text="@string/command_name" />
 
                     <EditText
                         style="@style/editTextStyle"
@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Код" />
+                        android:text="@string/code_command" />
 
                     <EditText
                         style="@style/editTextStyle"
@@ -81,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/tvSelectObject"
                             android:layout_gravity="center"
-                            android:text="Выбрать совместимое устройстово" />
+                            android:text="@string/select_enabled_device" />
                     </FrameLayout>
                     </LinearLayout>
 
