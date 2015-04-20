@@ -25,7 +25,6 @@ public class DialogSend extends MyDialog {
     FragmentHome fragmentHome;
     LinearLayout contentDialog;
     MyJQuery myJQuery;
-    final static String TAG = "myLog";
     DisplayMetrics displayMetrics;
     ArrayList<HashMap> arraySelectForSend;
     private float dpHeight, dpWidth, density;

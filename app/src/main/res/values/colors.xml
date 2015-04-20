@@ -42,7 +42,7 @@
     <item name="redBorderLight" type="color">#ffffa9a7</item>
 
 
-    <item name="gradientStartDialog" type="color">#89ffffff</item>
+    <item name="gradientStartDialog" type="color">#cfe7e7e7</item>
     <item name="gradientEndDialog" type="color">#e9ffffff</item>
     <item name="colorDelivered" type="color">#e9008d12</item>
 

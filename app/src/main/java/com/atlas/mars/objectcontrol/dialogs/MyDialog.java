@@ -16,6 +16,7 @@ abstract public class MyDialog {
     PopupWindow pw;
     LayoutInflater inflater;
     DataBaseHelper db;
+    final public static String TAG = "myLog";
     View viewDialog;
     MyDialog(Activity activity){
         this.activity = activity;
