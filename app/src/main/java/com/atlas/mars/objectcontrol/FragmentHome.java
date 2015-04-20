@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,7 +164,6 @@ public class FragmentHome extends MyFragmentView {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (map.get(SELECT_FOR_SEND).equals("0")) {
                     rowSelect(row, map);
                 } else {
@@ -182,6 +182,8 @@ public class FragmentHome extends MyFragmentView {
                 map.put(SELECT_FOR_SEND, "0");
             }
         });
+
+
 
     }
 
@@ -257,13 +259,36 @@ public class FragmentHome extends MyFragmentView {
             FrameLayout rowCheckBox = (FrameLayout) inflater.inflate(R.layout.row_object, null);
             ViewGroup vg = (ViewGroup) rowCheckBox;
             CheckBox checkBox = (CheckBox) vg.getChildAt(0);
+
+
             checkBox.setText(map.get(db.VALUE_NAME));
             if (map.get(db.VALUE_SELECTED).equals("1")) {
                 checkBox.setChecked(true);
             }
+
+            ImageView imgCall =(ImageView) myJQuery.findViewByTagClass(rowCheckBox, ImageView.class).get(0);
+
             ((ViewGroup) content).addView(rowCheckBox);
             checkBoxEvents(checkBox, map);
+            callEvents(imgCall, map);
         }
+    }
+
+    private void callEvents(final ImageView imgCall, final HashMap<String, String> map){
+        final String phone = map.get(db.VALUE_PHONE);
+        imgCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+                phoneIntent.setData(Uri.parse("tel:"+phone));
+                try {
+                    mainActivity.startActivity(phoneIntent);
+                    Log.d(TAG, "Finished making a call...");
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(mainActivity, "Call failed, please try again later.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void checkBoxEvents(final CheckBox checkBox, final HashMap map) {
