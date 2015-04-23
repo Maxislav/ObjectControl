@@ -32,4 +32,9 @@
         android:orderInCategory="3"
         android:title="@string/action_add_favorite"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_to_map"
+        android:orderInCategory="4"
+        android:title="Map"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -4,8 +4,6 @@ import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -202,6 +200,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 menu.findItem(R.id.action_settings).setVisible(true);
                 menu.findItem(R.id.action_add_object).setVisible(true);
                 menu.findItem(R.id.action_list_object).setVisible(true);
+                menu.findItem(R.id.action_to_map).setVisible(true);
                 break;
             case 1:
                 menu.findItem(R.id.action_settings).setVisible(true);
@@ -309,12 +308,15 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 return true;
             case R.id.action_settings:
                 Intent intent = new Intent(this, ActivitySetting.class);
-
                 startActivityForResult(intent, FROM_SETTING);
                 return true;
             case R.id.action_list_object:
                 questionIntent = new Intent(MainActivity.this, ListObjectActivity.class);
                 startActivityForResult(questionIntent, LIST_OBJECT);
+                return true;
+            case R.id.action_to_map:
+
+                startActivity( new Intent(MainActivity.this, MapsActivity.class));
                 return true;
 
         }
