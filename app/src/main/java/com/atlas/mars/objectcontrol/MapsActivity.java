@@ -3,12 +3,14 @@ package com.atlas.mars.objectcontrol;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends ActionBarActivity {
+public class MapsActivity extends ActionBarActivity  {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
@@ -16,6 +18,8 @@ public class MapsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+
         setUpMapIfNeeded();
     }
 
@@ -43,7 +47,10 @@ public class MapsActivity extends ActionBarActivity {
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
+
             // Try to obtain the map from the SupportMapFragment.
+            //MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
@@ -59,6 +66,16 @@ public class MapsActivity extends ActionBarActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        LatLng kiev = new LatLng(50.39, 30.47);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 8));
+
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        CameraPosition oldPos = mMap.getCameraPosition();
+
+        CameraPosition pos = CameraPosition.builder(oldPos).bearing(45.0f).build();
+
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
     }
+
+
 }
