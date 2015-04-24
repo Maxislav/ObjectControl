@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog00;
+import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
