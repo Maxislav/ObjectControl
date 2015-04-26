@@ -1,37 +1,50 @@
 package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.R;
+import com.atlas.mars.objectcontrol.http.MyHttp;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity {
        public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    LocationManager locationManager;
-    LocationListener locationListener;
-    ImageView btnImgTarget;
-    public static LatLng myPos;
-    private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
+    LocationManager locationManagerGps, locationManagerNet;
+    LocationListener locationListenerGps, locationListenerNet;
+    ImageButton btnFollow;
+    public  LatLng myPos;
+    static Marker myPosMarker;
+    public static Circle circle;
+   //public static Marker myPosMarker;
     private static final LatLng kiev = new LatLng(50.39, 30.47);
+    public boolean folowMyPos = false;
+    MyHttp myHttp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        myHttp = new MyHttp(this);
+        myHttp.postData("http://gps-tracker.com.ua/login.php");
+
         try {
             MapsInitializer.initialize(getApplicationContext());
         } catch (Exception e) {
@@ -39,20 +52,23 @@ public class MapsActivity extends FragmentActivity {
             Log.e(TAG, "+++ MapsInitializer" + e.toString());
         }
 
-        btnImgTarget = (ImageView)findViewById(R.id.btnImgTarget);
-        setClickListenerImgTargetMyPos(btnImgTarget);
+        btnFollow = (ImageButton)findViewById(R.id.btnFollow);
+        setClickListenerImgTargetMyPos(btnFollow);
         setUpMapIfNeeded();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener(this, mMap);
-        locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
     }
 
     @Override
     protected void onPause() {
-        if(locationManager != null){
-            locationManager.removeUpdates(locationListener);
+        if(locationManagerGps != null){
+            locationManagerGps.removeUpdates(locationListenerGps);
         }
-
+        if(locationManagerNet != null){
+            locationManagerNet.removeUpdates(locationListenerNet);
+        }
+        MyLocationListenerGps.statusGps = false;
         super.onPause();
     }
 
@@ -60,6 +76,11 @@ public class MapsActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        locationListenerGps = new MyLocationListenerGps(this, mMap);
+        locationListenerNet = new MyLocationListenerNet(this, mMap);
+        locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListenerGps);
+        locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
+
     }
 
 
@@ -68,13 +89,15 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if(myPos!=null){
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
                 }else{
                     toastShow("Position not available");
                 }
             }
         });
     }
+
+
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -112,10 +135,10 @@ public class MapsActivity extends FragmentActivity {
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 10));
 
-        mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
+        /*mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
                 .anchor(0.5f,0.5f)
                 .alpha(0.7f)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));*/
 
 
 
@@ -141,6 +164,33 @@ public class MapsActivity extends FragmentActivity {
     public void toastShow(String str){
         Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
     }
+    public void moveCameraToMyPos(){
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+    }
+    public void setMarkerMyPos(String title){
+        if (myPosMarker != null) {
+            myPosMarker.remove();
+            myPosMarker = null;
+        }
+        myPosMarker = mMap.addMarker(
+                new MarkerOptions()
+                        .position(myPos)
+                        .anchor(0.5f,0.5f)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+    }
+    public  void setAccuracy(float accuracy){
+        if (circle != null) {
+            circle.remove();
+            circle = null;
+        }
 
-
+        CircleOptions circleOptions = new CircleOptions()
+                .center(myPos)
+                .radius(accuracy)
+                .strokeColor(getResources().getColor(R.color.strokeColorAccuracy))
+                .fillColor( getResources().getColor(R.color.fillColorAccuracy))
+                .strokeWidth(2.0f);
+        circle = mMap.addCircle(circleOptions);
+    }
 }
