@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog00;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
+import com.atlas.mars.objectcontrol.http.MyHttp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     Menu menu;
     BroadcastReceiver receiver, receiverDeliver;
     public HashMap<String, String> mapSetting;
-
+    MyHttp myHttp;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -84,6 +85,8 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         setContentView(R.layout.activity_main);
         selectObject = "";
 
+        myHttp = new MyHttp(this);
+        myHttp.postData("http://gps-tracker.com.ua/login.php");
         _init();
     }
 

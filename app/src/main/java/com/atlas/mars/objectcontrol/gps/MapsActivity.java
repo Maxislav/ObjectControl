@@ -1,7 +1,6 @@
 package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -42,8 +41,8 @@ public class MapsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        myHttp = new MyHttp(this);
-        myHttp.postData("http://gps-tracker.com.ua/login.php");
+       /* myHttp = new MyHttp(this);
+        myHttp.postData("http://gps-tracker.com.ua/login.php");*/
 
         try {
             MapsInitializer.initialize(getApplicationContext());

@@ -1,33 +1,23 @@
 package com.atlas.mars.objectcontrol.http;
 
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.atlas.mars.objectcontrol.gps.MapsActivity;
+import com.atlas.mars.objectcontrol.MainActivity;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,40 +26,19 @@ import java.util.List;
  * Created by Администратор on 4/26/15.
  */
 public class MyHttp {
-    MapsActivity mapsActivity;
+    MainActivity mainActivity;
     private final String TAG = "myLog";
+    String url;
+    MyTask mt;
 
-    public MyHttp(MapsActivity mapsActivity) {
-        this.mapsActivity = mapsActivity;
+    public MyHttp(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 
     public void postData(String url) {
-        final String urlForRequest= url;
-        try{
-            HttpURLConnection con = (HttpURLConnection) ( new URL(url)).openConnection();
-            con.setRequestMethod("POST");
-            con.setDoInput(true);
-            con.setDoOutput(true);
-
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("login", "Mars"));
-            params.add(new BasicNameValuePair("password", "glider"));
-
-            OutputStream os = con.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getQuery(params));
-            writer.flush();
-            writer.close();
-            os.close();
-            con.connect();
-
-        }catch (Exception e){
-            Log.e(TAG, e.toString());
-        }
-
-
-
+        this.url= url;
+        mt = new MyTask();
+        mt.execute();
     }
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
     {
@@ -89,6 +58,82 @@ public class MyHttp {
         }
 
         return result.toString();
+    }
+
+    class MyTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+           // tvInfo.setText("Begin");
+        }
+
+        @Override
+        protected Void doInBackground(Void... _params) {
+            Log.d(TAG, "+++ doInBackground");
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+            nameValuePair.add(new BasicNameValuePair("login", "Mars"));
+            nameValuePair.add(new BasicNameValuePair("password", "..."));
+            //Encoding POST data
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+
+            } catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+                Log.e(TAG, "UnsupportedEncodingException+++"+ e.toString());
+            }
+
+            try {
+                HttpResponse response = httpClient.execute(httpPost);
+                // write response to log
+                Log.d( TAG,  "Http Post Response: +++ " +response.toString() );
+
+                InputStreamReader is = new InputStreamReader(response.getEntity().getContent());
+
+                BufferedReader r = new BufferedReader(is);
+                StringBuilder total = new StringBuilder();
+
+                String line = null;
+                while ((line = r.readLine()) != null) {
+                    total.append(line);
+                }
+                Log.d( TAG,  "Http Post Response: +++ " +total.toString() );
+
+
+                is.close();
+
+
+            } catch (ClientProtocolException e) {
+                // Log exception
+                e.printStackTrace();
+                Log.e(TAG, "ClientProtocolException++ " + e.toString());
+
+            } catch (IOException e) {
+                // Log exception
+                e.printStackTrace();
+                Log.e(TAG, "IOException ++ " + e.toString());
+            }
+
+
+                try{
+
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
+                }
+
+               // TimeUnit.SECONDS.sleep(2);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+           // tvInfo.setText("End");
+        }
     }
 
 }
