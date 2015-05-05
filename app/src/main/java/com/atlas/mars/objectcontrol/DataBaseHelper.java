@@ -51,6 +51,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MULTIPLE_SEND = "multipleSend";
     public static final String COUNT_MEMORY_HISTORY = "countMemoryHistory";
     public static final String COUNT_DISPLAY_HISTORY = "countDisplayHistory";
+    public static final String MAP_LOGIN = "mapLogin";
+    public static final String MAP_PASS = "mapPass";
+    public static final String MAP_SERVER_URL = "mapServerUrl";
 
 
     public static final String VALUE_SELECTED = "valueSelected";
@@ -528,10 +531,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb = getWritableDatabase();
         for (Map.Entry entry : map.entrySet()) {
 
-            query = "UPDATE " + TABLE_NAME_SETTING + " SET " + VALUE_PARAMETER_SETTING + "='"+ entry.getValue()+"'" + " WHERE " + VALUE_NAME_SETTING_CODE +"='"+entry.getKey()+"'";
-            Log.d(TAG, query);
-            sdb.execSQL(query);
-           // System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
+            String oldKey=null, oldValue=null;
+
+            String key = entry.getKey().toString();
+            String value = entry.getValue().toString();
+            query = "SELECT * FROM "+TABLE_NAME_SETTING+ " WHERE "+VALUE_NAME_SETTING_CODE+"=" +"'"+key+"'";
+
+            try{
+                Cursor cursor = sdb.rawQuery(query,null);
+                while (cursor.moveToNext()) {
+                oldValue = cursor.getString(cursor.getColumnIndex(VALUE_PARAMETER_SETTING));
+                }
+            }catch (Exception e){
+                Log.e(TAG,e.toString());
+            }
+            if(oldValue!=null && !oldValue.equals(value)){
+                query = "UPDATE " + TABLE_NAME_SETTING + " SET " + VALUE_PARAMETER_SETTING + "='"+ entry.getValue()+"'" + " WHERE " + VALUE_NAME_SETTING_CODE +"='"+entry.getKey()+"'";
+                sdb.execSQL(query);
+            }else if(oldValue==null){
+                fillSetting(key, value, sdb );
+            }
         }
         sdb.close();
 

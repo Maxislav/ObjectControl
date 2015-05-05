@@ -34,7 +34,6 @@
                         android:paddingRight="10dp"
                         android:paddingTop="5dp"
                         android:text="@string/multiple_send" />
-
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">

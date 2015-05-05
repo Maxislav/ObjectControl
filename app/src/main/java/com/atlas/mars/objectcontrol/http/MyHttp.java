@@ -3,7 +3,7 @@ package com.atlas.mars.objectcontrol.http;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.atlas.mars.objectcontrol.MainActivity;
+import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,13 +26,13 @@ import java.util.List;
  * Created by Администратор on 4/26/15.
  */
 public class MyHttp {
-    MainActivity mainActivity;
+    MapsActivity mapsActivity;
     private final String TAG = "myLog";
     String url;
     MyTask mt;
 
-    public MyHttp(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public MyHttp(MapsActivity mapsActivity) {
+        this.mapsActivity = mapsActivity;
     }
 
     public void postData(String url) {

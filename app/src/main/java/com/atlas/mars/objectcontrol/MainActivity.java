@@ -85,8 +85,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         setContentView(R.layout.activity_main);
         selectObject = "";
 
-        myHttp = new MyHttp(this);
-        myHttp.postData("http://gps-tracker.com.ua/login.php");
+
         _init();
     }
 

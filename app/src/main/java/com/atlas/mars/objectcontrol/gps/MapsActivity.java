@@ -1,11 +1,16 @@
 package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,8 +29,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity {
-       public final static String TAG = "myLog";
+public class MapsActivity extends ActionBarActivity {
+    public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     LocationManager locationManagerGps, locationManagerNet;
     LocationListener locationListenerGps, locationListenerNet;
@@ -33,22 +38,23 @@ public class MapsActivity extends FragmentActivity {
     public  LatLng myPos;
     static Marker myPosMarker;
     public static Circle circle;
-   //public static Marker myPosMarker;
     private static final LatLng kiev = new LatLng(50.39, 30.47);
     public boolean folowMyPos = false;
+
     MyHttp myHttp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-       /* myHttp = new MyHttp(this);
-        myHttp.postData("http://gps-tracker.com.ua/login.php");*/
+        myHttp = new MyHttp(this);
+        myHttp.postData("http://gps-tracker.com.ua/login.php");
+
 
         try {
             MapsInitializer.initialize(getApplicationContext());
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            Log.e(TAG, "+++ MapsInitializer" + e.toString());
+            Log.e(TAG, "Error +++ MapsInitializer" + e.toString());
         }
 
         btnFollow = (ImageButton)findViewById(R.id.btnFollow);
@@ -81,7 +87,34 @@ public class MapsActivity extends FragmentActivity {
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.map_menu, menu);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.actionbar_background, null));
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent questionIntent;
+        switch (item.getItemId()){
+            case R.id.action_settings_map:
+                questionIntent = new Intent(MapsActivity.this, SettingMapActivity.class);
+                startActivityForResult(questionIntent, 0);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode ==0){
+            if (resultCode == RESULT_OK){
+                //Todo нажато сохранение
+            }
+        }
+    }
 
     protected void  setClickListenerImgTargetMyPos(ImageView img){
         img.setOnClickListener(new View.OnClickListener() {
