@@ -43,6 +43,11 @@
     <string name="multiple_send_help">Allows you to select multiple commands</string>
     <string name="server_url">Адрес сервера к которому пивязаны устройства</string>
     <string name="server_url_title">Server URL</string>
+    <string name="server_login_title">Login</string>
+    <string name="server_pass_title">Password</string>
+    <string name="server_pass">Password on a server</string>
+    <string name="server_login">Login on server</string>
+
     <string name="multiple_send">Multiple sending</string>
     <string name="confirm_send">Request confirmation</string>
     <string name="confirm_send_help">Ask for confirmation before sending SMS</string>

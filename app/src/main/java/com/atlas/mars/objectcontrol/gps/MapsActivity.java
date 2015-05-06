@@ -47,7 +47,9 @@ public class MapsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         myHttp = new MyHttp(this);
-        myHttp.postData("http://gps-tracker.com.ua/login.php");
+
+      //Todo раскоментировать
+      //  myHttp.postData("http://gps-tracker.com.ua/login.php");
 
 
         try {

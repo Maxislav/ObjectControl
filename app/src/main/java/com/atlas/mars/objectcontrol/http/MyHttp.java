@@ -3,6 +3,7 @@ package com.atlas.mars.objectcontrol.http;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import org.apache.http.HttpResponse;
@@ -30,9 +31,12 @@ public class MyHttp {
     private final String TAG = "myLog";
     String url;
     MyTask mt;
+    DataBaseHelper db;
 
     public MyHttp(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
+        db = new DataBaseHelper(mapsActivity);
+
     }
 
     public void postData(String url) {

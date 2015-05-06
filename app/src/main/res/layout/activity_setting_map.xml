@@ -28,7 +28,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:orientation="horizontal"
                         android:weightSum="1">
                         <TextView
@@ -50,8 +49,7 @@
                             android:layout_width="match_parent"
                             android:layout_margin="10dp"
                             android:padding="10dp"
-                            android:layout_height="wrap_content"
-                          />
+                            android:layout_height="wrap_content"/>
                         </LinearLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -70,6 +68,102 @@
                         android:layout_alignParentBottom="true"
                         android:layout_gravity="bottom"
                         android:background="@drawable/border_bottom"></LinearLayout>
+
+                    <!--///////////-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:weightSum="2">
+                        <TextView
+                            style="@style/textStyleHistory"
+                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:layout_width="match_parent"
+                            android:text="@string/server_login_title"/>
+                        <EditText
+                            style="@style/editTextStyle"
+                            android:id="@+id/edTextServerLogin"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0.8"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent">
+                        <WebView
+                            android:id="@+id/wLogin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"></WebView>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/border_bottom"></LinearLayout>
+
+
+                    <!--/////////-->
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:weightSum="2">
+                        <TextView
+                            style="@style/textStyleHistory"
+                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:layout_width="match_parent"
+                            android:text="@string/server_pass_title"/>
+                        <EditText
+                            style="@style/editTextStyle"
+                            android:id="@+id/edTextServerPass"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0.8"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:inputType="textPassword"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent">
+                        <WebView
+                            android:id="@+id/wPass"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"></WebView>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/border_bottom"></LinearLayout>
+
+
+
+
+
+
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

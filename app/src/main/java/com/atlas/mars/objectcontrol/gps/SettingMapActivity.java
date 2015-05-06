@@ -24,7 +24,7 @@ public class SettingMapActivity extends ActionBarActivity{
     DataBaseHelper db;
     HashMap<String,String> mapSetting;
     String LOGIN, PASS, URL;
-    EditText serverUrl;
+    EditText serverUrl, edTextServerLogin, edTextServerPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,8 @@ public class SettingMapActivity extends ActionBarActivity{
     }
     private void init(){
         serverUrl = (EditText)findViewById(R.id.serverUrl);
+        edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
+        edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
         mapSetting = new HashMap<>();
         db = new DataBaseHelper(this);
         db.getSetting(mapSetting);
@@ -66,11 +68,19 @@ public class SettingMapActivity extends ActionBarActivity{
         if(URL!=null){
             serverUrl.setText(URL);
         }
+        if(LOGIN!=null){
+            edTextServerLogin.setText(LOGIN);
+        }
+        if(PASS!=null){
+            edTextServerPass.setText(PASS);
+        }
         web = getString(R.string.web);
         onDraw();
     }
     private void onDraw(){
         parsePasteWeb((WebView)findViewById(R.id.server), getString(R.string.server_url) );
+        parsePasteWeb((WebView)findViewById(R.id.wLogin), getString(R.string.server_login) );
+        parsePasteWeb((WebView)findViewById(R.id.wPass), getString(R.string.server_pass) );
 
     }
     private void parsePasteWeb(WebView browser, String put ){
@@ -79,7 +89,13 @@ public class SettingMapActivity extends ActionBarActivity{
     }
     private void saveSetting(){
         URL = serverUrl.getText().toString();
+        LOGIN = edTextServerLogin.getText().toString();
+        PASS = edTextServerPass.getText().toString();
+
         mapSetting.put(db.MAP_SERVER_URL, URL);
+        mapSetting.put(db.MAP_LOGIN, LOGIN);
+        mapSetting.put(db.MAP_PASS, PASS);
+
         db.setSetting(mapSetting);
     }
 
