@@ -49,7 +49,7 @@ public class MapsActivity extends ActionBarActivity {
         myHttp = new MyHttp(this);
 
       //Todo раскоментировать
-      //  myHttp.postData("http://gps-tracker.com.ua/login.php");
+        myHttp.postData();
 
 
         try {
