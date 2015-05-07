@@ -5,7 +5,11 @@ import android.util.Log;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -15,6 +19,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +35,7 @@ import java.util.List;
  */
 public class MyHttp {
     MapsActivity mapsActivity;
+    ObjectMapper mapper=new ObjectMapper();
     private final String TAG = "myLog";
 
     MyTask mt;
@@ -41,6 +47,7 @@ public class MyHttp {
 
     public MyHttp(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
+
         db = new DataBaseHelper(mapsActivity);
         mapSetting = new HashMap<>();
         db.getSetting(mapSetting);
@@ -89,6 +96,7 @@ public class MyHttp {
 
         @Override
         protected String doInBackground(String ... _params) {
+
             String resText = null;
             String login = _params[0];
             String pass = _params[1];
@@ -97,8 +105,11 @@ public class MyHttp {
 
             Log.d(TAG, "+++ doInBackground");
            // httpClient = new DefaultHttpClient();
+            @SuppressWarnings("deprecation")
             HttpPost httpPost = new HttpPost(urlAuth);
+            @SuppressWarnings("deprecation")
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+
             nameValuePair.add(new BasicNameValuePair("login", login));
             nameValuePair.add(new BasicNameValuePair("password", pass));
             //Encoding POST data
@@ -141,14 +152,51 @@ public class MyHttp {
             HttpGet httpGet = new HttpGet(urlStateObj);
             try {
                 HttpResponse response = httpClient.execute(httpGet);
-                InputStreamReader is = new InputStreamReader(response.getEntity().getContent());
+
+                HttpEntity entity = response.getEntity();
+                String content = EntityUtils.toString(entity);
+
+                Log.d( TAG,  "Http Post Response4: +++ " +content.toString() );
+               /* try {
+                    JSONObject json = new JSONObject(content.toString());
+                }catch (JSONException e){
+                    Log.e(TAG, e.toString());
+                }*/
+
+
+
+                    ObjectNode root = (ObjectNode) mapper.readTree(content);
+                    ArrayNode rows = (ArrayNode) root.get("rows");
+                    rows.size();
+
+                    Log.d(TAG, "+++ "+rows.size());
+
+
+
+                /*HashMap map = new HashMap<String,String>();
+
+                ObjectMapper mapper = new ObjectMapper();
+
+                try {
+                    HashMap<String,Object> result =
+                            new ObjectMapper().readValue(content, HashMap.class);
+                } catch (JsonMappingException e) {
+                    //e.printStackTrace();
+                }*/
+
+
+
+
+
+
+               /* InputStreamReader is = new InputStreamReader(response.getEntity().getContent());
                 BufferedReader r = new BufferedReader(is);
                 StringBuilder total = new StringBuilder();
                 String line = null;
                 while ((line = r.readLine()) != null) {
                     total.append(line);
-                }
-                Log.d( TAG,  "Http Post Response3: +++ " +total.toString() );
+                }*/
+             //   Log.d( TAG,  "Http Post Response3: +++ " +total.toString() );
 
             }catch (IOException e){
                 Log.e(TAG, "IOException ++ " + e.toString());
