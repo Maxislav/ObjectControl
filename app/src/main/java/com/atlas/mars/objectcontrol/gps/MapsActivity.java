@@ -29,6 +29,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MapsActivity extends ActionBarActivity {
     public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -213,6 +216,21 @@ public class MapsActivity extends ActionBarActivity {
                         .title(title)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
     }
+
+    public void setObjectMarkers(ArrayList<HashMap> arrayList){
+        for(HashMap<String, String> map : arrayList){
+            if(map.get("lat")!=null && !map.get("lat").isEmpty()){
+                LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+                mMap.addMarker(
+                        new MarkerOptions()
+                                .position(pos)
+                                .anchor(0.5f,0.5f)
+                                .title(map.get("name"))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+            }
+        }
+    }
+
     public  void setAccuracy(float accuracy){
         if (circle != null) {
             circle.remove();
