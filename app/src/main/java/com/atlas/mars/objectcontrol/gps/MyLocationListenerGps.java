@@ -43,7 +43,7 @@ public class MyLocationListenerGps implements LocationListener {
         statusGps = true;
             mapsActivity.myPos = myPosGps;
             mapsActivity.setMarkerMyPos("My location GPS");
-            mapsActivity.moveCameraToMyPos();
+            //mapsActivity.moveCameraToMyPos();
              mapsActivity.setAccuracy(accuracy);
     }
 

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.R;
@@ -38,20 +39,23 @@ public class MapsActivity extends ActionBarActivity {
     LocationManager locationManagerGps, locationManagerNet;
     LocationListener locationListenerGps, locationListenerNet;
     ImageButton btnFollow;
-    public  LatLng myPos;
+    public LatLng myPos;
     static Marker myPosMarker;
     public static Circle circle;
     private static final LatLng kiev = new LatLng(50.39, 30.47);
     public boolean folowMyPos = false;
+    private HashMap<String, HashMap> hashObjects;
 
     MyHttp myHttp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        hashObjects = new HashMap<>();
         myHttp = new MyHttp(this);
 
-      //Todo раскоментировать
+        //Todo раскоментировать
         myHttp.postData();
 
 
@@ -62,7 +66,7 @@ public class MapsActivity extends ActionBarActivity {
             Log.e(TAG, "Error +++ MapsInitializer" + e.toString());
         }
 
-        btnFollow = (ImageButton)findViewById(R.id.btnFollow);
+        btnFollow = (ImageButton) findViewById(R.id.btnFollow);
         setClickListenerImgTargetMyPos(btnFollow);
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -72,10 +76,10 @@ public class MapsActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        if(locationManagerGps != null){
+        if (locationManagerGps != null) {
             locationManagerGps.removeUpdates(locationListenerGps);
         }
-        if(locationManagerNet != null){
+        if (locationManagerNet != null) {
             locationManagerNet.removeUpdates(locationListenerNet);
         }
         MyLocationListenerGps.statusGps = false;
@@ -92,6 +96,7 @@ public class MapsActivity extends ActionBarActivity {
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.map_menu, menu);
@@ -103,7 +108,7 @@ public class MapsActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent questionIntent;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings_map:
                 questionIntent = new Intent(MapsActivity.this, SettingMapActivity.class);
                 startActivityForResult(questionIntent, 0);
@@ -114,26 +119,25 @@ public class MapsActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode ==0){
-            if (resultCode == RESULT_OK){
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
                 //Todo нажато сохранение
             }
         }
     }
 
-    protected void  setClickListenerImgTargetMyPos(ImageView img){
+    protected void setClickListenerImgTargetMyPos(ImageView img) {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(myPos!=null){
+                if (myPos != null) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
-                }else{
+                } else {
                     toastShow("Position not available");
                 }
             }
         });
     }
-
 
 
     /**
@@ -168,7 +172,7 @@ public class MapsActivity extends ActionBarActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-       // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
+        // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 10));
 
@@ -198,13 +202,15 @@ public class MapsActivity extends ActionBarActivity {
 */
     }
 
-    public void toastShow(String str){
+    public void toastShow(String str) {
         Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
     }
-    public void moveCameraToMyPos(){
+
+    public void moveCameraToMyPos() {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
     }
-    public void setMarkerMyPos(String title){
+
+    public void setMarkerMyPos(String title) {
         if (myPosMarker != null) {
             myPosMarker.remove();
             myPosMarker = null;
@@ -212,26 +218,54 @@ public class MapsActivity extends ActionBarActivity {
         myPosMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(myPos)
-                        .anchor(0.5f,0.5f)
+                        .anchor(0.5f, 0.5f)
                         .title(title)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
     }
 
-    public void setObjectMarkers(ArrayList<HashMap> arrayList){
-        for(HashMap<String, String> map : arrayList){
-            if(map.get("lat")!=null && !map.get("lat").isEmpty()){
+    public void setObjectMarkers(ArrayList<HashMap> arrayList) {
+        for (HashMap<String, String> map : arrayList) {
+            if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                 LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
-                mMap.addMarker(
+                hashObjects.put(map.get("id"), map);
+                Marker objMarker = mMap.addMarker(
                         new MarkerOptions()
                                 .position(pos)
-                                .anchor(0.5f,0.5f)
+                                .anchor(0.5f, 0.5f)
                                 .title(map.get("name"))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+                                .snippet(map.get("id"))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point_obj)));
+                objMarker.showInfoWindow();
             }
+        }
+        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+    }
+
+
+    public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            HashMap<String, String> map = hashObjects.get(marker.getSnippet());
+            View v = getLayoutInflater().inflate(R.layout.infowindow_layout, null);
+            if(map!=null && !map.isEmpty()){
+                TextView textName = (TextView) v.findViewById(R.id.textName);
+                TextView textDate = (TextView) v.findViewById(R.id.textDate);
+                textName.setText(map.get("name"));
+                textDate.setText(map.get("date"));
+            }
+
+            return v;
         }
     }
 
-    public  void setAccuracy(float accuracy){
+    public void setAccuracy(float accuracy) {
         if (circle != null) {
             circle.remove();
             circle = null;
@@ -241,7 +275,7 @@ public class MapsActivity extends ActionBarActivity {
                 .center(myPos)
                 .radius(accuracy)
                 .strokeColor(getResources().getColor(R.color.strokeColorAccuracy))
-                .fillColor( getResources().getColor(R.color.fillColorAccuracy))
+                .fillColor(getResources().getColor(R.color.fillColorAccuracy))
                 .strokeWidth(2.0f);
         circle = mMap.addCircle(circleOptions);
     }

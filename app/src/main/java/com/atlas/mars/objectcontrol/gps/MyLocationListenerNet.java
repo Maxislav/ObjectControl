@@ -31,7 +31,7 @@ public class MyLocationListenerNet extends MyLocationListenerGps implements Loca
         if(!MyLocationListenerGps.statusGps){
             mapsActivity.myPos = myPosNet;
             mapsActivity.setMarkerMyPos("My location NET");
-            mapsActivity.moveCameraToMyPos();
+          //  mapsActivity.moveCameraToMyPos();
             mapsActivity.setAccuracy(accuracy);
         }
     }

@@ -24,6 +24,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -79,6 +81,11 @@ public class MyHttp {
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
                 map.put("id", jsonNode.path("CarId").asText());
+
+                JsonNode arrayDateCar =  new ObjectMapper().readTree(jsonNode.path("DateCar").asText());
+                if(arrayDateCar.isArray())
+                map.put("date", arrayDateCar.get(0).path("DateCar").asText());
+
                 Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
                 arrayListObjects.add(map);
             }
