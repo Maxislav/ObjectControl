@@ -210,9 +210,11 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
                 menu.findItem(R.id.action_add_command).setVisible(true);
                 menu.findItem(R.id.action_remove_command).setVisible(true);
                 menu.findItem(R.id.action_add_favorite).setVisible(true);
+                menu.findItem(R.id.action_to_map).setVisible(true);
                 break;
             case 2:
                 menu.findItem(R.id.action_settings).setVisible(true);
+                menu.findItem(R.id.action_to_map).setVisible(true);
                 break;
 
             default:

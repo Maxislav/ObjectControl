@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class MapsActivity extends ActionBarActivity {
     private static final LatLng kiev = new LatLng(50.39, 30.47);
     public boolean folowMyPos = false;
     private HashMap<String, HashMap> hashObjects;
+    private SupportMapFragment fragment;
 
     MyHttp myHttp;
 
@@ -159,6 +161,10 @@ public class MapsActivity extends ActionBarActivity {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+          //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            SupportMapFragment  mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
             if (mMap != null) {
                 setUpMap();
             }
@@ -173,8 +179,13 @@ public class MapsActivity extends ActionBarActivity {
      */
     private void setUpMap() {
         // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
+    //    MapView mapView = (MapView)findViewById(R.id.map);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 10));
+
+        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+       // MapView mapView = (MapView)findViewById(R.id.map);
 
         /*mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
                 .anchor(0.5f,0.5f)
@@ -224,6 +235,7 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {
+        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         for (HashMap<String, String> map : arrayList) {
             if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                 LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
@@ -236,11 +248,49 @@ public class MapsActivity extends ActionBarActivity {
                                 .snippet(map.get("id"))
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point_obj)));
                 objMarker.showInfoWindow();
+
+                IconGenerator iconFactory = new IconGenerator(this);
+              //  addIcon(iconFactory, "Default",pos);
+
+               /* iconFactory.setColor(Color.CYAN);
+                addIcon(iconFactory, "Custom color", new LatLng(-33.9360, 151.2070));
+
+                iconFactory.setRotation(90);
+                iconFactory.setStyle(IconGenerator.STYLE_RED);
+                addIcon(iconFactory, "Rotated 90 degrees", new LatLng(-33.8858, 151.096));
+
+                iconFactory.setContentRotation(-90);
+                iconFactory.setStyle(IconGenerator.STYLE_PURPLE);
+                addIcon(iconFactory, "Rotate=90, ContentRotate=-90", new LatLng(-33.9992, 151.098));*/
+
+                iconFactory.setRotation(0);
+                //iconFactory.setContentRotation(90);
+                iconFactory.setStyle(IconGenerator.STYLE_WHITE);
+                addIcon(iconFactory, map.get("name"), pos, map);
+                //Bitmap iconBitmap = bubbleIconFactory
+
+               // MapView.LayoutParams mapParams =
+
+                /*MapView.LayoutParams mapParams = new MapView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        pos,
+               0.5,
+                0.5,
+                MapView.LayoutParams.WRAP_CONTENT);
+                map.addView(popUp, mapParams);*/
             }
         }
-        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-    }
 
+    }
+    private void addIcon(IconGenerator iconFactory, String text, LatLng position, HashMap<String, String> map) {
+        MarkerOptions markerOptions = new MarkerOptions().
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
+                position(position).
+        snippet(map.get("id")).
+                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+
+        mMap.addMarker(markerOptions);
+    }
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -252,6 +302,8 @@ public class MapsActivity extends ActionBarActivity {
 
         @Override
         public View getInfoContents(Marker marker) {
+
+
             HashMap<String, String> map = hashObjects.get(marker.getSnippet());
             View v = getLayoutInflater().inflate(R.layout.infowindow_layout, null);
             if(map!=null && !map.isEmpty()){
@@ -260,7 +312,7 @@ public class MapsActivity extends ActionBarActivity {
                 textName.setText(map.get("name"));
                 textDate.setText(map.get("date"));
             }
-
+//            marker.showInfoWindow();
             return v;
         }
     }
