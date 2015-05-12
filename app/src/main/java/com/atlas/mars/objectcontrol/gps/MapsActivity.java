@@ -309,8 +309,10 @@ public class MapsActivity extends ActionBarActivity {
             if(map!=null && !map.isEmpty()){
                 TextView textName = (TextView) v.findViewById(R.id.textName);
                 TextView textDate = (TextView) v.findViewById(R.id.textDate);
+                TextView textTime = (TextView) v.findViewById(R.id.textTime);
                 textName.setText(map.get("name"));
                 textDate.setText(map.get("date"));
+                textTime.setText(map.get("time"));
             }
 //            marker.showInfoWindow();
             return v;

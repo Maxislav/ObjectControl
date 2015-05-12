@@ -31,7 +31,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +48,7 @@ public class MyHttp {
     private static final String TAG = "myLog";
 
     MyTask mt;
+    Auth au;
     DataBaseHelper db;
     HashMap<String, String> mapSetting;
     HttpClient httpClient;
@@ -52,21 +56,28 @@ public class MyHttp {
 
     public MyHttp(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
-
         db = new DataBaseHelper(mapsActivity);
         mapSetting = new HashMap<>();
         db.getSetting(mapSetting);
-        httpClient = new DefaultHttpClient();
-
     }
 
     public void postData() {
-        //"http://gps-tracker.com.ua/login.php"
-
-        mt = new MyTask(mapsActivity);
-        if (mapSetting.get(db.MAP_LOGIN) != null && mapSetting.get(db.MAP_PASS) != null && mapSetting.get(db.MAP_SERVER_URL) != null) {
-            mt.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
+        if(httpClient==null){
+            getAuth();
         }
+    }
+
+    public void getAuth(){
+        au = new Auth();
+        if (mapSetting.get(db.MAP_LOGIN) != null && mapSetting.get(db.MAP_PASS) != null && mapSetting.get(db.MAP_SERVER_URL) != null) {
+            au.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
+        }
+    }
+
+    private void getPoints(String jsonText){
+        Log.d(TAG, "Http Post Response2: +++ " + jsonText);
+        mt = new MyTask(mapsActivity);
+        mt.execute(mapSetting.get(db.MAP_SERVER_URL)+"/loadevents.php?param=icars");
     }
 
     public  void resData(String json) {
@@ -76,16 +87,35 @@ public class MyHttp {
             ArrayNode rows = (ArrayNode) root.get("rows");
             for (JsonNode jsonNode : rows) {
                 HashMap<String, String> map = new HashMap<>();
-                Log.d(TAG, jsonNode.path("CarName").asText());
+                Log.d(TAG, jsonNode.toString());
                 map.put("name", jsonNode.path("CarName").asText());
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
                 map.put("id", jsonNode.path("CarId").asText());
 
                 JsonNode arrayDateCar =  new ObjectMapper().readTree(jsonNode.path("DateCar").asText());
-                if(arrayDateCar.isArray())
-                map.put("date", arrayDateCar.get(0).path("DateCar").asText());
+                String string_date = null;
+                if(arrayDateCar.isArray()){
+                    string_date = arrayDateCar.get(0).path("DateCar").asText();
+                }
 
+                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                Date d = null;
+                try {
+                    d = f.parse(string_date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yy");
+                SimpleDateFormat df3 = new SimpleDateFormat("HH:mm:ss");
+                String dateText = df2.format(d);
+                String dateTime = df3.format(d);
+
+                if(d!=null){
+                    //string_date = ""+ d.getTime();
+                    map.put("date", dateText);
+                    map.put("time", dateTime);
+                }
                 Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
                 arrayListObjects.add(map);
             }
@@ -95,13 +125,70 @@ public class MyHttp {
         }
     }
 
+    class  Auth extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... params) {
+            httpClient = new DefaultHttpClient();
+            String resText = null;
+            String login = params[0];
+            String pass = params[1];
+            String urlAuth = params[2] + "/login.php";
+            httpClient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+            httpClient.getParams().setParameter("http.protocol.content-charset", "cp1251");
+            Log.d(TAG, "+++ doInBackground");
+            @SuppressWarnings("deprecation")
+            HttpPost httpPost = new HttpPost(urlAuth);
+            @SuppressWarnings("deprecation")
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+            nameValuePair.add(new BasicNameValuePair("login", login));
+            nameValuePair.add(new BasicNameValuePair("password", pass));
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                Log.e(TAG, "UnsupportedEncodingException+++" + e.toString());
+            }
+            try {
+                HttpResponse response = httpClient.execute(httpPost);
+                HttpEntity entity = response.getEntity();
+                String content = EntityUtils.toString(entity);
+                resText = content.toString();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+                Log.e(TAG, "ClientProtocolException++ " + e.toString());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "IOException ++ " + e.toString());
+            }
+
+            return resText;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            // super.onPostExecute(result);
+            ObjectNode root = null;
+            try {
+                root = (ObjectNode) mapper.readTree(result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            JsonNode successNode = root.path("success");
+            boolean res = successNode.asBoolean();
+            if(res){
+                getPoints(result);
+            }
+        }
+    }
+
+
     class MyTask extends AsyncTask<String, Void, String> {
         MapsActivity mapsActivity;
 
         MyTask(MapsActivity mapsActivity){
             super();
             this.mapsActivity = mapsActivity;
-
         }
 
         @Override
@@ -111,87 +198,18 @@ public class MyHttp {
         }
 
         @Override
-        protected String doInBackground(String... _params) {
+        protected String doInBackground(String... params) {
 
+            String urlStateObj = params[0];// + "/loadevents.php?param=icars";
             String resText = null;
-            String login = _params[0];
-            String pass = _params[1];
-            String urlAuth = _params[2] + "/login.php";
-            String urlStateObj = _params[2] + "/loadevents.php?param=icars";
-
-            httpClient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-            httpClient.getParams().setParameter("http.protocol.content-charset", "cp1251");
-
-
-            Log.d(TAG, "+++ doInBackground");
-            // httpClient = new DefaultHttpClient();
-            @SuppressWarnings("deprecation")
-            HttpPost httpPost = new HttpPost(urlAuth);
-            @SuppressWarnings("deprecation")
-            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-
-            nameValuePair.add(new BasicNameValuePair("login", login));
-            nameValuePair.add(new BasicNameValuePair("password", pass));
-            //Encoding POST data
-            try {
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                Log.e(TAG, "UnsupportedEncodingException+++" + e.toString());
-            }
-
-            try {
-                HttpResponse response = httpClient.execute(httpPost);
-                HttpEntity entity = response.getEntity();
-                String content = EntityUtils.toString(entity);
-                Log.d(TAG, "Http Post Response2: +++ " + content.toString());
-
-                ObjectNode root = (ObjectNode) mapper.readTree(content);
-
-                JsonNode successNode = root.path("success");
-                boolean res = successNode.asBoolean();
-
-                Log.d(TAG, "nameNode +++" + res);
-
-
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-                Log.e(TAG, "ClientProtocolException++ " + e.toString());
-
-            } catch (IOException e) {
-                // Log exception
-                e.printStackTrace();
-                Log.e(TAG, "IOException ++ " + e.toString());
-            }
-
             HttpGet httpGet = new HttpGet(urlStateObj);
             httpGet.setHeader("charset", "windows-1251");
             try {
-                //  httpClient.bodyString("Important stuff", ContentType.create("text/plain", Consts.UTF_8))
 
                 HttpResponse response = httpClient.execute(httpGet);
-
-                // HttpEntity entity = response.getEntity();
-
                 String responseBody = EntityUtils.toString(response.getEntity(), "UTF8");
-
-
-                // String utf8String= new String(res.getBytes("UTF-8"), "windows-1251");;
                 String utf8String = new String(responseBody.getBytes("Cp1251"), "UTF-8");
-                //String utf8String= new String(res.getBytes("UTF-8"), "windows-1251");;
                 resText = utf8String;
-                // String content = EntityUtils.toString(entity, "ISO-8859-1");
-/*
-               // Log.d(TAG, "Http Post Response4: +++ " + content.toString());
-               // resText =  content.toString();
-                resText =  responseBody;
-                ObjectNode root = (ObjectNode) mapper.readTree(content);
-                ArrayNode rows = (ArrayNode) root.get("rows");
-                rows.size();
-
-                Log.d(TAG, "+++ " + rows.size());*/
-
-
             } catch (IOException e) {
                 Log.e(TAG, "IOException ++ " + e.toString());
             }
@@ -200,10 +218,7 @@ public class MyHttp {
 
         @Override
         protected void onPostExecute(String result) {
-            // super.onPostExecute(result);
             resData(result);
-            //  mapsActivity.toastShow(result);
-            // tvInfo.setText("End");
         }
     }
 
