@@ -9,11 +9,19 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +48,11 @@ public class MapsActivity extends ActionBarActivity {
     LocationManager locationManagerGps, locationManagerNet;
     LocationListener locationListenerGps, locationListenerNet;
     ImageButton btnFollow;
+    ImageButton btnList;
+    LinearLayout listContainer;
+    LinearLayout linearLayoutInScroll;
+    ScrollView scrollView;
+
     public LatLng myPos;
     static Marker myPosMarker;
     public static Circle circle;
@@ -69,7 +82,14 @@ public class MapsActivity extends ActionBarActivity {
         }
 
         btnFollow = (ImageButton) findViewById(R.id.btnFollow);
+        btnList = (ImageButton) findViewById(R.id.btnList);
+        listContainer = (LinearLayout) findViewById(R.id.listContainer);
+        linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+
+
         setClickListenerImgTargetMyPos(btnFollow);
+        setClickListenerBtnList();
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -137,6 +157,37 @@ public class MapsActivity extends ActionBarActivity {
                 } else {
                     toastShow("Position not available");
                 }
+            }
+        });
+    }
+
+    protected void setClickListenerBtnList(){
+        final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
+        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup_hide);
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(250, FrameLayout.LayoutParams.MATCH_PARENT);
+                listContainer.startAnimation(animIn);
+                aniOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        btnList.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                btnList.startAnimation(aniOut);
+                lp.setMargins(0, 0, 0, 0);
+                listContainer.setLayoutParams(lp);
             }
         });
     }
@@ -248,6 +299,7 @@ public class MapsActivity extends ActionBarActivity {
                                 .snippet(map.get("id"))
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point_obj)));
                 objMarker.showInfoWindow();
+                addRowObject(map);
 
                 IconGenerator iconFactory = new IconGenerator(this);
               //  addIcon(iconFactory, "Default",pos);
@@ -332,5 +384,28 @@ public class MapsActivity extends ActionBarActivity {
                 .fillColor(getResources().getColor(R.color.fillColorAccuracy))
                 .strokeWidth(2.0f);
         circle = mMap.addCircle(circleOptions);
+    }
+
+    private void addRowObject(final HashMap<String, String> map){
+        LayoutInflater ltInflater = getLayoutInflater();
+        View view = ltInflater.inflate(R.layout.row_map_object, null, false);
+
+        TextView textName = (TextView) view.findViewById(R.id.textName);
+        TextView textDate = (TextView) view.findViewById(R.id.textDate);
+        TextView textTime = (TextView) view.findViewById(R.id.textTime);
+        textName.setText(map.get("name"));
+        textDate.setText(map.get("date"));
+        textTime.setText(map.get("time"));
+        linearLayoutInScroll.addView(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            final HashMap<String,String> _map = map;
+            @Override
+            public void onClick(View v) {
+                if(map.get("lat")!=null && !map.get("lat").isEmpty()){
+                    LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                }
+            }
+        });
     }
 }
