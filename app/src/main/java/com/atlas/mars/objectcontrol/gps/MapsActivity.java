@@ -8,19 +8,18 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +42,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapsActivity extends ActionBarActivity {
+
+    DisplayMetrics displayMetrics;
+    private float dpHeight, dpWidth, density;
+
     public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     LocationManager locationManagerGps, locationManagerNet;
@@ -52,6 +55,7 @@ public class MapsActivity extends ActionBarActivity {
     LinearLayout listContainer;
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
+    LinearLayout hideLinearLayout;
 
     public LatLng myPos;
     static Marker myPosMarker;
@@ -68,7 +72,18 @@ public class MapsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         hashObjects = new HashMap<>();
+
+        displayMetrics = getResources().getDisplayMetrics();
+        density = displayMetrics.density;
+        dpHeight = displayMetrics.heightPixels / density;
+        dpWidth = displayMetrics.widthPixels / density;
+        Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
+
+
+
         myHttp = new MyHttp(this);
+
+
 
         //Todo раскоментировать
         myHttp.postData();
@@ -86,10 +101,15 @@ public class MapsActivity extends ActionBarActivity {
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
+        hideLinearLayout = (LinearLayout) findViewById(R.id.hideLinearLayout);
+
+       // scrollView.setOnTouchListener(new MyTouchListener());
+    //    scrollView.setOnDragListener(new MyDragListener());
 
 
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerBtnList();
+        setClickListenerHideLinearLayout();
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -161,13 +181,44 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
+    protected void setClickListenerHideLinearLayout(){
+        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
+        final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup_show);
+        hideLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aniOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
+                        lp.setMargins(-(int)(density*250), 0, 0, 0);
+                        listContainer.setLayoutParams(lp);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                btnList.setVisibility(View.VISIBLE);
+                btnList.startAnimation(animIn);
+                listContainer.startAnimation(aniOut);
+
+            }
+        });
+    }
     protected void setClickListenerBtnList(){
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup_hide);
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(250, FrameLayout.LayoutParams.MATCH_PARENT);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
                 listContainer.startAnimation(animIn);
                 aniOut.setAnimationListener(new Animation.AnimationListener() {
                     @Override
@@ -401,6 +452,7 @@ public class MapsActivity extends ActionBarActivity {
             final HashMap<String,String> _map = map;
             @Override
             public void onClick(View v) {
+
                 if(map.get("lat")!=null && !map.get("lat").isEmpty()){
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
@@ -408,4 +460,7 @@ public class MapsActivity extends ActionBarActivity {
             }
         });
     }
+
+
+
 }

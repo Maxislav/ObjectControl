@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="titleColor" type="color">#fff4f4ff</item>
-    <item name="rowObjectMapBack" type="color">#97ffffff</item>
+    <item name="rowObjectMapBack" type="color">#d4ffffff</item>
     <item name="titleColorPressStart" type="color">#ffeffeff</item>
     <item name="titleColorPressEnd" type="color">#ffb9b9b9</item>
 

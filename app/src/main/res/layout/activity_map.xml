@@ -20,27 +20,39 @@
         android:background="@drawable/list" />
 
     <LinearLayout
+        android:id="@+id/listContainer"
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="-250dp"
-        android:orientation="vertical"
-        android:id="@+id/listContainer">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/targetBack"
+            android:id="@+id/hideLinearLayout"
+            android:gravity="right">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:background="@drawable/hide_left"
+                />
+        </LinearLayout>
 
         <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/scrollView">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/linearLayoutInScroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/linearLayoutInScroll"
                 android:orientation="vertical">
 
 
-
-
-             </LinearLayout>
+            </LinearLayout>
 
 
         </ScrollView>
