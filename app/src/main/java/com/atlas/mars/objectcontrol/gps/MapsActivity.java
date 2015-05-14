@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,7 +54,7 @@ public class MapsActivity extends ActionBarActivity {
     LinearLayout listContainer;
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
-    LinearLayout hideLinearLayout;
+
 
     public LatLng myPos;
     static Marker myPosMarker;
@@ -101,7 +100,6 @@ public class MapsActivity extends ActionBarActivity {
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
-        hideLinearLayout = (LinearLayout) findViewById(R.id.hideLinearLayout);
 
        // scrollView.setOnTouchListener(new MyTouchListener());
     //    scrollView.setOnDragListener(new MyDragListener());
@@ -109,7 +107,6 @@ public class MapsActivity extends ActionBarActivity {
 
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerBtnList();
-        setClickListenerHideLinearLayout();
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -181,64 +178,56 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
-    protected void setClickListenerHideLinearLayout(){
-        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
-        final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup_show);
-        hideLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                aniOut.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
 
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
-                        lp.setMargins(-(int)(density*250), 0, 0, 0);
-                        listContainer.setLayoutParams(lp);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                btnList.setVisibility(View.VISIBLE);
-                btnList.startAnimation(animIn);
-                listContainer.startAnimation(aniOut);
-
-            }
-        });
-    }
     protected void setClickListenerBtnList(){
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
-        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup_hide);
+        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
-                listContainer.startAnimation(animIn);
-                aniOut.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+               // FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
 
-                    }
+                if(listContainer.isShown()){
+                    aniOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        btnList.setVisibility(View.INVISIBLE);
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            listContainer.setVisibility(View.INVISIBLE);
+                        }
 
-                    }
-                });
-                btnList.startAnimation(aniOut);
-                lp.setMargins(0, 0, 0, 0);
-                listContainer.setLayoutParams(lp);
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    listContainer.startAnimation(aniOut);
+                }else{
+
+                    animIn.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            listContainer.setVisibility(View.VISIBLE);
+                        }
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            //btnList.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    listContainer.startAnimation(animIn);
+
+                }
+
+               // lp.setMargins(0, 0, 0, 0);
+                //listContainer.setLayoutParams(lp);
             }
         });
     }
