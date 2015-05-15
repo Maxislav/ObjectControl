@@ -402,9 +402,11 @@ public class MapsActivity extends ActionBarActivity {
                 TextView textName = (TextView) v.findViewById(R.id.textName);
                 TextView textDate = (TextView) v.findViewById(R.id.textDate);
                 TextView textTime = (TextView) v.findViewById(R.id.textTime);
+                TextView textSp = (TextView) v.findViewById(R.id.textSp);
                 textName.setText(map.get("name"));
                 textDate.setText(map.get("date"));
                 textTime.setText(map.get("time"));
+                textSp.setText(map.get("speed"));
             }
 //            marker.showInfoWindow();
             return v;
@@ -433,9 +435,12 @@ public class MapsActivity extends ActionBarActivity {
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
         TextView textTime = (TextView) view.findViewById(R.id.textTime);
+        TextView textSp = (TextView) view.findViewById(R.id.textSp);
         textName.setText(map.get("name"));
         textDate.setText(map.get("date"));
         textTime.setText(map.get("time"));
+        textSp.setText(map.get("speed"));
+
         linearLayoutInScroll.addView(view);
         view.setOnClickListener(new View.OnClickListener() {
             final HashMap<String,String> _map = map;

@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
-import com.atlas.mars.objectcontrol.MainActivity;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,21 +21,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -99,6 +92,10 @@ public class MyHttp {
                     string_date = arrayDateCar.get(0).path("DateCar").asText();
                 }
 
+                double speed = jsonNode.path("SpeedV").asDouble();
+                speed = speed*1.61;
+                map.put("speed", ""+(int)speed);
+
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                 Date d = null;
                 try {
@@ -106,7 +103,7 @@ public class MyHttp {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yy");
+                SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yyyy");
                 SimpleDateFormat df3 = new SimpleDateFormat("HH:mm:ss");
                 String dateText = df2.format(d);
                 String dateTime = df3.format(d);
