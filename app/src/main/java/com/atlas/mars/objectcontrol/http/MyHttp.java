@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.geoMath.GeoMath;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,6 +76,8 @@ public class MyHttp {
 
     public  void resData(String json) {
         ArrayList<HashMap> arrayListObjects = new ArrayList<>();
+        GeoMath geoMath = new GeoMath();
+
         try {
             ObjectNode root = (ObjectNode) mapper.readTree(json);
             ArrayNode rows = (ArrayNode) root.get("rows");
@@ -85,6 +88,17 @@ public class MyHttp {
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
                 map.put("id", jsonNode.path("CarId").asText());
+
+                double lat1 = jsonNode.path("X").asDouble();
+                double lng1 = jsonNode.path("Y").asDouble();
+                double lat2 = jsonNode.path("pX").asDouble();
+                double lng2 = jsonNode.path("pY").asDouble();
+
+                double azimuth = geoMath.toAthimuth(lat2,lng2,lat1,lng1);
+                if(!Double.isNaN(azimuth)){
+                    Log.d(TAG,"azimuz ++ "+azimuth);
+                    map.put("azimuth", ""+(int) Math.round(azimuth));
+                }
 
                 JsonNode arrayDateCar =  new ObjectMapper().readTree(jsonNode.path("DateCar").asText());
                 String string_date = null;

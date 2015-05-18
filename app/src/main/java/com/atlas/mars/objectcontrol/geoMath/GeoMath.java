@@ -4,7 +4,7 @@ package com.atlas.mars.objectcontrol.geoMath;
  * Created by mars on 5/18/15.
  */
 public class GeoMath {
-    public float toAthimuth(float llat1, float llng1, float llat2, float llng2) {
+    public double toAthimuth(double llat1, double llng1, double llat2, double llng2) {
         double rad = 6372795;
 
         double lat1 = llat1 * Math.PI / 180;
@@ -21,13 +21,26 @@ public class GeoMath {
         double cdelta = Math.cos(delta);
         double sdelta = Math.sin(delta);
 
+        //вычисления длины большого круга
         double y = Math.sqrt(Math.pow(cl2 * sdelta, 2) + Math.pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2));
         double x = sl1 * sl2 + cl1 * cl2 * cdelta;
-        double ad = Math.atan2(y,x);
-        double  dist = ad*rad;
+        double ad = Math.atan2(y, x);
+        double dist = ad * rad;
 
 
-        return 0.0f;
+        //вычисление начального азимута
+        x = (cl1 * sl2) - (sl1 * cl2 * cdelta);
+        y = sdelta * cl2;
+        double z = Math.toDegrees(Math.atan(-y / x));
 
+        if (x < 0) {
+            z = z + 180;
+        }
+        double z2 = (z + 180) % 360 - 180;
+        z2 = -Math.toRadians(z2);
+
+        double anglerad2 = z2 - ((2 * Math.PI) * Math.floor((z2 / (2 * Math.PI))));
+        double angledeg = (anglerad2 * 180.) / Math.PI;
+        return angledeg;
     }
 }

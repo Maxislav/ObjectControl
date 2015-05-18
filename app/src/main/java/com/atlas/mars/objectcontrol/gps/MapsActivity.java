@@ -331,13 +331,18 @@ public class MapsActivity extends ActionBarActivity {
             if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                 LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                 hashObjects.put(map.get("id"), map);
+
                 Marker objMarker = mMap.addMarker(
                         new MarkerOptions()
                                 .position(pos)
                                 .anchor(0.5f, 0.5f)
                                 .title(map.get("name"))
                                 .snippet(map.get("id"))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point_obj)));
+                                .icon(BitmapDescriptorFactory.fromResource( map.get("azimuth") != null ? R.drawable.arrow_obj :R.drawable.ico_point_obj)));
+
+                if( map.get("azimuth") != null ){
+                    objMarker.setRotation(Float.parseFloat(map.get("azimuth")));
+                }
                 objMarker.showInfoWindow();
                 addRowObject(map);
 
