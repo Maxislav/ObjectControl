@@ -7,8 +7,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
@@ -21,6 +24,7 @@ import java.util.HashMap;
  */
 public class SettingMapActivity extends ActionBarActivity{
     String web;
+    Spinner spinner;
     DataBaseHelper db;
     HashMap<String,String> mapSetting;
     String LOGIN, PASS, URL;
@@ -58,6 +62,7 @@ public class SettingMapActivity extends ActionBarActivity{
         serverUrl = (EditText)findViewById(R.id.serverUrl);
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
+        spinner = (Spinner)findViewById(R.id.spinner);
         mapSetting = new HashMap<>();
         db = new DataBaseHelper(this);
         db.getSetting(mapSetting);
@@ -75,6 +80,18 @@ public class SettingMapActivity extends ActionBarActivity{
             edTextServerPass.setText(PASS);
         }
         web = getString(R.string.web);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         onDraw();
     }
     private void onDraw(){
