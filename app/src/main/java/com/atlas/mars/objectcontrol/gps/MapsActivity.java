@@ -338,6 +338,7 @@ public class MapsActivity extends ActionBarActivity {
                                 .anchor(0.5f, 0.5f)
                                 .title(map.get("name"))
                                 .snippet(map.get("id"))
+                        .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource( map.get("azimuth") != null ? R.drawable.arrow_obj :R.drawable.ico_point_obj)));
 
                 if( map.get("azimuth") != null ){

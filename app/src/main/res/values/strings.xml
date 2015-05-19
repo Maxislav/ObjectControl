@@ -38,6 +38,11 @@
     <string name="all_commands">All commands</string>
     <string name="history">History</string>
     <string name="edit_default_value">Please edit default number</string>
+    <string name="list_servers_title">Servers</string>
+
+    <string-array name="array_servers">
+        <item>M2 gps-tracker.com.ua</item>
+    </string-array>
 
     <string name="web" translatable="false"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Allows you to select multiple commands</string>
