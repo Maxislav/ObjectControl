@@ -18,7 +18,6 @@
                 android:orientation="vertical">
 
 
-
                 <!--////////////-->
 
 
@@ -28,13 +27,34 @@
                     android:background="@color/white"
                     android:orientation="vertical">
 
-                    <Spinner
+                    <LinearLayout
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            style="@style/textStyleHistory"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:text="Использовать протокол" />
+
+                    </LinearLayout>
+                    <Spinner
                         android:id="@+id/spinner"
+                        style="@style/editTextStyle"
+                        android:layout_margin="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:entries="@array/array_servers"
-                        android:prompt="@string/list_servers_title"
-                        android:layout_height="wrap_content">
-                        </Spinner>
+                        android:prompt="@string/list_servers_title"></Spinner>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/border_bottom"></LinearLayout>
+
 
 
 
@@ -43,30 +63,35 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:weightSum="1">
+
                         <TextView
                             style="@style/textStyleHistory"
-                            android:layout_margin="10dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/server_url_title"/>
+                            android:layout_margin="10dp"
+                            android:text="@string/server_url_title" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:focusable="true"
                         android:focusableInTouchMode="true">
+
                         <EditText
-                            style="@style/editTextStyle"
                             android:id="@+id/serverUrl"
-                            android:minWidth="60dp"
+                            style="@style/editTextStyle"
                             android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:padding="10dp"
-                            android:layout_height="wrap_content"/>
-                        </LinearLayout>
+                            android:minWidth="60dp"
+                            android:padding="10dp" />
+                    </LinearLayout>
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent">
+
                         <WebView
                             android:id="@+id/server"
                             android:layout_width="match_parent"
@@ -86,30 +111,34 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
+                        android:orientation="horizontal"
                         android:weightSum="2">
+
                         <TextView
                             style="@style/textStyleHistory"
-                            android:layout_margin="10dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.2"
-                            android:layout_width="match_parent"
-                            android:text="@string/server_login_title"/>
-                        <EditText
-                            style="@style/editTextStyle"
-                            android:id="@+id/edTextServerLogin"
-                            android:layout_width="match_parent"
-                            android:layout_weight="0.8"
                             android:layout_margin="10dp"
-                            android:padding="10dp"
-                            android:layout_height="wrap_content"/>
+                            android:layout_weight="1.2"
+                            android:text="@string/server_login_title" />
+
+                        <EditText
+                            android:id="@+id/edTextServerLogin"
+                            style="@style/editTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="0.8"
+                            android:padding="10dp" />
 
                     </LinearLayout>
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent">
+
                         <WebView
                             android:id="@+id/wLogin"
                             android:layout_width="match_parent"
@@ -132,31 +161,35 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
+                        android:orientation="horizontal"
                         android:weightSum="2">
+
                         <TextView
                             style="@style/textStyleHistory"
-                            android:layout_margin="10dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.2"
-                            android:layout_width="match_parent"
-                            android:text="@string/server_pass_title"/>
-                        <EditText
-                            style="@style/editTextStyle"
-                            android:id="@+id/edTextServerPass"
-                            android:layout_width="match_parent"
-                            android:layout_weight="0.8"
                             android:layout_margin="10dp"
-                            android:padding="10dp"
+                            android:layout_weight="1.2"
+                            android:text="@string/server_pass_title" />
+
+                        <EditText
+                            android:id="@+id/edTextServerPass"
+                            style="@style/editTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="0.8"
                             android:inputType="textPassword"
-                            android:layout_height="wrap_content"/>
+                            android:padding="10dp" />
 
                     </LinearLayout>
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent">
+
                         <WebView
                             android:id="@+id/wPass"
                             android:layout_width="match_parent"
@@ -171,10 +204,6 @@
                         android:layout_alignParentBottom="true"
                         android:layout_gravity="bottom"
                         android:background="@drawable/border_bottom"></LinearLayout>
-
-
-
-
 
 
                 </LinearLayout>

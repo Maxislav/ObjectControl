@@ -63,6 +63,7 @@ public class MapsActivity extends ActionBarActivity {
     public boolean folowMyPos = false;
     private HashMap<String, HashMap> hashObjects;
     private SupportMapFragment fragment;
+    private HashMap<String, Marker> hashMarker;
 
     MyHttp myHttp;
 
@@ -79,9 +80,7 @@ public class MapsActivity extends ActionBarActivity {
         Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
 
 
-
         myHttp = new MyHttp(this);
-
 
 
         //Todo раскоментировать
@@ -101,8 +100,8 @@ public class MapsActivity extends ActionBarActivity {
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
 
-       // scrollView.setOnTouchListener(new MyTouchListener());
-    //    scrollView.setOnDragListener(new MyDragListener());
+        // scrollView.setOnTouchListener(new MyTouchListener());
+        //    scrollView.setOnDragListener(new MyDragListener());
 
 
         setClickListenerImgTargetMyPos(btnFollow);
@@ -179,15 +178,15 @@ public class MapsActivity extends ActionBarActivity {
     }
 
 
-    protected void setClickListenerBtnList(){
+    protected void setClickListenerBtnList() {
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
+                // FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
 
-                if(listContainer.isShown()){
+                if (listContainer.isShown()) {
                     aniOut.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
@@ -205,13 +204,14 @@ public class MapsActivity extends ActionBarActivity {
                         }
                     });
                     listContainer.startAnimation(aniOut);
-                }else{
+                } else {
 
                     animIn.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
                             listContainer.setVisibility(View.VISIBLE);
                         }
+
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             //btnList.setVisibility(View.INVISIBLE);
@@ -226,7 +226,7 @@ public class MapsActivity extends ActionBarActivity {
 
                 }
 
-               // lp.setMargins(0, 0, 0, 0);
+                // lp.setMargins(0, 0, 0, 0);
                 //listContainer.setLayoutParams(lp);
             }
         });
@@ -252,8 +252,8 @@ public class MapsActivity extends ActionBarActivity {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-          //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            SupportMapFragment  mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
             if (mMap != null) {
@@ -270,13 +270,13 @@ public class MapsActivity extends ActionBarActivity {
      */
     private void setUpMap() {
         // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
-    //    MapView mapView = (MapView)findViewById(R.id.map);
+        //    MapView mapView = (MapView)findViewById(R.id.map);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 10));
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         mMap.getUiSettings().setZoomControlsEnabled(true);
-       // MapView mapView = (MapView)findViewById(R.id.map);
+        // MapView mapView = (MapView)findViewById(R.id.map);
 
         /*mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
                 .anchor(0.5f,0.5f)
@@ -327,28 +327,32 @@ public class MapsActivity extends ActionBarActivity {
 
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-        for (HashMap<String, String> map : arrayList) {
-            if (map.get("lat") != null && !map.get("lat").isEmpty()) {
-                LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
-                hashObjects.put(map.get("id"), map);
+        for (HashMap<String, String> hashMapMArkerOpt : arrayList) {
+            if (hashMapMArkerOpt.get("lat") != null && !hashMapMArkerOpt.get("lat").isEmpty()) {
+                LatLng pos = new LatLng(Float.parseFloat(hashMapMArkerOpt.get("lat")), Float.parseFloat(hashMapMArkerOpt.get("lng")));
+                hashObjects.put(hashMapMArkerOpt.get("id"), hashMapMArkerOpt);
+
+
 
                 Marker objMarker = mMap.addMarker(
                         new MarkerOptions()
                                 .position(pos)
                                 .anchor(0.5f, 0.5f)
-                                .title(map.get("name"))
-                                .snippet(map.get("id"))
-                        .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource( map.get("azimuth") != null ? R.drawable.arrow_obj :R.drawable.ico_point_obj)));
+                                .title(hashMapMArkerOpt.get("name"))
+                                .snippet(hashMapMArkerOpt.get("id"))
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(hashMapMArkerOpt.get("azimuth") != null ? R.drawable.arrow_obj : R.drawable.ico_point_obj)));
 
-                if( map.get("azimuth") != null ){
-                    objMarker.setRotation(Float.parseFloat(map.get("azimuth")));
+                hashMarker.put(hashMapMArkerOpt.get("id"), objMarker);
+
+                if (hashMapMArkerOpt.get("azimuth") != null) {
+                    objMarker.setRotation(Float.parseFloat(hashMapMArkerOpt.get("azimuth")));
                 }
                 objMarker.showInfoWindow();
-                addRowObject(map);
+                addRowObject(hashMapMArkerOpt);
 
                 IconGenerator iconFactory = new IconGenerator(this);
-              //  addIcon(iconFactory, "Default",pos);
+                //  addIcon(iconFactory, "Default",pos);
 
                /* iconFactory.setColor(Color.CYAN);
                 addIcon(iconFactory, "Custom color", new LatLng(-33.9360, 151.2070));
@@ -364,10 +368,10 @@ public class MapsActivity extends ActionBarActivity {
                 iconFactory.setRotation(0);
                 //iconFactory.setContentRotation(90);
                 iconFactory.setStyle(IconGenerator.STYLE_WHITE);
-                addIcon(iconFactory, map.get("name"), pos, map);
+                addIcon(iconFactory, hashMapMArkerOpt.get("name"), pos, hashMapMArkerOpt);
                 //Bitmap iconBitmap = bubbleIconFactory
 
-               // MapView.LayoutParams mapParams =
+                // MapView.LayoutParams mapParams =
 
                 /*MapView.LayoutParams mapParams = new MapView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -380,11 +384,12 @@ public class MapsActivity extends ActionBarActivity {
         }
 
     }
+
     private void addIcon(IconGenerator iconFactory, String text, LatLng position, HashMap<String, String> map) {
         MarkerOptions markerOptions = new MarkerOptions().
                 icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
                 position(position).
-        snippet(map.get("id")).
+                snippet(map.get("id")).
                 anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
         mMap.addMarker(markerOptions);
@@ -404,7 +409,7 @@ public class MapsActivity extends ActionBarActivity {
 
             HashMap<String, String> map = hashObjects.get(marker.getSnippet());
             View v = getLayoutInflater().inflate(R.layout.infowindow_layout, null);
-            if(map!=null && !map.isEmpty()){
+            if (map != null && !map.isEmpty()) {
                 TextView textName = (TextView) v.findViewById(R.id.textName);
                 TextView textDate = (TextView) v.findViewById(R.id.textDate);
                 TextView textTime = (TextView) v.findViewById(R.id.textTime);
@@ -434,7 +439,7 @@ public class MapsActivity extends ActionBarActivity {
         circle = mMap.addCircle(circleOptions);
     }
 
-    private void addRowObject(final HashMap<String, String> map){
+    private void addRowObject(final HashMap<String, String> map) {
         LayoutInflater ltInflater = getLayoutInflater();
         View view = ltInflater.inflate(R.layout.row_map_object, null, false);
 
@@ -449,18 +454,18 @@ public class MapsActivity extends ActionBarActivity {
 
         linearLayoutInScroll.addView(view);
         view.setOnClickListener(new View.OnClickListener() {
-            final HashMap<String,String> _map = map;
+            final HashMap<String, String> _map = map;
+
             @Override
             public void onClick(View v) {
 
-                if(map.get("lat")!=null && !map.get("lat").isEmpty()){
+                if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
                 }
             }
         });
     }
-
 
 
 }
