@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Created by Администратор on 4/26/15.
@@ -46,6 +49,9 @@ public class MyHttp {
     DataBaseHelper db;
     HashMap<String, String> mapSetting;
     HttpClient httpClient;
+    private Timer mTimer;
+    private MyTimerTask mMyTimerTask;
+
 
 
     public MyHttp(MapsActivity mapsActivity) {
@@ -59,6 +65,9 @@ public class MyHttp {
         if(httpClient==null){
             getAuth();
         }
+
+
+
     }
 
     public void getAuth(){
@@ -68,11 +77,23 @@ public class MyHttp {
         }
     }
 
+    private void timerito(){
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+        mTimer = new Timer();
+        mMyTimerTask = new MyTimerTask();
+        mTimer.schedule(mMyTimerTask, 100, 5000);
+    }
+
     private void getPoints(String jsonText){
         Log.d(TAG, "Http Post Response2: +++ " + jsonText);
         mt = new MyTask(mapsActivity);
         mt.execute(mapSetting.get(db.MAP_SERVER_URL)+"/loadevents.php?param=icars");
     }
+
+
+
 
     public  void resData(String json) {
         ArrayList<HashMap> arrayListObjects = new ArrayList<>();
@@ -188,7 +209,8 @@ public class MyHttp {
             JsonNode successNode = root.path("success");
             boolean res = successNode.asBoolean();
             if(res){
-                getPoints(result);
+                timerito();
+               // getPoints(result);
             }
         }
     }
@@ -230,6 +252,27 @@ public class MyHttp {
         @Override
         protected void onPostExecute(String result) {
             resData(result);
+        }
+    }
+
+    class MyTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            getPoints("Ololo");
+          /*  Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+                    "dd:MMMM:yyyy HH:mm:ss a", Locale.getDefault());
+            final String strDate = simpleDateFormat.format(calendar.getTime());*/
+
+           /* mapsActivity.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    //  mCounterTextView.setText(strDate);
+                }
+            });*/
         }
     }
 

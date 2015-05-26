@@ -78,11 +78,9 @@ public class MapsActivity extends ActionBarActivity {
         dpHeight = displayMetrics.heightPixels / density;
         dpWidth = displayMetrics.widthPixels / density;
         Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
-
+        hashMarker = new HashMap<>();
 
         myHttp = new MyHttp(this);
-
-
         //Todo раскоментировать
         myHttp.postData();
 
@@ -332,7 +330,9 @@ public class MapsActivity extends ActionBarActivity {
                 LatLng pos = new LatLng(Float.parseFloat(hashMapMArkerOpt.get("lat")), Float.parseFloat(hashMapMArkerOpt.get("lng")));
                 hashObjects.put(hashMapMArkerOpt.get("id"), hashMapMArkerOpt);
 
-
+                if(hashMarker.get(hashMapMArkerOpt.get("id"))!=null)  {
+                    hashMarker.get(hashMapMArkerOpt.get("id")).remove();
+                }
 
                 Marker objMarker = mMap.addMarker(
                         new MarkerOptions()
@@ -343,7 +343,10 @@ public class MapsActivity extends ActionBarActivity {
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(hashMapMArkerOpt.get("azimuth") != null ? R.drawable.arrow_obj : R.drawable.ico_point_obj)));
 
-                hashMarker.put(hashMapMArkerOpt.get("id"), objMarker);
+                if(hashMapMArkerOpt.get("id")!=null){
+                   hashMarker.put(hashMapMArkerOpt.get("id").toString(), objMarker);
+                }
+
 
                 if (hashMapMArkerOpt.get("azimuth") != null) {
                     objMarker.setRotation(Float.parseFloat(hashMapMArkerOpt.get("azimuth")));
