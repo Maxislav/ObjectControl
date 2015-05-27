@@ -125,7 +125,7 @@ public class MapsActivity extends ActionBarActivity {
             locationManagerNet.removeUpdates(locationListenerNet);
         }
         MyLocationListenerGps.statusGps = false;
-        myHttp.onPause();
+        if(myHttp!=null) myHttp.onPause();
         super.onPause();
     }
 
