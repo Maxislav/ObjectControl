@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -50,7 +49,6 @@ public class MyHttp {
     HashMap<String, String> mapSetting;
     HttpClient httpClient;
     private Timer mTimer;
-    private MyTimerTask mMyTimerTask;
     private boolean doIt = false;
     private boolean goRecursion = true;
 
@@ -152,11 +150,11 @@ public class MyHttp {
                 SimpleDateFormat df3 = new SimpleDateFormat("HH:mm:ss");
                 String dateText = df2.format(d);
                 String dateTime = df3.format(d);
-
                 if(d!=null){
                     //string_date = ""+ d.getTime();
                     map.put("date", dateText);
                     map.put("time", dateTime);
+                    map.put("dateLong", "" + d.getTime());
                 }
                 Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
                 arrayListObjects.add(map);
@@ -280,11 +278,5 @@ public class MyHttp {
         }
     }
 
-    class MyTimerTask extends TimerTask {
-        @Override
-        public void run() {
-           // getPoints("Ololo");
-        }
-    }
 
 }

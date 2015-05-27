@@ -68,6 +68,7 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, Marker> hashMarker;
     private HashMap<String, View> hashViewRow;
     private HashMap<String, Marker> hashPopup;
+    private HashMap<String, HashMap> hashMapCollection;
 
     MyHttp myHttp;
 
@@ -85,6 +86,7 @@ public class MapsActivity extends ActionBarActivity {
         hashMarker = new HashMap<>();
         hashViewRow = new HashMap<>();
         hashPopup = new HashMap<>();
+        hashMapCollection = new HashMap<>();
       // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
         if(haveNetworkConnection()){
             myHttp = new MyHttp(this);
@@ -335,11 +337,20 @@ public class MapsActivity extends ActionBarActivity {
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         for (HashMap<String, String> hashMapMArkerOpt : arrayList) {
+            String id = hashMapMArkerOpt.get("id");
             if (hashMapMArkerOpt.get("lat") != null && !hashMapMArkerOpt.get("lat").isEmpty()) {
                 LatLng pos = new LatLng(Float.parseFloat(hashMapMArkerOpt.get("lat")), Float.parseFloat(hashMapMArkerOpt.get("lng")));
                 hashObjects.put(hashMapMArkerOpt.get("id"), hashMapMArkerOpt);
 
-                if(hashMarker.get(hashMapMArkerOpt.get("id"))!=null)  {
+                if(hashMapCollection.get(id) == null){
+                    hashMapCollection.put(id, hashMapMArkerOpt);
+                }
+
+
+                if(hashMarker.get(id)!=null)  {
+
+
+                    //if(hashMarker.get(hashMapMArkerOpt.get("dateLong")) )
                     hashMarker.get(hashMapMArkerOpt.get("id")).remove();
                 }
 
@@ -355,14 +366,10 @@ public class MapsActivity extends ActionBarActivity {
                 if(hashMapMArkerOpt.get("id")!=null){
                    hashMarker.put(hashMapMArkerOpt.get("id").toString(), objMarker);
                 }
-
-
                 if (hashMapMArkerOpt.get("azimuth") != null) {
                     objMarker.setRotation(Float.parseFloat(hashMapMArkerOpt.get("azimuth")));
                 }
-               // objMarker.showInfoWindow();
                 addRowObject(hashMapMArkerOpt);
-
                 IconGenerator iconFactory = new IconGenerator(this);
                 //  addIcon(iconFactory, "Default",pos);
 
