@@ -44,15 +44,33 @@ public class MyHttp {
     static ObjectMapper mapper = new ObjectMapper();
     private static final String TAG = "myLog";
 
-    MyTask mt;
+    getPointsAsync mt;
     Auth au;
     DataBaseHelper db;
     HashMap<String, String> mapSetting;
     HttpClient httpClient;
     private Timer mTimer;
     private MyTimerTask mMyTimerTask;
+    private boolean doIt = false;
+    private boolean goRecursion = true;
 
 
+    public  void stopTimer(){
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+        goRecursion = false;
+
+
+    }
+
+    public void onResume(){
+        goRecursion = true;
+        postData();
+    }
+    public void onPause(){
+        goRecursion = false;
+    }
 
     public MyHttp(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
@@ -64,10 +82,9 @@ public class MyHttp {
     public void postData() {
         if(httpClient==null){
             getAuth();
+        }else{
+            getPoints();
         }
-
-
-
     }
 
     public void getAuth(){
@@ -77,19 +94,12 @@ public class MyHttp {
         }
     }
 
-    private void timerito(){
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
-        mTimer = new Timer();
-        mMyTimerTask = new MyTimerTask();
-        mTimer.schedule(mMyTimerTask, 100, 5000);
-    }
 
-    private void getPoints(String jsonText){
-        Log.d(TAG, "Http Post Response2: +++ " + jsonText);
-        mt = new MyTask(mapsActivity);
-        mt.execute(mapSetting.get(db.MAP_SERVER_URL)+"/loadevents.php?param=icars");
+
+    private void getPoints(){
+        Log.d(TAG, "Http Post Response2: +++ ");
+        getPointsAsync mt = new getPointsAsync(mapsActivity);
+        mt.execute(mapSetting.get(db.MAP_SERVER_URL) + "/loadevents.php?param=icars");
     }
 
 
@@ -155,6 +165,8 @@ public class MyHttp {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        getPoints();
+
     }
 
     class  Auth extends AsyncTask<String, Void, String>{
@@ -209,17 +221,18 @@ public class MyHttp {
             JsonNode successNode = root.path("success");
             boolean res = successNode.asBoolean();
             if(res){
-                timerito();
+                getPoints();
+               // timerito();
                // getPoints(result);
             }
         }
     }
 
 
-    class MyTask extends AsyncTask<String, Void, String> {
+    class getPointsAsync extends AsyncTask<String, Void, String> {
         MapsActivity mapsActivity;
 
-        MyTask(MapsActivity mapsActivity){
+        getPointsAsync(MapsActivity mapsActivity){
             super();
             this.mapsActivity = mapsActivity;
         }
@@ -233,6 +246,16 @@ public class MyHttp {
         @Override
         protected String doInBackground(String... params) {
 
+            try {
+                if(doIt){
+                    Thread.sleep(5000);
+                }else{
+                    doIt = true;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "Get points ++ ");
             String urlStateObj = params[0];// + "/loadevents.php?param=icars";
             String resText = null;
             HttpGet httpGet = new HttpGet(urlStateObj);
@@ -251,28 +274,16 @@ public class MyHttp {
 
         @Override
         protected void onPostExecute(String result) {
-            resData(result);
+            if(goRecursion){
+                resData(result);
+            }
         }
     }
 
     class MyTimerTask extends TimerTask {
-
         @Override
         public void run() {
-
-            getPoints("Ololo");
-          /*  Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-                    "dd:MMMM:yyyy HH:mm:ss a", Locale.getDefault());
-            final String strDate = simpleDateFormat.format(calendar.getTime());*/
-
-           /* mapsActivity.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    //  mCounterTextView.setText(strDate);
-                }
-            });*/
+           // getPoints("Ololo");
         }
     }
 

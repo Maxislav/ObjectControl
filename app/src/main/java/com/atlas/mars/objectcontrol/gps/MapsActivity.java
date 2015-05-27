@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
@@ -64,6 +66,8 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, HashMap> hashObjects;
     private SupportMapFragment fragment;
     private HashMap<String, Marker> hashMarker;
+    private HashMap<String, View> hashViewRow;
+    private HashMap<String, Marker> hashPopup;
 
     MyHttp myHttp;
 
@@ -79,11 +83,13 @@ public class MapsActivity extends ActionBarActivity {
         dpWidth = displayMetrics.widthPixels / density;
         Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
         hashMarker = new HashMap<>();
-
-        myHttp = new MyHttp(this);
-        //Todo раскоментировать
-        myHttp.postData();
-
+        hashViewRow = new HashMap<>();
+        hashPopup = new HashMap<>();
+      // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
+        if(haveNetworkConnection()){
+            myHttp = new MyHttp(this);
+            myHttp.postData();
+        }
 
         try {
             MapsInitializer.initialize(getApplicationContext());
@@ -119,6 +125,7 @@ public class MapsActivity extends ActionBarActivity {
             locationManagerNet.removeUpdates(locationListenerNet);
         }
         MyLocationListenerGps.statusGps = false;
+        myHttp.onPause();
         super.onPause();
     }
 
@@ -130,7 +137,9 @@ public class MapsActivity extends ActionBarActivity {
         locationListenerNet = new MyLocationListenerNet(this, mMap);
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
-
+        if(haveNetworkConnection()){
+            myHttp.onResume();
+        }
     }
 
     @Override
@@ -351,7 +360,7 @@ public class MapsActivity extends ActionBarActivity {
                 if (hashMapMArkerOpt.get("azimuth") != null) {
                     objMarker.setRotation(Float.parseFloat(hashMapMArkerOpt.get("azimuth")));
                 }
-                objMarker.showInfoWindow();
+               // objMarker.showInfoWindow();
                 addRowObject(hashMapMArkerOpt);
 
                 IconGenerator iconFactory = new IconGenerator(this);
@@ -389,13 +398,19 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     private void addIcon(IconGenerator iconFactory, String text, LatLng position, HashMap<String, String> map) {
+        String id = map.get("id");
+        if(hashPopup.get(id)!=null){
+            hashPopup.get(id).remove();
+        }
+
         MarkerOptions markerOptions = new MarkerOptions().
                 icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
                 position(position).
                 snippet(map.get("id")).
                 anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
-        mMap.addMarker(markerOptions);
+        Marker m = mMap.addMarker(markerOptions);
+        hashPopup.put(id, m);
     }
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -443,9 +458,10 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     private void addRowObject(final HashMap<String, String> map) {
-        LayoutInflater ltInflater = getLayoutInflater();
-        View view = ltInflater.inflate(R.layout.row_map_object, null, false);
+        String id = map.get("id");
 
+        LayoutInflater ltInflater = getLayoutInflater();
+        View view = hashViewRow.get(id)!=null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
         TextView textTime = (TextView) view.findViewById(R.id.textTime);
@@ -455,13 +471,16 @@ public class MapsActivity extends ActionBarActivity {
         textTime.setText(map.get("time"));
         textSp.setText(map.get("speed"));
 
-        linearLayoutInScroll.addView(view);
+        if(hashViewRow.get(map.get("id")) == null){
+            hashViewRow.put(id, view);
+            linearLayoutInScroll.addView(view);
+
+
+        }
         view.setOnClickListener(new View.OnClickListener() {
-            final HashMap<String, String> _map = map;
 
             @Override
             public void onClick(View v) {
-
                 if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
@@ -470,5 +489,20 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
 }

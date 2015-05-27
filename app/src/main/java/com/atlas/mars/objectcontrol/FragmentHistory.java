@@ -127,7 +127,7 @@ public class FragmentHistory extends MyFragmentView {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
             String toDate = dateFormat.format(date);
 
-            Log.d(TAG, String.valueOf(date));
+           // Log.d(TAG, String.valueOf(date));
             ((TextView)arrayTextView.get(0)).setText(toDate);
             ((TextView)arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView)arrayTextView.get(2)).setText(map.get(db.VALUE_COMMAND));
@@ -170,7 +170,7 @@ public class FragmentHistory extends MyFragmentView {
             int mYear = year;
             int mMonth = monthOfYear;
             int mDay = dayOfMonth;
-            Log.d(TAG, mDay+"."+mMonth+"."+mYear);
+          //  Log.d(TAG, mDay+"."+mMonth+"."+mYear);
 
             calFrom.set(Calendar.YEAR, year);
             calFrom.set(Calendar.MONTH,mMonth);
@@ -191,7 +191,7 @@ public class FragmentHistory extends MyFragmentView {
             int mYear = year;
             int mMonth = monthOfYear;
             int mDay = dayOfMonth;
-            Log.d(TAG, mDay+"."+mMonth+"."+mYear);
+            //Log.d(TAG, mDay+"."+mMonth+"."+mYear);
 
             calTo.set(Calendar.YEAR, year);
             calTo.set(Calendar.MONTH,mMonth);
