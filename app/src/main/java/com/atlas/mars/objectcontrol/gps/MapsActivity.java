@@ -87,8 +87,8 @@ public class MapsActivity extends ActionBarActivity {
         hashViewRow = new HashMap<>();
         hashPopup = new HashMap<>();
         hashMapCollection = new HashMap<>();
-      // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
-        if(haveNetworkConnection()){
+        // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
+        if (haveNetworkConnection()) {
             myHttp = new MyHttp(this);
             myHttp.postData();
         }
@@ -127,7 +127,7 @@ public class MapsActivity extends ActionBarActivity {
             locationManagerNet.removeUpdates(locationListenerNet);
         }
         MyLocationListenerGps.statusGps = false;
-        if(myHttp!=null) myHttp.onPause();
+        if (myHttp != null) myHttp.onPause();
         super.onPause();
     }
 
@@ -139,7 +139,7 @@ public class MapsActivity extends ActionBarActivity {
         locationListenerNet = new MyLocationListenerNet(this, mMap);
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
-        if(haveNetworkConnection()){
+        if (haveNetworkConnection()) {
             myHttp.onResume();
         }
     }
@@ -339,85 +339,72 @@ public class MapsActivity extends ActionBarActivity {
         for (HashMap<String, String> hashMapMArkerOpt : arrayList) {
             String id = hashMapMArkerOpt.get("id");
             if (hashMapMArkerOpt.get("lat") != null && !hashMapMArkerOpt.get("lat").isEmpty()) {
-                LatLng pos = new LatLng(Float.parseFloat(hashMapMArkerOpt.get("lat")), Float.parseFloat(hashMapMArkerOpt.get("lng")));
-                hashObjects.put(hashMapMArkerOpt.get("id"), hashMapMArkerOpt);
+                // LatLng pos = new LatLng(Float.parseFloat(hashMapMArkerOpt.get("lat")), Float.parseFloat(hashMapMArkerOpt.get("lng")));
+                //hashObjects.put(hashMapMArkerOpt.get("id"), hashMapMArkerOpt);
 
-                if(hashMapCollection.get(id) == null){
+                if (hashMapCollection.get(id) == null) {
                     hashMapCollection.put(id, hashMapMArkerOpt);
+                    Log.d(TAG, "Init +++ " + id);
+                    drawMarker(hashMapMArkerOpt);
+                    drawIcon(hashMapMArkerOpt);
+                    addRowObject(hashMapMArkerOpt);
                 }
 
-
-                if(hashMarker.get(id)!=null)  {
-
-
-                    //if(hashMarker.get(hashMapMArkerOpt.get("dateLong")) )
-                    hashMarker.get(hashMapMArkerOpt.get("id")).remove();
+                if (!hashMapCollection.get(id).get("dateLong").equals(hashMapMArkerOpt.get("dateLong"))) {
+                    Log.d(TAG, "Move +++ " + id);
+                    redrawMarker(hashMapMArkerOpt);
+                    redrawIcon(hashMapMArkerOpt);
+                    addRowObject(hashMapMArkerOpt);
                 }
-
-                Marker objMarker = mMap.addMarker(
-                        new MarkerOptions()
-                                .position(pos)
-                                .anchor(0.5f, 0.5f)
-                                .title(hashMapMArkerOpt.get("name"))
-                                .snippet(hashMapMArkerOpt.get("id"))
-                                .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(hashMapMArkerOpt.get("azimuth") != null ? R.drawable.arrow_obj : R.drawable.ico_point_obj)));
-
-                if(hashMapMArkerOpt.get("id")!=null){
-                   hashMarker.put(hashMapMArkerOpt.get("id").toString(), objMarker);
-                }
-                if (hashMapMArkerOpt.get("azimuth") != null) {
-                    objMarker.setRotation(Float.parseFloat(hashMapMArkerOpt.get("azimuth")));
-                }
-                addRowObject(hashMapMArkerOpt);
-                IconGenerator iconFactory = new IconGenerator(this);
-                //  addIcon(iconFactory, "Default",pos);
-
-               /* iconFactory.setColor(Color.CYAN);
-                addIcon(iconFactory, "Custom color", new LatLng(-33.9360, 151.2070));
-
-                iconFactory.setRotation(90);
-                iconFactory.setStyle(IconGenerator.STYLE_RED);
-                addIcon(iconFactory, "Rotated 90 degrees", new LatLng(-33.8858, 151.096));
-
-                iconFactory.setContentRotation(-90);
-                iconFactory.setStyle(IconGenerator.STYLE_PURPLE);
-                addIcon(iconFactory, "Rotate=90, ContentRotate=-90", new LatLng(-33.9992, 151.098));*/
-
-                iconFactory.setRotation(0);
-                //iconFactory.setContentRotation(90);
-                iconFactory.setStyle(IconGenerator.STYLE_WHITE);
-                addIcon(iconFactory, hashMapMArkerOpt.get("name"), pos, hashMapMArkerOpt);
-                //Bitmap iconBitmap = bubbleIconFactory
-
-                // MapView.LayoutParams mapParams =
-
-                /*MapView.LayoutParams mapParams = new MapView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        pos,
-               0.5,
-                0.5,
-                MapView.LayoutParams.WRAP_CONTENT);
-                map.addView(popUp, mapParams);*/
             }
         }
-
     }
 
-    private void addIcon(IconGenerator iconFactory, String text, LatLng position, HashMap<String, String> map) {
-        String id = map.get("id");
-        if(hashPopup.get(id)!=null){
-            hashPopup.get(id).remove();
-        }
+    private void drawMarker(HashMap<String, String> map) {
+        LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+        Marker objMarker = mMap.addMarker(
+                new MarkerOptions()
+                        .position(pos)
+                        .anchor(0.5f, 0.5f)
+                        .title(map.get("name"))
+                        .snippet(map.get("id"))
+                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromResource(map.get("azimuth") != null ? R.drawable.arrow_obj : R.drawable.ico_point_obj)));
 
+        if (map.get("id") != null) {
+            hashMarker.put(map.get("id").toString(), objMarker);
+        }
+        if (map.get("azimuth") != null) {
+            objMarker.setRotation(Float.parseFloat(map.get("azimuth")));
+        }
+    }
+
+    private void redrawMarker(HashMap<String, String> map) {
+        String id = map.get("id");
+        hashMarker.get(id).remove();
+        drawMarker(map);
+    }
+
+
+    private void drawIcon(HashMap<String, String> map) {
+        IconGenerator iconFactory = new IconGenerator(this);
+        String id = map.get("id");
+        LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
         MarkerOptions markerOptions = new MarkerOptions().
-                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
-                position(position).
+                icon(BitmapDescriptorFactory.
+                        fromBitmap(iconFactory.makeIcon(map.get("name")))).
+                position(pos).
                 snippet(map.get("id")).
                 anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
-        Marker m = mMap.addMarker(markerOptions);
-        hashPopup.put(id, m);
+        Marker iconMarker = mMap.addMarker(markerOptions);
+        hashPopup.put(id, iconMarker);
+    }
+
+    private void redrawIcon(HashMap<String, String> map) {
+        String id = map.get("id");
+        hashPopup.get(id).remove();
+        drawIcon(map);
     }
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -468,7 +455,7 @@ public class MapsActivity extends ActionBarActivity {
         String id = map.get("id");
 
         LayoutInflater ltInflater = getLayoutInflater();
-        View view = hashViewRow.get(id)!=null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
+        View view = hashViewRow.get(id) != null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
         TextView textTime = (TextView) view.findViewById(R.id.textTime);
@@ -478,11 +465,9 @@ public class MapsActivity extends ActionBarActivity {
         textTime.setText(map.get("time"));
         textSp.setText(map.get("speed"));
 
-        if(hashViewRow.get(map.get("id")) == null){
+        if (hashViewRow.get(map.get("id")) == null) {
             hashViewRow.put(id, view);
             linearLayoutInScroll.addView(view);
-
-
         }
         view.setOnClickListener(new View.OnClickListener() {
 
@@ -495,6 +480,7 @@ public class MapsActivity extends ActionBarActivity {
             }
         });
     }
+
 
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;

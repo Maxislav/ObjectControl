@@ -244,7 +244,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 long id = sdb.insert(TABLE_NAME_COMMANDS, null, cv);*/
 
                 String jquery = "INSERT INTO "+TABLE_NAME_COMMANDS+" ("+VALUE_NAME+", "+VALUE_COMMAND+", "+VALUE_ID_DEVICE +", "+VALUE_FAVORITE+")"+
-                        "VALUES ('"+map.get("name")+"','"+map.get("code")+"','"+map.get("idDev")+"','0');";
+                        "VALUES ('"+map.get("name")+"','"+map.get("code")+"','"+map.get("idDev")+"','1');";
                 sdb.execSQL(jquery);
             }
         }catch (SQLException e){

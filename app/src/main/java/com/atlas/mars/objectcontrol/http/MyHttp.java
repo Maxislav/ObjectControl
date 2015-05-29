@@ -112,7 +112,7 @@ public class MyHttp {
             ArrayNode rows = (ArrayNode) root.get("rows");
             for (JsonNode jsonNode : rows) {
                 HashMap<String, String> map = new HashMap<>();
-                Log.d(TAG, jsonNode.toString());
+               // Log.d(TAG, jsonNode.toString());
                 map.put("name", jsonNode.path("CarName").asText());
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
@@ -125,7 +125,7 @@ public class MyHttp {
 
                 double azimuth = geoMath.toAthimuth(lat2,lng2,lat1,lng1);
                 if(!Double.isNaN(azimuth)){
-                    Log.d(TAG,"azimuz ++ "+azimuth);
+                    //Log.d(TAG,"azimuz ++ "+azimuth);
                     map.put("azimuth", ""+(int) Math.round(azimuth));
                 }
 
@@ -156,7 +156,7 @@ public class MyHttp {
                     map.put("time", dateTime);
                     map.put("dateLong", "" + d.getTime());
                 }
-                Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
+               // Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
                 arrayListObjects.add(map);
             }
             mapsActivity.setObjectMarkers(arrayListObjects);
