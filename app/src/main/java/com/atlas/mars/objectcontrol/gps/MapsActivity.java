@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -69,6 +71,8 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, View> hashViewRow;
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
+    private boolean targetOn; /** targetOn включено ли все время за мной следить*/
+    private boolean isTouch; /** isTouch касание*/
 
     MyHttp myHttp;
 
@@ -76,7 +80,11 @@ public class MapsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+
         hashObjects = new HashMap<>();
+        targetOn = false;
+        isTouch = false;
 
         displayMetrics = getResources().getDisplayMetrics();
         density = displayMetrics.density;
@@ -87,6 +95,7 @@ public class MapsActivity extends ActionBarActivity {
         hashViewRow = new HashMap<>();
         hashPopup = new HashMap<>();
         hashMapCollection = new HashMap<>();
+
         // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
         if (haveNetworkConnection()) {
             myHttp = new MyHttp(this);
@@ -116,6 +125,21 @@ public class MapsActivity extends ActionBarActivity {
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isTouch = true;
+              //  toastShow("ACTION_DOWN");
+                break;
+            case MotionEvent.ACTION_UP:
+                isTouch = false;
+               // toastShow("ACTION_UP");
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -179,6 +203,8 @@ public class MapsActivity extends ActionBarActivity {
             public void onClick(View v) {
                 if (myPos != null) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+                    targetOn = true;
+                    toastShow("Autocenter on");
                 } else {
                     toastShow("Position not available");
                 }
@@ -263,6 +289,10 @@ public class MapsActivity extends ActionBarActivity {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            View mapView =(View)mainFragment.getView();
+         //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
+
+
             //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
             if (mMap != null) {
@@ -270,6 +300,11 @@ public class MapsActivity extends ActionBarActivity {
             }
         }
     }
+
+
+
+
+
 
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
@@ -285,6 +320,8 @@ public class MapsActivity extends ActionBarActivity {
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setOnCameraChangeListener(mOnCameraChangeListener);
+
         // MapView mapView = (MapView)findViewById(R.id.map);
 
         /*mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
@@ -313,12 +350,32 @@ public class MapsActivity extends ActionBarActivity {
 */
     }
 
+
+
+    private final GoogleMap.OnCameraChangeListener mOnCameraChangeListener =
+            new GoogleMap.OnCameraChangeListener() {
+
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                  if(isTouch) {
+                     //отключаем слежку за собой
+                      if(targetOn){
+                          toastShow("Autocenter false");
+                      }
+                      targetOn = false;
+
+                  }
+                }
+            };
+
     public void toastShow(String str) {
         Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
     }
 
     public void moveCameraToMyPos() {
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+        if(targetOn){
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+        }
     }
 
     public void setMarkerMyPos(String title) {

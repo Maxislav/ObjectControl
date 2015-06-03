@@ -6,15 +6,10 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.atlas.mars.objectcontrol.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by mars on 4/24/15.
@@ -26,6 +21,7 @@ public class MyLocationListenerGps implements LocationListener {
     public static LatLng myPosGps;
     static Marker myPosMarker;
     public static Circle circle;
+    /** statusGps  - зафиксировано ли положение по gps */
     public static boolean statusGps = false;
     public static float accuracy;
 
@@ -44,7 +40,7 @@ public class MyLocationListenerGps implements LocationListener {
         statusGps = true;
             mapsActivity.myPos = myPosGps;
             mapsActivity.setMarkerMyPos("My location GPS");
-            //mapsActivity.moveCameraToMyPos();
+            mapsActivity.moveCameraToMyPos();
              mapsActivity.setAccuracy(accuracy);
     }
 

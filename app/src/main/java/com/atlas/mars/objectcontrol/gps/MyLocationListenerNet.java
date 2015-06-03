@@ -2,14 +2,9 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.location.Location;
 import android.location.LocationListener;
-import android.util.Log;
 
-import com.atlas.mars.objectcontrol.R;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Администратор on 4/25/15.
@@ -31,7 +26,7 @@ public class MyLocationListenerNet extends MyLocationListenerGps implements Loca
         if(!MyLocationListenerGps.statusGps){
             mapsActivity.myPos = myPosNet;
             mapsActivity.setMarkerMyPos("My location NET");
-          //  mapsActivity.moveCameraToMyPos();
+            mapsActivity.moveCameraToMyPos();
             mapsActivity.setAccuracy(accuracy);
         }
     }
