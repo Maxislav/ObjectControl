@@ -55,6 +55,7 @@ public class MapsActivity extends ActionBarActivity {
     LocationListener locationListenerGps, locationListenerNet;
     ImageButton btnFollow;
     ImageButton btnList;
+    ImageButton btnBearing;
     LinearLayout listContainer;
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
@@ -73,6 +74,8 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, HashMap> hashMapCollection;
     private boolean targetOn; /** targetOn включено ли все время за мной следить*/
     private boolean isTouch; /** isTouch касание*/
+    private boolean bearing; /** bearing поворачивать ли карту по своему направлению*/
+    public float myBearing;
 
     MyHttp myHttp;
 
@@ -85,6 +88,7 @@ public class MapsActivity extends ActionBarActivity {
         hashObjects = new HashMap<>();
         targetOn = false;
         isTouch = false;
+        bearing = false;
 
         displayMetrics = getResources().getDisplayMetrics();
         density = displayMetrics.density;
@@ -111,6 +115,7 @@ public class MapsActivity extends ActionBarActivity {
 
         btnFollow = (ImageButton) findViewById(R.id.btnFollow);
         btnList = (ImageButton) findViewById(R.id.btnList);
+        btnBearing = (ImageButton) findViewById(R.id.btnBearing);
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
@@ -120,6 +125,9 @@ public class MapsActivity extends ActionBarActivity {
 
 
         setClickListenerImgTargetMyPos(btnFollow);
+        setClickListenerImgBearing(btnBearing);
+
+
         setClickListenerBtnList();
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -197,13 +205,31 @@ public class MapsActivity extends ActionBarActivity {
         }
     }
 
-    protected void setClickListenerImgTargetMyPos(ImageView img) {
+    protected void setClickListenerImgBearing(final ImageView img) {
+
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!bearing){
+                    bearing = true;
+                    img.setBackgroundResource(R.drawable.bitmap_rotate_follow_on);
+                }else{
+                    img.setBackgroundResource(R.drawable.bitmap_nord);
+                    bearing = false;
+                }
+            }
+        });
+    }
+
+    protected void setClickListenerImgTargetMyPos(final ImageView img) {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (myPos != null) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
                     targetOn = true;
+                    img.setBackgroundResource(R.drawable.target_on);
+                    //img.setBackgroundDrawable( getResources().getDrawable(R.drawable.target) );
                     toastShow("Autocenter on");
                 } else {
                     toastShow("Position not available");
@@ -360,6 +386,7 @@ public class MapsActivity extends ActionBarActivity {
                   if(isTouch) {
                      //отключаем слежку за собой
                       if(targetOn){
+                          btnFollow.setBackgroundResource(R.drawable.target);
                           toastShow("Autocenter false");
                       }
                       targetOn = false;
@@ -375,6 +402,11 @@ public class MapsActivity extends ActionBarActivity {
     public void moveCameraToMyPos() {
         if(targetOn){
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+            if(bearing && myBearing != 0.0f){
+                CameraPosition oldPos = mMap.getCameraPosition();
+                CameraPosition pos = CameraPosition.builder(oldPos).bearing(myBearing).build();
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+            }
         }
     }
 
@@ -387,8 +419,16 @@ public class MapsActivity extends ActionBarActivity {
                 new MarkerOptions()
                         .position(myPos)
                         .anchor(0.5f, 0.5f)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+                        .flat(true)
+                        .title(title));
+                        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+        if(MyLocationListenerGps.statusGps && myBearing!=0.0f){
+            myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_obj));
+            myPosMarker.setRotation(myBearing);
+        }else{
+            myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point));
+        }
+
     }
 
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {

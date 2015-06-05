@@ -35,6 +35,7 @@ public class MyLocationListenerGps implements LocationListener {
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         float bearing = location.getBearing();
+        mapsActivity.myBearing = bearing;
         myPosGps = new LatLng(lat, lng);
         accuracy = location.getAccuracy();
         statusGps = true;
