@@ -213,9 +213,14 @@ public class MapsActivity extends ActionBarActivity {
                 if(!bearing){
                     bearing = true;
                     img.setBackgroundResource(R.drawable.bitmap_rotate_follow_on);
+                    if(bearing && myBearing != 0.0f){
+                        rotateCamera(myBearing);
+                    }
+
                 }else{
                     img.setBackgroundResource(R.drawable.bitmap_nord);
                     bearing = false;
+                    rotateCamera(0.0f);
                 }
             }
         });
@@ -226,7 +231,7 @@ public class MapsActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (myPos != null) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos));
                     targetOn = true;
                     img.setBackgroundResource(R.drawable.target_on);
                     //img.setBackgroundDrawable( getResources().getDrawable(R.drawable.target) );
@@ -401,13 +406,19 @@ public class MapsActivity extends ActionBarActivity {
 
     public void moveCameraToMyPos() {
         if(targetOn){
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos));
             if(bearing && myBearing != 0.0f){
-                CameraPosition oldPos = mMap.getCameraPosition();
-                CameraPosition pos = CameraPosition.builder(oldPos).bearing(myBearing).build();
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+                rotateCamera(myBearing);
             }
         }
+    }
+
+    private void rotateCamera(float _bearing){
+            CameraPosition oldPos = mMap.getCameraPosition();
+            CameraPosition pos = CameraPosition.builder(oldPos).bearing(_bearing).build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+
     }
 
     public void setMarkerMyPos(String title) {

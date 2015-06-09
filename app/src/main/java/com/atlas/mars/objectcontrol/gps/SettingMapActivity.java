@@ -98,6 +98,7 @@ public class SettingMapActivity extends ActionBarActivity{
         parsePasteWeb((WebView)findViewById(R.id.server), getString(R.string.server_url) );
         parsePasteWeb((WebView)findViewById(R.id.wLogin), getString(R.string.server_login) );
         parsePasteWeb((WebView)findViewById(R.id.wPass), getString(R.string.server_pass) );
+        parsePasteWeb((WebView)findViewById(R.id.protocol), getString(R.string.server_protocol) );
 
     }
     private void parsePasteWeb(WebView browser, String put ){
