@@ -28,6 +28,10 @@
     <string name="save">Сохранить</string>
     <string name="save_and_close">Сохранить и закрыть</string>
 
+    <string-array name="array_servers">
+        <item>M2 gps-tracker.com.ua</item>
+    </string-array>
+
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>
     <string name="multiple_send">Можественная отправка</string>
     <string name="confirm_send">Запрашивать подтверждение</string>
