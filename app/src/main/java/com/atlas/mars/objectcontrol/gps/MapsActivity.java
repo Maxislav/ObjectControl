@@ -406,18 +406,28 @@ public class MapsActivity extends ActionBarActivity {
 
     public void moveCameraToMyPos() {
         if(targetOn){
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos));
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos), 500, MyCancelableCallback);
+        }
+    }
+
+    GoogleMap.CancelableCallback MyCancelableCallback = new GoogleMap.CancelableCallback() {
+        @Override
+        public void onFinish() {
             if(bearing && myBearing != 0.0f){
                 rotateCamera(myBearing);
             }
         }
-    }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
 
     private void rotateCamera(float _bearing){
             CameraPosition oldPos = mMap.getCameraPosition();
             CameraPosition pos = CameraPosition.builder(oldPos).bearing(_bearing).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-
 
     }
 
