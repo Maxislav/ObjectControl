@@ -72,9 +72,18 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, View> hashViewRow;
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
-    private boolean targetOn; /** targetOn включено ли все время за мной следить*/
-    private boolean isTouch; /** isTouch касание*/
-    private boolean bearing; /** bearing поворачивать ли карту по своему направлению*/
+    private boolean targetOn;
+    /**
+     * targetOn включено ли все время за мной следить
+     */
+    private boolean isTouch;
+    /**
+     * isTouch касание
+     */
+    private boolean bearing;
+    /**
+     * bearing поворачивать ли карту по своему направлению
+     */
     public float myBearing;
 
     MyHttp myHttp;
@@ -140,11 +149,11 @@ public class MapsActivity extends ActionBarActivity {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isTouch = true;
-              //  toastShow("ACTION_DOWN");
+                //  toastShow("ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
-               // toastShow("ACTION_UP");
+                // toastShow("ACTION_UP");
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -210,14 +219,14 @@ public class MapsActivity extends ActionBarActivity {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!bearing){
+                if (!bearing) {
                     bearing = true;
                     img.setBackgroundResource(R.drawable.bitmap_rotate_follow_on);
-                    if(bearing && myBearing != 0.0f){
+                    if (bearing && myBearing != 0.0f) {
                         rotateCamera(myBearing);
                     }
 
-                }else{
+                } else {
                     img.setBackgroundResource(R.drawable.bitmap_nord);
                     bearing = false;
                     rotateCamera(0.0f);
@@ -320,8 +329,8 @@ public class MapsActivity extends ActionBarActivity {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            View mapView =(View)mainFragment.getView();
-         //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
+            View mapView = (View) mainFragment.getView();
+            //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
 
 
             //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -331,10 +340,6 @@ public class MapsActivity extends ActionBarActivity {
             }
         }
     }
-
-
-
-
 
 
     /**
@@ -382,21 +387,20 @@ public class MapsActivity extends ActionBarActivity {
     }
 
 
-
     private final GoogleMap.OnCameraChangeListener mOnCameraChangeListener =
             new GoogleMap.OnCameraChangeListener() {
 
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                  if(isTouch) {
-                     //отключаем слежку за собой
-                      if(targetOn){
-                          btnFollow.setBackgroundResource(R.drawable.target);
-                          toastShow("Autocenter false");
-                      }
-                      targetOn = false;
+                    if (isTouch) {
+                        //отключаем слежку за собой
+                        if (targetOn) {
+                            btnFollow.setBackgroundResource(R.drawable.target);
+                            toastShow("Autocenter false");
+                        }
+                        targetOn = false;
 
-                  }
+                    }
                 }
             };
 
@@ -405,7 +409,7 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     public void moveCameraToMyPos() {
-        if(targetOn){
+        if (targetOn) {
             mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos), 500, MyCancelableCallback);
         }
     }
@@ -413,7 +417,7 @@ public class MapsActivity extends ActionBarActivity {
     GoogleMap.CancelableCallback MyCancelableCallback = new GoogleMap.CancelableCallback() {
         @Override
         public void onFinish() {
-            if(bearing && myBearing != 0.0f){
+            if (bearing && myBearing != 0.0f) {
                 rotateCamera(myBearing);
             }
         }
@@ -424,10 +428,10 @@ public class MapsActivity extends ActionBarActivity {
         }
     };
 
-    private void rotateCamera(float _bearing){
-            CameraPosition oldPos = mMap.getCameraPosition();
-            CameraPosition pos = CameraPosition.builder(oldPos).bearing(_bearing).build();
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+    private void rotateCamera(float _bearing) {
+        CameraPosition oldPos = mMap.getCameraPosition();
+        CameraPosition pos = CameraPosition.builder(oldPos).bearing(_bearing).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
 
     }
 
@@ -442,11 +446,11 @@ public class MapsActivity extends ActionBarActivity {
                         .anchor(0.5f, 0.5f)
                         .flat(true)
                         .title(title));
-                        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
-        if(MyLocationListenerGps.statusGps && myBearing!=0.0f){
+        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
+        if (MyLocationListenerGps.statusGps && myBearing != 0.0f) {
             myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_obj));
             myPosMarker.setRotation(myBearing);
-        }else{
+        } else {
             myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point));
         }
 
@@ -479,6 +483,7 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     private void drawMarker(HashMap<String, String> map) {
+        hashObjects.put(map.get("id"), map);
         LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
         Marker objMarker = mMap.addMarker(
                 new MarkerOptions()
@@ -544,10 +549,14 @@ public class MapsActivity extends ActionBarActivity {
                 TextView textDate = (TextView) v.findViewById(R.id.textDate);
                 TextView textTime = (TextView) v.findViewById(R.id.textTime);
                 TextView textSp = (TextView) v.findViewById(R.id.textSp);
+                TextView textSat = (TextView) v.findViewById(R.id.textSat);
+                TextView textBat = (TextView) v.findViewById(R.id.textBat);
                 textName.setText(map.get("name"));
                 textDate.setText(map.get("date"));
                 textTime.setText(map.get("time"));
                 textSp.setText(map.get("speed"));
+                textSat.setText(map.get("gps_level"));
+                textBat.setText(map.get("bat_level"));
             }
 //            marker.showInfoWindow();
             return v;
@@ -578,10 +587,14 @@ public class MapsActivity extends ActionBarActivity {
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
         TextView textTime = (TextView) view.findViewById(R.id.textTime);
         TextView textSp = (TextView) view.findViewById(R.id.textSp);
+        TextView textSat = (TextView) view.findViewById(R.id.textSat);
+        TextView textBat = (TextView) view.findViewById(R.id.textBat);
         textName.setText(map.get("name"));
         textDate.setText(map.get("date"));
         textTime.setText(map.get("time"));
         textSp.setText(map.get("speed"));
+        textSat.setText(map.get("gps_level"));
+        textBat.setText(map.get("bat_level"));
 
         if (hashViewRow.get(map.get("id")) == null) {
             hashViewRow.put(id, view);

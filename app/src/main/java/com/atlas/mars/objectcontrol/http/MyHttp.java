@@ -117,6 +117,8 @@ public class MyHttp {
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
                 map.put("id", jsonNode.path("CarId").asText());
+                map.put("gps_level", jsonNode.path("gps_level").asText());
+                map.put("bat_level", jsonNode.path("bat_level").asText());
 
                 double lat1 = jsonNode.path("X").asDouble();
                 double lng1 = jsonNode.path("Y").asDouble();
