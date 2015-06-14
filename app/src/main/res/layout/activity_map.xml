@@ -56,5 +56,13 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="95dp"
         android:background="@drawable/bitmap_nord" />
+    <ImageButton
+        android:id="@+id/btnTrack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="145dp"
+        android:background="@drawable/bitmap_track_show" />
 
 </FrameLayout>

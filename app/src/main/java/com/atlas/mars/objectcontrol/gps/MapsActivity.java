@@ -1,6 +1,10 @@
 package com.atlas.mars.objectcontrol.gps;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationListener;
@@ -8,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -50,6 +55,7 @@ import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,6 +74,7 @@ public class MapsActivity extends ActionBarActivity {
     ImageButton btnFollow;
     ImageButton btnList;
     ImageButton btnBearing;
+    ImageButton btnTrack;
     LinearLayout listContainer;
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
@@ -137,6 +144,7 @@ public class MapsActivity extends ActionBarActivity {
         btnFollow = (ImageButton) findViewById(R.id.btnFollow);
         btnList = (ImageButton) findViewById(R.id.btnList);
         btnBearing = (ImageButton) findViewById(R.id.btnBearing);
+        btnTrack = (ImageButton) findViewById(R.id.btnTrack);
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
@@ -147,6 +155,7 @@ public class MapsActivity extends ActionBarActivity {
 
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
+        setClickListenerImgTrack(btnTrack);
 
 
         setClickListenerBtnList();
@@ -224,6 +233,27 @@ public class MapsActivity extends ActionBarActivity {
                 //Todo нажато сохранение
             }
         }
+    }
+    protected void setClickListenerImgTrack(final ImageView img) {
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("*/*");
+//                intent.addCategory(Intent.CATEGORY_OPENABLE);
+//
+//                try {
+//                    startActivityForResult(
+//                            Intent.createChooser(intent, "Select a File to Upload"),1);
+//                } catch (android.content.ActivityNotFoundException ex) {
+//                    // Potentially direct the user to the Market with a Dialog
+//                    //Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+//                }
+
+
+
+            }
+        });
     }
 
     protected void setClickListenerImgBearing(final ImageView img) {
