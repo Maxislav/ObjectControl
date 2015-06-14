@@ -90,10 +90,10 @@ public class MyLocationListenerGps implements LocationListener, GpsStatus.Listen
             Iterator<GpsSatellite> sat = satellites.iterator();
             int i=0;
             while (sat.hasNext()) {
-                Log.d(TAG, "strGpsStats +++");
+                //Log.d(TAG, "strGpsStats +++");
                 GpsSatellite satellite = sat.next();
                 strGpsStats+= (i++) + ": " + satellite.getPrn() + "," + satellite.usedInFix() + "," + satellite.getSnr() + "," + satellite.getAzimuth() + "," + satellite.getElevation()+ "\n\n";
-                Log.d(TAG, strGpsStats);
+               // Log.d(TAG, strGpsStats);
             }
             //tv.setText(strGpsStats);
         }

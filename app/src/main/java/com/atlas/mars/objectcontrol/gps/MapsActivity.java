@@ -32,6 +32,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.atlas.mars.objectcontrol.MainActivity;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.MyHttp;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -234,12 +235,42 @@ public class MapsActivity extends ActionBarActivity {
             }
         }
     }
-    protected void setClickListenerImgTrack(final ImageView img) {
+    public void drawPoly(String path){
+        String state = Environment.getExternalStorageState();
+
+        if (!(state.equals(Environment.MEDIA_MOUNTED))) {
+            //Toast.makeText(this, "There is no any sd card", Toast.LENGTH_LONG).show();
+
+            toastShow("There is no any sd card");
+            return;
+        }else{
+
+        }
+
+
+        Mytrack mytrack = new Mytrack(path);
+
+        Polyline line = mMap.addPolyline(new PolylineOptions()
+                .add(mytrack.getTrack())
+                .width(5)
+                .color(Color.BLUE));
+        line.setZIndex(2.0f);
+        //return null;
+    }
+
+    protected void setClickListenerImgTrack(final ImageView img ) {
+
         img.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
+
+
+                OpenFileDialog fileDialog = new OpenFileDialog(MapsActivity.this);
+                fileDialog.show();
+                /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("file*//*");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
 
                 try {
@@ -247,8 +278,9 @@ public class MapsActivity extends ActionBarActivity {
                             Intent.createChooser(intent, "Select a File to Upload"),1);
                 } catch (android.content.ActivityNotFoundException ex) {
                     // Potentially direct the user to the Market with a Dialog
+                    toastShow("Please install a File Manager.");
                     //Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
-                }
+                }*/
 
 
 
@@ -407,13 +439,17 @@ public class MapsActivity extends ActionBarActivity {
 
 
             TileOverlay tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
-            Mytrack mytrack = new Mytrack();
+            /*Mytrack mytrack = new Mytrack();
 
             Polyline line = mMap.addPolyline(new PolylineOptions()
                     .add(mytrack.getTrack())
                     .width(5)
                     .color(Color.BLUE));
-            line.setZIndex(2.0f);
+            line.setZIndex(2.0f);*/
+
+
+
+
             //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
 
 
