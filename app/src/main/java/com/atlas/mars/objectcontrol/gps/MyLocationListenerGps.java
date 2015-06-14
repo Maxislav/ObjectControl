@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol.gps;
 
+import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,10 +12,12 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Iterator;
+
 /**
  * Created by mars on 4/24/15.
  */
-public class MyLocationListenerGps implements LocationListener {
+public class MyLocationListenerGps implements LocationListener, GpsStatus.Listener {
     public final static String TAG = "myLog";
     public GoogleMap mMap;
     MapsActivity mapsActivity;
@@ -28,6 +31,7 @@ public class MyLocationListenerGps implements LocationListener {
     public MyLocationListenerGps(MapsActivity mapsActivity, GoogleMap mMap) {
         this.mapsActivity = mapsActivity;
         this.mMap = mMap;
+        mapsActivity.locationManagerGps.addGpsStatusListener(this);
     }
 
     @Override
@@ -75,5 +79,23 @@ public class MyLocationListenerGps implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
         Log.d(TAG,"onProviderDisabled +++ "+ provider );
+    }
+
+    @Override
+    public void onGpsStatusChanged(int event) {
+        GpsStatus gpsStatus = mapsActivity.locationManagerGps.getGpsStatus(null);
+       String strGpsStats = "";
+        if(gpsStatus != null) {
+            Iterable<GpsSatellite>satellites = gpsStatus.getSatellites();
+            Iterator<GpsSatellite> sat = satellites.iterator();
+            int i=0;
+            while (sat.hasNext()) {
+                Log.d(TAG, "strGpsStats +++");
+                GpsSatellite satellite = sat.next();
+                strGpsStats+= (i++) + ": " + satellite.getPrn() + "," + satellite.usedInFix() + "," + satellite.getSnr() + "," + satellite.getAzimuth() + "," + satellite.getElevation()+ "\n\n";
+                Log.d(TAG, strGpsStats);
+            }
+            //tv.setText(strGpsStats);
+        }
     }
 }

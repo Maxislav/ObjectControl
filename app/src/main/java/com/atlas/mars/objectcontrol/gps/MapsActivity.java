@@ -2,6 +2,7 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -39,8 +40,18 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.model.TileProvider;
+import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -51,8 +62,9 @@ public class MapsActivity extends ActionBarActivity {
 
     public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    LocationManager locationManagerGps, locationManagerNet;
-    LocationListener locationListenerGps, locationListenerNet;
+    private TileProvider tileProvider; //
+    public LocationManager locationManagerGps, locationManagerNet;
+    public LocationListener locationListenerGps, locationListenerNet;
     ImageButton btnFollow;
     ImageButton btnList;
     ImageButton btnBearing;
@@ -178,7 +190,7 @@ public class MapsActivity extends ActionBarActivity {
         setUpMapIfNeeded();
         locationListenerGps = new MyLocationListenerGps(this, mMap);
         locationListenerNet = new MyLocationListenerNet(this, mMap);
-        locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListenerGps);
+        locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
         if (haveNetworkConnection()) {
             myHttp.onResume();
@@ -307,6 +319,36 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
+    private void setUpTileLayer(){
+        tileProvider = new UrlTileProvider(256, 256) {
+            @Override
+            public URL getTileUrl(int x, int y, int zoom) {
+               // String s = String.format("https://b.tile.openstreetmap.org/%d/%d/%d.png", zoom, x, y);
+                String s = String.format("http://a.tile.openstreetmap.fr/hot/%d/%d/%d.png", zoom, x, y);
+
+                if (!checkTileExists(x, y, zoom)) {
+                    return null;
+                }
+
+                try {
+                    return new URL(s);
+                } catch (MalformedURLException e) {
+                    throw new AssertionError(e);
+                }
+            }
+            private boolean checkTileExists(int x, int y, int zoom) {
+                int minZoom = 6;
+                int maxZoom = 19;
+
+                if ((zoom < minZoom || zoom > maxZoom)) {
+                    return false;
+                }
+
+                return true;
+            }
+        };
+    }
+
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -324,12 +366,24 @@ public class MapsActivity extends ActionBarActivity {
      * method in {@link #onResume()} to guarantee that it will be called.
      */
     private void setUpMapIfNeeded() {
+        setUpTileLayer();
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+           // mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
+
+
+            TileOverlay tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+            Mytrack mytrack = new Mytrack();
+
+            Polyline line = mMap.addPolyline(new PolylineOptions()
+                    .add(mytrack.getTrack())
+                    .width(5)
+                    .color(Color.BLUE));
+            line.setZIndex(2.0f);
             //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
 
 
