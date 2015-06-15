@@ -464,8 +464,8 @@ public class MapsActivity extends ActionBarActivity {
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
-
-            setTileLayer("mapQuest");
+            //todo раскоментировать потом
+            //setTileLayer("mapQuest");
 
             /*Mytrack mytrack = new Mytrack();
 
@@ -556,7 +556,7 @@ public class MapsActivity extends ActionBarActivity {
                         //отключаем слежку за собой
                         if (targetOn) {
                             btnFollow.setBackgroundResource(R.drawable.target);
-                            toastShow("Autocenter false");
+                            toastShow("Autocenter off");
                         }
                         targetOn = false;
 
