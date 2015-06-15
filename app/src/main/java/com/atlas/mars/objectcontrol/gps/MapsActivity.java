@@ -1,10 +1,6 @@
 package com.atlas.mars.objectcontrol.gps;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationListener;
@@ -32,7 +28,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.atlas.mars.objectcontrol.MainActivity;
+import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.MyHttp;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,8 +42,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -56,7 +50,6 @@ import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -65,6 +58,7 @@ import java.util.HashMap;
 public class MapsActivity extends ActionBarActivity {
 
     DisplayMetrics displayMetrics;
+    private DataBaseHelper dataBaseHelper;
     private float dpHeight, dpWidth, density;
 
     public final static String TAG = "myLog";
@@ -92,7 +86,16 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, View> hashViewRow;
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
+    private HashMap<String, String> mapSetting;
+    /***
+     * Тип карты
+     */
+    private HashMap<String, String> mapType;
+
+
     private boolean targetOn;
+
+
     /**
      * targetOn включено ли все время за мной следить
      */
@@ -118,6 +121,10 @@ public class MapsActivity extends ActionBarActivity {
         targetOn = false;
         isTouch = false;
         bearing = false;
+        dataBaseHelper = new DataBaseHelper(this);
+
+        mapSetting = new HashMap<>();
+        dataBaseHelper.getSetting(mapSetting);
 
         displayMetrics = getResources().getDisplayMetrics();
         density = displayMetrics.density;
@@ -150,14 +157,9 @@ public class MapsActivity extends ActionBarActivity {
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
 
-        // scrollView.setOnTouchListener(new MyTouchListener());
-        //    scrollView.setOnDragListener(new MyDragListener());
-
-
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
         setClickListenerImgTrack(btnTrack);
-
 
         setClickListenerBtnList();
         setUpMapIfNeeded();
@@ -191,6 +193,15 @@ public class MapsActivity extends ActionBarActivity {
         }
         MyLocationListenerGps.statusGps = false;
         if (myHttp != null) myHttp.onPause();
+        LatLng startLatLng = mMap.getCameraPosition().target;
+        double lat  = startLatLng.latitude;
+        double lng  = startLatLng.longitude;
+        float zoom = mMap.getCameraPosition().zoom;
+
+        mapSetting.put(dataBaseHelper.MAP_START_LAT, Double.toString(lat));
+        mapSetting.put(dataBaseHelper.MAP_START_LNG, Double.toString(lng));
+        mapSetting.put(dataBaseHelper.MAP_START_ZOOM, Float.toString(zoom));
+        dataBaseHelper.setSetting(mapSetting);
         super.onPause();
     }
 
@@ -205,6 +216,9 @@ public class MapsActivity extends ActionBarActivity {
         if (haveNetworkConnection()) {
             myHttp.onResume();
         }
+
+
+
     }
 
     @Override
@@ -259,14 +273,11 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     protected void setClickListenerImgTrack(final ImageView img ) {
-
         img.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
             public void onClick(View v) {
-
-
                 OpenFileDialog fileDialog = new OpenFileDialog(MapsActivity.this);
                 fileDialog.show();
                 /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -281,9 +292,6 @@ public class MapsActivity extends ActionBarActivity {
                     toastShow("Please install a File Manager.");
                     //Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
                 }*/
-
-
-
             }
         });
     }
@@ -381,13 +389,30 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
-    private void setUpTileLayer(){
+
+    private void setTileLayer(String mapName){
+        setUpTileLayer(mapName);
+        TileOverlay tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+
+    }
+
+    private void setUpTileLayer(final String mapName){
         tileProvider = new UrlTileProvider(256, 256) {
             @Override
             public URL getTileUrl(int x, int y, int zoom) {
-               // String s = String.format("https://b.tile.openstreetmap.org/%d/%d/%d.png", zoom, x, y);
-                String s = String.format("http://a.tile.openstreetmap.fr/hot/%d/%d/%d.png", zoom, x, y);
+                String s;
+                switch (mapName){
+                    case "mapQuest":
+                        s = String.format(mapType.get(mapName), zoom, x, y);
+                        break;
+                    case "ggl":
+                        s = String.format(mapType.get(mapName), x, y, zoom);
+                        break;
+                    default:
+                        s = String.format(mapType.get(mapName), x, y, zoom);
+                }
 
+               // String
                 if (!checkTileExists(x, y, zoom)) {
                     return null;
                 }
@@ -428,17 +453,20 @@ public class MapsActivity extends ActionBarActivity {
      * method in {@link #onResume()} to guarantee that it will be called.
      */
     private void setUpMapIfNeeded() {
-        setUpTileLayer();
-        // Do a null check to confirm that we have not already instantiated the map.
+        mapType = new HashMap<>();
+        mapType.put("ggl", "http://mt0.googleapis.com/vt/lyrs=m@207000000&hl=ru&src=api&x=%d&y=%d&z=%d&s=Galile");
+        mapType.put("mapQuest", "http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png");
+
+
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-           // mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+            //mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
 
+            setTileLayer("mapQuest");
 
-            TileOverlay tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
             /*Mytrack mytrack = new Mytrack();
 
             Polyline line = mMap.addPolyline(new PolylineOptions()
@@ -471,9 +499,21 @@ public class MapsActivity extends ActionBarActivity {
     private void setUpMap() {
         // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
         //    MapView mapView = (MapView)findViewById(R.id.map);
+        String lat = mapSetting.get(dataBaseHelper.MAP_START_LAT);
+        String lng = mapSetting.get(dataBaseHelper.MAP_START_LNG);
+        LatLng startPos;
+        if(lat!=null && lng!=null){
+            startPos = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+        }else {
+            startPos = kiev;
+        }
+        String strZoom = mapSetting.get(dataBaseHelper.MAP_START_ZOOM);
+        float zoom = 10;
+        if(strZoom!=null){
+            zoom = Float.parseFloat(strZoom);
+        }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kiev, 10));
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startPos, zoom));
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setOnCameraChangeListener(mOnCameraChangeListener);
@@ -694,7 +734,8 @@ public class MapsActivity extends ActionBarActivity {
                 .radius(accuracy)
                 .strokeColor(getResources().getColor(R.color.strokeColorAccuracy))
                 .fillColor(getResources().getColor(R.color.fillColorAccuracy))
-                .strokeWidth(2.0f);
+                .strokeWidth(2.0f)
+                .zIndex(2.0f);
         circle = mMap.addCircle(circleOptions);
     }
 

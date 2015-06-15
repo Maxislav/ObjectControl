@@ -55,6 +55,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_PASS = "mapPass";
     public static final String MAP_SERVER_URL = "mapServerUrl";
 
+    public static final String MAP_TYPE = "mapType";
+    public static final String MAP_START_LAT = "startLat";
+    public static final String MAP_START_LNG = "startLng";
+    public static final String MAP_START_ZOOM = "startZoom";
+
 
     public static final String VALUE_SELECTED = "valueSelected";
 
@@ -80,6 +85,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
 
 
 
