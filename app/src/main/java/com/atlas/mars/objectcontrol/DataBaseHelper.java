@@ -59,6 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_START_LAT = "startLat";
     public static final String MAP_START_LNG = "startLng";
     public static final String MAP_START_ZOOM = "startZoom";
+    public static final String MAP_SHOW_LIST = "mapShowList";
 
 
     public static final String VALUE_SELECTED = "valueSelected";

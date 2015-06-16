@@ -58,8 +58,9 @@ import java.util.HashMap;
 public class MapsActivity extends ActionBarActivity {
 
     DisplayMetrics displayMetrics;
-    private DataBaseHelper dataBaseHelper;
+    public DataBaseHelper dataBaseHelper;
     private float dpHeight, dpWidth, density;
+    private TileOverlay tileOverlay;
 
     public final static String TAG = "myLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -86,11 +87,11 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, View> hashViewRow;
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
-    private HashMap<String, String> mapSetting;
+    public HashMap<String, String> mapSetting;
     /***
      * Тип карты
      */
-    private HashMap<String, String> mapType;
+    private String mapType;
 
 
     private boolean targetOn;
@@ -160,8 +161,8 @@ public class MapsActivity extends ActionBarActivity {
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
         setClickListenerImgTrack(btnTrack);
-
         setClickListenerBtnList();
+        new ChangeMap(this);
         setUpMapIfNeeded();
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -338,6 +339,9 @@ public class MapsActivity extends ActionBarActivity {
     protected void setClickListenerBtnList() {
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
+        if(mapSetting.get(dataBaseHelper.MAP_SHOW_LIST)!=null && mapSetting.get(dataBaseHelper.MAP_SHOW_LIST).equals("0")){
+            listContainer.setVisibility(View.INVISIBLE);
+        }
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -353,6 +357,7 @@ public class MapsActivity extends ActionBarActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             listContainer.setVisibility(View.INVISIBLE);
+                            mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
                         }
 
                         @Override
@@ -367,6 +372,7 @@ public class MapsActivity extends ActionBarActivity {
                         @Override
                         public void onAnimationStart(Animation animation) {
                             listContainer.setVisibility(View.VISIBLE);
+                            mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
                         }
 
                         @Override
@@ -390,10 +396,34 @@ public class MapsActivity extends ActionBarActivity {
     }
 
 
-    private void setTileLayer(String mapName){
-        setUpTileLayer(mapName);
-        TileOverlay tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+    public void setTileLayer(String mapName){
+        if(mapType==null || mapType!=mapName){
+            mapType = mapName;
+            switch (mapName){
+                case "ggl":
+                    if(tileOverlay!= null){
+                        tileOverlay.remove();
+                    }
+                    break;
+                case "osm":
+                    if(tileOverlay!= null){
+                        tileOverlay.remove();
+                        tileOverlay.clearTileCache();
+                    }
+                    setUpTileLayer(mapName);
+                    tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    break;
+                case "mapQuest":
+                    if(tileOverlay!= null){
+                        tileOverlay.remove();
+                        tileOverlay.clearTileCache();
+                    }
+                    setUpTileLayer(mapName);
+                    tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    break;
+            }
 
+        }
     }
 
     private void setUpTileLayer(final String mapName){
@@ -403,13 +433,16 @@ public class MapsActivity extends ActionBarActivity {
                 String s;
                 switch (mapName){
                     case "mapQuest":
-                        s = String.format(mapType.get(mapName), zoom, x, y);
+                        s = String.format("http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png", zoom, x, y);
+                        break;
+                    case "osm":
+                        s = String.format("http://a.tile.openstreetmap.org/%d/%d/%d.png", zoom, x, y);
                         break;
                     case "ggl":
-                        s = String.format(mapType.get(mapName), x, y, zoom);
+                        s = String.format("http://mt0.googleapis.com/vt/lyrs=m@207000000&hl=ru&src=api&x=%d&y=%d&z=%d&s=Galile", x, y, zoom);
                         break;
                     default:
-                        s = String.format(mapType.get(mapName), x, y, zoom);
+                        s = String.format("http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png", zoom, x, y);
                 }
 
                // String
@@ -453,9 +486,9 @@ public class MapsActivity extends ActionBarActivity {
      * method in {@link #onResume()} to guarantee that it will be called.
      */
     private void setUpMapIfNeeded() {
-        mapType = new HashMap<>();
-        mapType.put("ggl", "http://mt0.googleapis.com/vt/lyrs=m@207000000&hl=ru&src=api&x=%d&y=%d&z=%d&s=Galile");
-        mapType.put("mapQuest", "http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png");
+      //  mapType = new HashMap<>();
+        //mapType.put("ggl", "http://mt0.googleapis.com/vt/lyrs=m@207000000&hl=ru&src=api&x=%d&y=%d&z=%d&s=Galile");
+       // mapType.put("mapQuest", "http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png");
 
 
         if (mMap == null) {
@@ -465,6 +498,9 @@ public class MapsActivity extends ActionBarActivity {
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
             //todo раскоментировать потом
+            if(mapSetting!=null && mapSetting.get(DataBaseHelper.MAP_TYPE)!=null){
+                setTileLayer(mapSetting.get(DataBaseHelper.MAP_TYPE));
+            }
             //setTileLayer("mapQuest");
 
             /*Mytrack mytrack = new Mytrack();
