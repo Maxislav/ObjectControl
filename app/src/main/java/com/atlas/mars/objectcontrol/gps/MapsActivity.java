@@ -88,6 +88,8 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
     public HashMap<String, String> mapSetting;
+
+    private int countObj = 0;
     /***
      * Тип карты
      */
@@ -338,14 +340,17 @@ public class MapsActivity extends ActionBarActivity {
     protected void setClickListenerBtnList() {
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
-        if(mapSetting.get(dataBaseHelper.MAP_SHOW_LIST)!=null && mapSetting.get(dataBaseHelper.MAP_SHOW_LIST).equals("0")){
-            listContainer.setVisibility(View.INVISIBLE);
+        if(mapSetting.get(dataBaseHelper.MAP_SHOW_LIST)!=null && mapSetting.get(dataBaseHelper.MAP_SHOW_LIST).equals("1")){
+            listContainer.setVisibility(View.VISIBLE);
         }
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int)(density*250), FrameLayout.LayoutParams.MATCH_PARENT);
 
+                if(countObj<1){
+                    toastShow("Empty list objects");
+                    return;
+                }
                 if (listContainer.isShown()) {
                     aniOut.setAnimationListener(new Animation.AnimationListener() {
                         @Override
@@ -385,11 +390,7 @@ public class MapsActivity extends ActionBarActivity {
                         }
                     });
                     listContainer.startAnimation(animIn);
-
                 }
-
-                // lp.setMargins(0, 0, 0, 0);
-                //listContainer.setLayoutParams(lp);
             }
         });
     }
@@ -665,6 +666,7 @@ public class MapsActivity extends ActionBarActivity {
                     drawMarker(hashMapMArkerOpt);
                     drawIcon(hashMapMArkerOpt);
                     addRowObject(hashMapMArkerOpt);
+                    countObj++;
                 }
 
                 if (!hashMapCollection.get(id).get("dateLong").equals(hashMapMArkerOpt.get("dateLong"))) {
@@ -778,6 +780,8 @@ public class MapsActivity extends ActionBarActivity {
         String id = map.get("id");
 
         LayoutInflater ltInflater = getLayoutInflater();
+
+
         View view = hashViewRow.get(id) != null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);

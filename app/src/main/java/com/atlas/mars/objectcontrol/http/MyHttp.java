@@ -73,8 +73,7 @@ public class MyHttp {
     public MyHttp(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         db = new DataBaseHelper(mapsActivity);
-        mapSetting = new HashMap<>();
-        db.getSetting(mapSetting);
+        mapSetting = db.hashSetting;
     }
 
     public void postData() {
@@ -86,8 +85,8 @@ public class MyHttp {
     }
 
     public void getAuth(){
-        au = new Auth();
         if (mapSetting.get(db.MAP_LOGIN) != null && mapSetting.get(db.MAP_PASS) != null && mapSetting.get(db.MAP_SERVER_URL) != null) {
+            au = new Auth();
             au.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
         }
     }
