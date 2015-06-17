@@ -124,8 +124,7 @@ public class MapsActivity extends ActionBarActivity {
         bearing = false;
         dataBaseHelper = new DataBaseHelper(this);
 
-        mapSetting = new HashMap<>();
-        dataBaseHelper.getSetting(mapSetting);
+        mapSetting = dataBaseHelper.hashSetting;
 
         displayMetrics = getResources().getDisplayMetrics();
         density = displayMetrics.density;

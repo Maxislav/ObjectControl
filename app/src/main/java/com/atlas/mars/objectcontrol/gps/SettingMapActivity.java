@@ -26,7 +26,7 @@ public class SettingMapActivity extends ActionBarActivity{
     String web;
     Spinner spinner;
     DataBaseHelper db;
-    HashMap<String,String> mapSetting;
+    HashMap<String,String> mapSetting = DataBaseHelper.hashSetting;
     String LOGIN, PASS, URL;
     EditText serverUrl, edTextServerLogin, edTextServerPass;
 
@@ -63,9 +63,9 @@ public class SettingMapActivity extends ActionBarActivity{
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
         spinner = (Spinner)findViewById(R.id.spinner);
-        mapSetting = new HashMap<>();
+       // mapSetting = new HashMap<>();
         db = new DataBaseHelper(this);
-        db.getSetting(mapSetting);
+      //  db.getSetting(mapSetting);
         LOGIN = mapSetting.get(db.MAP_LOGIN);
         PASS = mapSetting.get(db.MAP_PASS);
         URL = mapSetting.get(db.MAP_SERVER_URL);

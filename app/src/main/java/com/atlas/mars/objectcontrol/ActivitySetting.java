@@ -134,7 +134,7 @@ public class ActivitySetting extends ActionBarActivity {
         });
     }
     private void saveSetting(){
-        HashMap <String,String> changesSettingMap = new HashMap<>();
+        HashMap <String,String> changesSettingMap = db.hashSetting;
         /*fillSetting(CONFIRM_SEND, "1",db);
         fillSetting(MULTIPLE_SEND, "0", db);
         fillSetting(COUNT_MEMORY_HISTORY, "100", db);

@@ -61,6 +61,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_START_ZOOM = "startZoom";
     public static final String MAP_SHOW_LIST = "mapShowList";
 
+    public static HashMap<String, String> hashSetting;
+
 
     public static final String VALUE_SELECTED = "valueSelected";
 
@@ -85,6 +87,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        if(hashSetting==null){
+            getSetting(hashSetting = new HashMap<>());
+        }
     }
 
 
