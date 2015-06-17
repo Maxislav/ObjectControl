@@ -820,6 +820,10 @@ public class MapsActivity extends ActionBarActivity {
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if(!locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)){
+            return false;
+        }
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
