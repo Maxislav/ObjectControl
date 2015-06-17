@@ -77,6 +77,7 @@ public class MapsActivity extends ActionBarActivity {
 
 
     public LatLng myPos;
+    public float mySpeed;
     static Marker myPosMarker;
     public static Circle circle;
     private static final LatLng kiev = new LatLng(50.39, 30.47);
@@ -211,6 +212,12 @@ public class MapsActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+
+        if(!haveNetworkConnection() || !isNetworkAvailable()){
+            toastShow("No connections");
+            return;
+        }
+
         locationListenerGps = new MyLocationListenerGps(this, mMap);
         locationListenerNet = new MyLocationListenerNet(this, mMap);
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
@@ -218,9 +225,6 @@ public class MapsActivity extends ActionBarActivity {
         if (haveNetworkConnection()) {
             myHttp.onResume();
         }
-
-
-
     }
 
     @Override
@@ -828,5 +832,11 @@ public class MapsActivity extends ActionBarActivity {
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

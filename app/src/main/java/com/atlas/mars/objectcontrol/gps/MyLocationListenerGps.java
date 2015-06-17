@@ -39,14 +39,16 @@ public class MyLocationListenerGps implements LocationListener, GpsStatus.Listen
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         float bearing = location.getBearing();
+        float speed =  location.getSpeed();
         mapsActivity.myBearing = bearing;
         myPosGps = new LatLng(lat, lng);
         accuracy = location.getAccuracy();
         statusGps = true;
+        mapsActivity.mySpeed =  speed;
             mapsActivity.myPos = myPosGps;
             mapsActivity.setMarkerMyPos("My location GPS");
             mapsActivity.moveCameraToMyPos();
-             mapsActivity.setAccuracy(accuracy);
+            mapsActivity.setAccuracy(accuracy);
     }
 
     @Override
