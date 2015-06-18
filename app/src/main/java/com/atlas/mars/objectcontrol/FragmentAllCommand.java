@@ -118,12 +118,11 @@ public class FragmentAllCommand extends MyFragmentView {
             FrameLayout row = rowCreator.create(map);
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
-            Button btnDel = (Button)myJQuery.findViewByTagClass(row, "android.widget.Button").get(0);
+            Button btnDel = (Button)myJQuery.findViewByTagClass(row, Button.class).get(0);
 
             setListenerMinus(row, btnDel, id);
             setListenerDel(btnDel, row, map);
-        //    ArrayList<View> viewArrayList = myJQuery.findViewByTagClass(row, ImageView.class);
-            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass(row, ImageView.class);
             ImageView imgFavorite = (ImageView)viewArrayList.get(2);
             ImageView bacGroutdImg = (ImageView)viewArrayList.get(0);
             if(map.get(db.VALUE_FAVORITE).equals("1")){
@@ -166,8 +165,7 @@ public class FragmentAllCommand extends MyFragmentView {
         final Animation animOut = AnimationUtils.loadAnimation(mainActivity.getApplicationContext(), R.anim.hide_left);
 
 
-      //  final ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, ImageView.class).get(1);
-        final ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, "android.widget.ImageView").get(1);
+        final ImageView imgMinus = (ImageView)myJQuery.findViewByTagClass(row, ImageView.class).get(1);
 
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,13 +251,13 @@ public class FragmentAllCommand extends MyFragmentView {
 
     public void showMinus(int visible){
         for (Map.Entry entry : hashMapRow.entrySet()) {
-            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), "android.widget.ImageView");
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), ImageView.class);
             ImageView img = (ImageView)viewArrayList.get(1);
             img.setVisibility(visible);
 
             if(visible == View.INVISIBLE){
                 img.setBackgroundResource(R.drawable.btn_minus);
-                ((Button)myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), "android.widget.Button").get(0)).setVisibility(visible);
+                ((Button)myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), Button.class).get(0)).setVisibility(visible);
             }
 
         }
@@ -268,7 +266,7 @@ public class FragmentAllCommand extends MyFragmentView {
 
     public void showFavorite(int visible){
         for (Map.Entry entry : hashMapRow.entrySet()) {
-            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), "android.widget.ImageView");
+            ArrayList<View> viewArrayList = myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), ImageView.class);
             ImageView img = (ImageView)viewArrayList.get(2);
             img.setVisibility(visible);
         }
@@ -279,7 +277,7 @@ public class FragmentAllCommand extends MyFragmentView {
         if(dialog==null){
             dialog = inflater.inflate(R.layout.dialod_end_del, null);
             pw = new PopupWindow(dialog, FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
-            FrameLayout btnEndDel = (FrameLayout)myJQuery.findViewByTagClass((ViewGroup) dialog, "android.widget.class").get(0);
+            FrameLayout btnEndDel = (FrameLayout)myJQuery.findViewByTagClass((ViewGroup) dialog, FrameLayout.class).get(0);
             btnEndDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

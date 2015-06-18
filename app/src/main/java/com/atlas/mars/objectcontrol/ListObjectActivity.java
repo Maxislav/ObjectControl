@@ -143,7 +143,7 @@ public class ListObjectActivity extends ActionBarActivity {
 
     private void showEdit(int visible) {
         for (Map.Entry entry : hashMapView.entrySet()) {
-            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), "android.widget.ImageView").get(0);
+            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), ImageView.class).get(0);
             imgEdit.setVisibility(visible);
             //System.out.println("Key: " + entry.getKey() + " Value: "+ entry.getValue());
         }
@@ -151,11 +151,11 @@ public class ListObjectActivity extends ActionBarActivity {
 
     private void showDelMinus(int visible) {
         for (Map.Entry entry : hashMapView.entrySet()) {
-            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), "android.widget.ImageView").get(1);
+            ImageView imgEdit = (ImageView) myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), ImageView.class).get(1);
             imgEdit.setVisibility(visible);
 
             if(visible == View.INVISIBLE){
-                ArrayList<View> butnDelView = myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), "android.widget.Button");
+                ArrayList<View> butnDelView = myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), Button.class);
                 Button btnDel = (Button) butnDelView.get(0);
                 btnDel.setVisibility(visible);
                 imgEdit.setBackgroundResource(R.drawable.btn_minus);
@@ -167,9 +167,9 @@ public class ListObjectActivity extends ActionBarActivity {
         hashMapView = new HashMap<>();
         for (HashMap<String, String> map : arrayListDevices) {
             LinearLayout row = (LinearLayout) inflater.inflate(R.layout.row_list_object, null);
-            ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, "android.widget.TextView");
-            ArrayList<View> arrayImageView = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
-            ArrayList<View> butnDelView = myJQuery.findViewByTagClass(row, "android.widget.Button");
+            ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
+            ArrayList<View> arrayImageView = myJQuery.findViewByTagClass(row, ImageView.class);
+            ArrayList<View> butnDelView = myJQuery.findViewByTagClass(row, Button.class);
             Button btnDel = (Button) butnDelView.get(0);
             ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView) arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
@@ -283,7 +283,7 @@ public class ListObjectActivity extends ActionBarActivity {
     }
 
     public void updateRow(View row, HashMap<String, String> map) {
-        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass((LinearLayout) row, "android.widget.TextView");
+        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass((LinearLayout) row, TextView.class);
         ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
         ((TextView) arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));
     }
