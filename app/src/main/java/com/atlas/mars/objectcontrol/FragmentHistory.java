@@ -49,9 +49,9 @@ public class FragmentHistory extends MyFragmentView {
         resources = mainActivity.getResources();
         mainLayout = (LinearLayout)viewFragment.findViewById(R.id.mainLayout);
         btnFrom =(FrameLayout) viewFragment.findViewById(R.id.btnFrom);
-        textBtnFrom =(TextView) myJQuery.findViewByTagClass(btnFrom, "android.widget.TextView").get(0);
+        textBtnFrom =(TextView) myJQuery.findViewByTagClass(btnFrom, TextView.class).get(0);
         btnTo =(FrameLayout) viewFragment.findViewById(R.id.btnTo);
-        textBtnTo =(TextView) myJQuery.findViewByTagClass(btnTo, "android.widget.TextView").get(0);
+        textBtnTo =(TextView) myJQuery.findViewByTagClass(btnTo, TextView.class).get(0);
         Calendar c = Calendar.getInstance();
 
 
@@ -114,7 +114,7 @@ public class FragmentHistory extends MyFragmentView {
         hashViews = new HashMap<>();
         for(HashMap<String, String> map : arrayList){
             FrameLayout row =(FrameLayout)inflater.inflate(R.layout.row_command_history, null);
-            ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, "android.widget.TextView");
+            ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
             String sDate = map.get(db.VALUE_DATE);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -221,7 +221,7 @@ public class FragmentHistory extends MyFragmentView {
 
     public  void setDelivered(String id){
         FrameLayout row = (FrameLayout)hashViews.get(id);
-        TextView dateText  =(TextView) myJQuery.findViewByTagClass(row, "android.widget.TextView").get(0);
+        TextView dateText  =(TextView) myJQuery.findViewByTagClass(row, TextView.class).get(0);
         dateText.setTextColor(mainActivity.getResources().getColor(R.color.colorDelivered));
     }
 

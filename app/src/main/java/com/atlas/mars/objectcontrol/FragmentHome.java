@@ -67,8 +67,8 @@ public class FragmentHome extends MyFragmentView {
         viewHashMap = new HashMap<>();
         mapSelectObjects = new HashMap<>();
         listCheckBox = new ArrayList<>();
-        btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, "android.widget.FrameLayout").get(0);
-        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) btnSelectObj, "android.widget.TextView").get(0);
+        btnSelectObj = (FrameLayout) myJQuery.findViewByTagClass((ViewGroup) viewFragment, FrameLayout.class).get(0);
+        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) btnSelectObj, TextView.class).get(0);
         btnSend = (FrameLayout) viewFragment.findViewById(R.id.send);
         initBtnSend();
         //initOkCancelSend(viewDialogSend);
@@ -144,15 +144,15 @@ public class FragmentHome extends MyFragmentView {
 
     private void createRow(HashMap<String, String> map) {
         FrameLayout row = (FrameLayout) inflater.inflate(R.layout.row_command, null);
-        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, "android.widget.TextView");
-        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
+        ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
         ImageView imageBackground = (ImageView) arrayImgs.get(0);
         ImageView imageSms = (ImageView) arrayImgs.get(3);
 
         ((TextView) arrayTextView.get(0)).setText(map.get(db.VALUE_NAME));
         ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_COMMAND));
         ((TextView) arrayTextView.get(2)).setText(map.get(db.VALUE_NAME_DEVICE));
-        ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
+        ArrayList<View> arrayImgView = myJQuery.findViewByTagClass(row, ImageView.class);
         arrayImgView.get(2).setVisibility(View.INVISIBLE);
         mainLayout.addView(row);
         viewHashMap.put(map.get(db.UID), row);
@@ -200,7 +200,7 @@ public class FragmentHome extends MyFragmentView {
             }
         }
 
-        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
         ImageView imageBackground = (ImageView)arrayImgs.get(0);
         ImageView imageSms = (ImageView)arrayImgs.get(3);
         imageBackground.setBackgroundResource(R.drawable.bitmap_button_to_send);
@@ -209,7 +209,7 @@ public class FragmentHome extends MyFragmentView {
     }
 
     public void rowUnSelect(FrameLayout row, HashMap<String, String> map) {
-        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, "android.widget.ImageView");
+        ArrayList<View> arrayImgs = myJQuery.findViewByTagClass(row, ImageView.class);
         ImageView imageBackground = (ImageView)arrayImgs.get(0);
         ImageView imageSms = (ImageView)arrayImgs.get(3);
 
@@ -243,7 +243,7 @@ public class FragmentHome extends MyFragmentView {
     }
 
     public void initBtnSelectObj(View view) {
-        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) view, "android.widget.TextView").get(0);
+        tvSelectObject = (TextView) myJQuery.findViewByTagClass((ViewGroup) view, TextView.class).get(0);
         viewDialogSelectObj = dialogSelectObj.onCreate();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,7 +266,7 @@ public class FragmentHome extends MyFragmentView {
                 checkBox.setChecked(true);
             }
 
-            ImageView imgCall =(ImageView) myJQuery.findViewByTagClass(rowCheckBox, "android.widget.ImageView").get(0);
+            ImageView imgCall =(ImageView) myJQuery.findViewByTagClass(rowCheckBox, ImageView.class).get(0);
 
             ((ViewGroup) content).addView(rowCheckBox);
             checkBoxEvents(checkBox, map);
