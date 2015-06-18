@@ -7,9 +7,7 @@ import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.widget.TintButton;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -157,7 +155,7 @@ public class ListObjectActivity extends ActionBarActivity {
             imgEdit.setVisibility(visible);
 
             if(visible == View.INVISIBLE){
-                ArrayList<View> butnDelView = myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), TintButton.class);
+                ArrayList<View> butnDelView = myJQuery.findViewByTagClass((LinearLayout) entry.getValue(), Button.class);
                 Button btnDel = (Button) butnDelView.get(0);
                 btnDel.setVisibility(visible);
                 imgEdit.setBackgroundResource(R.drawable.btn_minus);
@@ -171,7 +169,7 @@ public class ListObjectActivity extends ActionBarActivity {
             LinearLayout row = (LinearLayout) inflater.inflate(R.layout.row_list_object, null);
             ArrayList<View> arrayTextView = myJQuery.findViewByTagClass(row, TextView.class);
             ArrayList<View> arrayImageView = myJQuery.findViewByTagClass(row, ImageView.class);
-            ArrayList<View> butnDelView = myJQuery.findViewByTagClass(row, TintButton.class);
+            ArrayList<View> butnDelView = myJQuery.findViewByTagClass(row, Button.class);
             Button btnDel = (Button) butnDelView.get(0);
             ((TextView) arrayTextView.get(1)).setText(map.get(db.VALUE_NAME));
             ((TextView) arrayTextView.get(3)).setText(map.get(db.VALUE_PHONE));

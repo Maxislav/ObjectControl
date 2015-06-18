@@ -1,7 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
 import android.os.Handler;
-import android.support.v7.internal.widget.TintButton;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -119,7 +118,7 @@ public class FragmentAllCommand extends MyFragmentView {
             FrameLayout row = rowCreator.create(map);
             String id = map.get(DataBaseHelper.UID);
             hashMapRow.put(id, row);
-            Button btnDel = (Button)myJQuery.findViewByTagClass(row, TintButton.class).get(0);
+            Button btnDel = (Button)myJQuery.findViewByTagClass(row, Button.class).get(0);
 
             setListenerMinus(row, btnDel, id);
             setListenerDel(btnDel, row, map);
@@ -258,7 +257,7 @@ public class FragmentAllCommand extends MyFragmentView {
 
             if(visible == View.INVISIBLE){
                 img.setBackgroundResource(R.drawable.btn_minus);
-                ((Button)myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), TintButton.class).get(0)).setVisibility(visible);
+                ((Button)myJQuery.findViewByTagClass((FrameLayout) entry.getValue(), Button.class).get(0)).setVisibility(visible);
             }
 
         }
