@@ -32,16 +32,10 @@ public class MyJQuery {
             if (childView instanceof ViewGroup && 0 < ((ViewGroup) childView).getChildCount()) {
                 getViewsByTag((ViewGroup) childView, type);
             }
-
-          //  if (childView.getClass().equals(type)) {
             if (type.isInstance(childView)) {
                 allViews.add(childView);
-              //  Log.d("myLOg", ""+type.isInstance(childView));
             }
-
-
         }
-
         return allViews;
     }
 
