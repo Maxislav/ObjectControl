@@ -15,6 +15,9 @@ public class MyJQuery {
     public MyJQuery() {
         allViews = new ArrayList<View>();
     }
+
+
+
     public ArrayList<View> findViewByTagClass(ViewGroup root, Class type){
         allViews = new ArrayList<View>();
 
@@ -38,6 +41,5 @@ public class MyJQuery {
         }
         return allViews;
     }
-
 
 }

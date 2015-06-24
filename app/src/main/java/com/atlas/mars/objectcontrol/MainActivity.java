@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol;
 
+
 import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,7 +35,6 @@ import com.atlas.mars.objectcontrol.http.MyHttp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 public class MainActivity extends ActionBarActivity implements PageFragment.OnSelectedButtonListener, Communicator {
 
     static final String TAG = "myLogs";
