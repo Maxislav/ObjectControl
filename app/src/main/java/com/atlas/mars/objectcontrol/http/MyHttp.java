@@ -85,7 +85,11 @@ public class MyHttp {
     }
 
     public void getAuth(){
-        if (mapSetting.get(db.MAP_LOGIN) != null && mapSetting.get(db.MAP_PASS) != null && mapSetting.get(db.MAP_SERVER_URL) != null) {
+        String LOGIN, PASS, SERVERURL;
+        LOGIN = mapSetting.get(db.MAP_LOGIN);
+        PASS = mapSetting.get(db.MAP_PASS);
+        SERVERURL = mapSetting.get(db.MAP_SERVER_URL);
+        if (LOGIN != null && PASS!= null && SERVERURL != null && !SERVERURL.isEmpty()) {
             au = new Auth();
             au.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
         }

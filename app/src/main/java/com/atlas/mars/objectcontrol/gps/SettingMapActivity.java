@@ -110,10 +110,15 @@ public class SettingMapActivity extends ActionBarActivity{
         LOGIN = edTextServerLogin.getText().toString();
         PASS = edTextServerPass.getText().toString();
 
-        mapSetting.put(db.MAP_SERVER_URL, URL);
-        mapSetting.put(db.MAP_LOGIN, LOGIN);
-        mapSetting.put(db.MAP_PASS, PASS);
-
+        if(URL!=null && !URL.isEmpty()){
+            mapSetting.put(db.MAP_SERVER_URL, URL);
+        }
+        if(LOGIN!=null && !LOGIN.isEmpty()){
+            mapSetting.put(db.MAP_LOGIN, LOGIN);
+        }
+        if(PASS!=null && !PASS.isEmpty()){
+            mapSetting.put(db.MAP_PASS, PASS);
+        }
         db.setSetting(mapSetting);
     }
 
