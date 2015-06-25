@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
-import com.atlas.mars.objectcontrol.http.MyHttp;
+import com.atlas.mars.objectcontrol.http.M2Http;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -95,11 +95,7 @@ public class MapsActivity extends ActionBarActivity {
      * Тип карты
      */
     private String mapType;
-
-
     private boolean targetOn;
-
-
     /**
      * targetOn включено ли все время за мной следить
      */
@@ -113,7 +109,7 @@ public class MapsActivity extends ActionBarActivity {
      */
     public float myBearing;
 
-    MyHttp myHttp;
+    M2Http m2Http;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,8 +137,8 @@ public class MapsActivity extends ActionBarActivity {
 
         // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
         if (haveNetworkConnection()) {
-            myHttp = new MyHttp(this);
-            myHttp.postData();
+            m2Http = new M2Http(this);
+            m2Http.postData();
         }
 
         try {
@@ -195,7 +191,7 @@ public class MapsActivity extends ActionBarActivity {
             locationManagerNet.removeUpdates(locationListenerNet);
         }
         MyLocationListenerGps.statusGps = false;
-        if (myHttp != null) myHttp.onPause();
+        if (m2Http != null) m2Http.onPause();
         LatLng startLatLng = mMap.getCameraPosition().target;
         double lat  = startLatLng.latitude;
         double lng  = startLatLng.longitude;
@@ -223,7 +219,7 @@ public class MapsActivity extends ActionBarActivity {
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
         if (haveNetworkConnection()) {
-            myHttp.onResume();
+            m2Http.onResume();
         }
     }
 
@@ -501,6 +497,23 @@ public class MapsActivity extends ActionBarActivity {
             //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
+
+           /* mapView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    return false;
+                }
+            });
+            */
+            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLng) {
+                    toastShow(""+ latLng.latitude +": "+ latLng.longitude);
+                }
+            });
+
+
             //todo раскоментировать потом
             if(mapSetting!=null && mapSetting.get(DataBaseHelper.MAP_TYPE)!=null){
                 setTileLayer(mapSetting.get(DataBaseHelper.MAP_TYPE));

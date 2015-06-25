@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.dialogs.SelectObjDialog00;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
-import com.atlas.mars.objectcontrol.http.MyHttp;
+import com.atlas.mars.objectcontrol.http.M2Http;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     Menu menu;
     BroadcastReceiver receiver, receiverDeliver;
     public HashMap<String, String> mapSetting;
-    MyHttp myHttp;
+    M2Http m2Http;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -38,7 +38,7 @@ import java.util.Timer;
 /**
  * Created by Администратор on 4/26/15.
  */
-public class MyHttp {
+public class M2Http {
     MapsActivity mapsActivity;
     static ObjectMapper mapper = new ObjectMapper();
     private static final String TAG = "myLog";
@@ -70,7 +70,7 @@ public class MyHttp {
         goRecursion = false;
     }
 
-    public MyHttp(MapsActivity mapsActivity) {
+    public M2Http(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         db = new DataBaseHelper(mapsActivity);
         mapSetting = db.hashSetting;
