@@ -506,12 +506,13 @@ public class MapsActivity extends ActionBarActivity {
                 }
             });
             */
-            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            new Track(this, mMap);
+          /*  mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
                     toastShow(""+ latLng.latitude +": "+ latLng.longitude);
                 }
-            });
+            });*/
 
 
             //todo раскоментировать потом
