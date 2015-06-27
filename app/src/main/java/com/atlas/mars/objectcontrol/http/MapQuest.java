@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
+import com.atlas.mars.objectcontrol.gps.Track;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -19,31 +20,43 @@ import java.util.Map;
 /**
  * Created by mars on 6/26/15.
  */
-public class Gpsies {
+public class MapQuest{
     MapsActivity mapsActivity;
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
-    private static final String LOGGER_TAG="myLog";
+    private static final String LOGGER_TAG="routing";
+    Track track;
     Auth au;
     URLConnection urlConnection;
 
-    public Gpsies(MapsActivity mapsActivity) {
+    public MapQuest(MapsActivity mapsActivity, Track track) {
+        this.track = track;
         this.mapsActivity = mapsActivity;
         urlConnection = null;
-        au = new Auth();
-        au.execute("http://www.gpsies.com/createTrack.do");
+
     }
 
-    class  Auth extends AsyncTask<String, Void, String> {
+    public void findRoute(String from, String to){
+        au = new Auth();
+        au.execute(from, to);
+    }
+
+
+
+    class Auth extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            String apiKey = "geCwAnTQVkpj2ixbLJyHsLpnuZtG742A";
+            //String from = "50.3891,30.49373";
+            String from = params[0];
+            String to = params[1];
+            String urlPath = "http://www.mapquestapi.com/directions/v2/route?key="+apiKey+"&from="+from+"&to="+to+"&routeType=bicycle&drivingStyle=2&unit=k&fullShape=false&maxLinkId=100&generalize=0&shape=true";
 
-
-            Log.d(LOGGER_TAG, "+++start");
+            Log.d(LOGGER_TAG, urlPath);
             InputStream in=null;
             URL url = null;
             try {
-                url = new URL(params[0]);
+                url = new URL(urlPath);
                 urlConnection = url.openConnection();
 
                 Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
@@ -58,18 +71,16 @@ public class Gpsies {
             }
 
 
-
             return getResponseText(in);
         }
         @Override
         protected void onPostExecute(String result) {
-
-                Log.d(LOGGER_TAG, "+++ result " + result);
+            track.parseTrack(result);
         }
 
         private String getResponseText(InputStream is) {
 
-            Log.d(LOGGER_TAG, "+++InputStream");
+            Log.d(LOGGER_TAG, "+++ InputStream");
             BufferedReader br = null;
             StringBuilder sb = new StringBuilder();
 
@@ -96,6 +107,7 @@ public class Gpsies {
             return sb.toString();
         }
     }
+
 
 
 }
