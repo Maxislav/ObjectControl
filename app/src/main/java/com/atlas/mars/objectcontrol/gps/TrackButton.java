@@ -100,6 +100,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     @Override
     public void onMapLongClick(LatLng latLng) {
         toastShow("" + latLng.latitude + ": " + latLng.longitude);
+        mMap.setOnMapLongClickListener(null);
         GetFromServer  getFromServer= new GetFromServer(mapsActivity);
         String from = String.valueOf(mapsActivity.myPos.latitude)+","+String.valueOf(mapsActivity.myPos.longitude);
         String to = String.valueOf(latLng.latitude)+","+String.valueOf(latLng.longitude);
