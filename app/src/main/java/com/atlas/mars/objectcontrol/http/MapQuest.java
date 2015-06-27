@@ -25,12 +25,10 @@ public class MapQuest{
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
     private static final String LOGGER_TAG="routing";
-    Track track;
     Auth au;
     URLConnection urlConnection;
 
-    public MapQuest(MapsActivity mapsActivity, Track track) {
-        this.track = track;
+    public MapQuest(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         urlConnection = null;
 
@@ -41,6 +39,9 @@ public class MapQuest{
         au.execute(from, to);
     }
 
+    public void onCallBack(String result){
+
+    }
 
 
     class Auth extends AsyncTask<String, Void, String> {
@@ -75,7 +76,7 @@ public class MapQuest{
         }
         @Override
         protected void onPostExecute(String result) {
-            track.parseTrack(result);
+            onCallBack(result);
         }
 
         private String getResponseText(InputStream is) {

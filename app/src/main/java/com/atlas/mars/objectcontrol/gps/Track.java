@@ -18,22 +18,15 @@ import java.io.IOException;
 /**
  * Created by mars on 6/26/15.
  */
-public class Track implements GoogleMap.OnMapLongClickListener{
+public class Track {
     public final static String TAG = "myLog";
-    GoogleMap mMap;
-    MapsActivity mapsActivity;
-    MapQuest mapQuest;
-    public Track(MapsActivity mapsActivity, GoogleMap mMap){
-        this.mapsActivity = mapsActivity;
-        this.mMap = mMap;
-        mMap.setOnMapLongClickListener(this);
-        mapQuest = new MapQuest(mapsActivity, this);
-        //todo stop hear
-       mapQuest.findRoute("50.3891,30.49373", "50.446,30.44852");
+
+    public Track(){
+
     };
 
 
-    public void parseTrack(String json){
+    public LatLng[] parseTrack(String json){
         Log.d(TAG, json);
         LatLng[] latLngs = new LatLng[0] ;
         ObjectMapper mapper = new ObjectMapper();
@@ -59,26 +52,13 @@ public class Track implements GoogleMap.OnMapLongClickListener{
             Log.e(TAG, "Can't parse json");
             e.printStackTrace();
         }
-        if(latLngs!=null && 1<latLngs.length){
-            Polyline line = mMap.addPolyline(new PolylineOptions()
-                    .add(latLngs)
-                    .width(5)
-                    .color(Color.BLUE));
-            line.setZIndex(2.0f);
-        }
+
+        return latLngs;
+
 
     }
 
 
-
-    @Override
-    public void onMapLongClick(LatLng latLng) {
-        toastShow("" + latLng.latitude + ": " + latLng.longitude);
-    }
-
-    private void toastShow(String str){
-        mapsActivity.toastShow(str);
-    }
 
 
 }

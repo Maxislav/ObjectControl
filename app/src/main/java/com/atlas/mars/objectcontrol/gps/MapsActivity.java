@@ -159,10 +159,11 @@ public class MapsActivity extends ActionBarActivity {
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
 
-        new TrackButton(this, btnTrack );
+
         setClickListenerBtnList();
         new ChangeMap(this);
         setUpMapIfNeeded();
+        new TrackButton(this, btnTrack, mMap );
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -483,7 +484,7 @@ public class MapsActivity extends ActionBarActivity {
                 }
             });
             */
-            new Track(this, mMap);
+           // new Track(this, mMap);
           /*  mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
