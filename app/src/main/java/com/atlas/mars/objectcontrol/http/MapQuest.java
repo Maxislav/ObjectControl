@@ -50,7 +50,8 @@ public class MapQuest{
             //String from = "50.3891,30.49373";
             String from = params[0];
             String to = params[1];
-            String urlPath = "http://www.mapquestapi.com/directions/v2/route?key="+apiKey+"&from="+from+"&to="+to+"&routeType=bicycle&drivingStyle=2&unit=k&fullShape=false&maxLinkId=100&generalize=0&shape=true";
+            //http://www.mapquestapi.com/directions/v2/route?key=geCwAnTQVkpj2ixbLJyHsLpnuZtG742A&from=50.3891,30.49373&to=50.446,30.44852&routeType=bicycle&unit=k&fullShape=true
+            String urlPath = "http://www.mapquestapi.com/directions/v2/route?key="+apiKey+"&from="+from+"&to="+to+"&routeType=shortest&unit=k&fullShape=true";
 
             Log.d(LOGGER_TAG, urlPath);
             InputStream in=null;
@@ -69,9 +70,8 @@ public class MapQuest{
                 Log.e(LOGGER_TAG, "+++IOException");
                 e.printStackTrace();
             }
-
-
-            return getResponseText(in);
+            String resParams = getResponseText(in);
+            return resParams;
         }
         @Override
         protected void onPostExecute(String result) {
@@ -79,7 +79,9 @@ public class MapQuest{
         }
 
         private String getResponseText(InputStream is) {
-
+            if(is == null){
+                return null;
+            }
             Log.d(LOGGER_TAG, "+++ InputStream");
             BufferedReader br = null;
             StringBuilder sb = new StringBuilder();

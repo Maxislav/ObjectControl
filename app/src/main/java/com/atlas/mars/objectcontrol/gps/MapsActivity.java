@@ -158,7 +158,8 @@ public class MapsActivity extends ActionBarActivity {
 
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
-        setClickListenerImgTrack(btnTrack);
+
+        new TrackButton(this, btnTrack );
         setClickListenerBtnList();
         new ChangeMap(this);
         setUpMapIfNeeded();
@@ -272,30 +273,6 @@ public class MapsActivity extends ActionBarActivity {
                 .color(Color.BLUE));
         line.setZIndex(2.0f);
         //return null;
-    }
-
-    protected void setClickListenerImgTrack(final ImageView img ) {
-        img.setOnClickListener(new View.OnClickListener() {
-
-
-            @Override
-            public void onClick(View v) {
-                OpenFileDialog fileDialog = new OpenFileDialog(MapsActivity.this);
-                fileDialog.show();
-                /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("file*//*");
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-                try {
-                    startActivityForResult(
-                            Intent.createChooser(intent, "Select a File to Upload"),1);
-                } catch (android.content.ActivityNotFoundException ex) {
-                    // Potentially direct the user to the Market with a Dialog
-                    toastShow("Please install a File Manager.");
-                    //Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
-                }*/
-            }
-        });
     }
 
     protected void setClickListenerImgBearing(final ImageView img) {

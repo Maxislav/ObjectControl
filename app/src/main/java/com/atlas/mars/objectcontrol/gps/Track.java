@@ -29,7 +29,7 @@ public class Track implements GoogleMap.OnMapLongClickListener{
         mMap.setOnMapLongClickListener(this);
         mapQuest = new MapQuest(mapsActivity, this);
         //todo stop hear
-       // mapQuest.findRoute("50.3891,30.49373", "50.446,30.44852");
+       mapQuest.findRoute("50.3891,30.49373", "50.446,30.44852");
     };
 
 
@@ -40,23 +40,20 @@ public class Track implements GoogleMap.OnMapLongClickListener{
         try {
             ObjectNode root = (ObjectNode) mapper.readTree(json);
             ObjectNode route =(ObjectNode)root.get("route");
+            ObjectNode shape = (ObjectNode)route.get("shape");
+            ArrayNode shapePoints  = (ArrayNode)shape.get("shapePoints");
+            latLngs = new LatLng[shapePoints.size()/2];
+            int k=0;
+            for(int i=0; i<shapePoints.size(); i+=2){
+                double lat = shapePoints.get(i).asDouble();
+                double lng = shapePoints.get(i+1).asDouble();
+                latLngs[k] =  new LatLng(lat, lng);
+                k++;
+        }
 
-            ObjectNode legs = (ObjectNode)route.get("legs").get(0);
+            Log.e(TAG, "end");
 
-            ArrayNode maneuvers = (ArrayNode)legs.get("maneuvers");
-            latLngs = new LatLng[maneuvers.size()];
-            int i = 0;
 
-            for (JsonNode jsonNode : maneuvers) {
-
-                ObjectNode startPoint = (ObjectNode)jsonNode.get("startPoint");
-                double lat = startPoint.path("lat").asDouble();
-                double lng = startPoint.path("lng").asDouble();
-                latLngs[i] =  new LatLng(lat, lng);
-                i++;
-
-            }
-            Log.d(TAG, json);
 
         } catch (IOException e) {
             Log.e(TAG, "Can't parse json");
