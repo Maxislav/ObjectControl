@@ -35,6 +35,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     MapsActivity mapsActivity;
     ImageButton btnTrack;
     LinearLayout layoutRouteType;
+    LinearLayout layoutRouteMenu;
     List<LinearLayout> listRouteType;
     private GoogleMap mMap;
     List<Marker> listMarkerPoints;
@@ -96,11 +97,19 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
         layoutRouteType = (LinearLayout) view;
         frameLayout.addView(layoutRouteType);
-        float width = mapsActivity.getResources().getDisplayMetrics().density * 200;
-        float height = mapsActivity.getResources().getDisplayMetrics().density * 50;
+        float width = mapsActivity.getResources().getDisplayMetrics().density * 160;
+        float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
         layoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
         layoutRouteType.setLayoutParams(layoutParams);
+
+        view = layoutInflater.inflate(R.layout.route_menu, null, false);
+        layoutRouteMenu = (LinearLayout) view;
+        frameLayout.addView(layoutRouteMenu);
+        FrameLayout.LayoutParams layoutParamsMenu = new FrameLayout.LayoutParams((int) width, (int) height);
+        layoutParamsMenu.gravity = Gravity.TOP | Gravity.CENTER;
+        layoutRouteMenu.setLayoutParams(layoutParamsMenu);
+
         listRouteType = new ArrayList<>();
         LinearLayout layoutCar = (LinearLayout) layoutRouteType.findViewById(R.id.car);
         LinearLayout layoutMoto = (LinearLayout) layoutRouteType.findViewById(R.id.moto);
