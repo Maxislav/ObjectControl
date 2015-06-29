@@ -1,5 +1,6 @@
 package com.atlas.mars.objectcontrol.gps;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
@@ -11,9 +12,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
+import com.atlas.mars.objectcontrol.dialogs.DialogSaveTrack;
 import com.atlas.mars.objectcontrol.http.MapQuest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -43,6 +46,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     HashMap<String, String> mapSetting;
     String from;
     DataBaseHelper db;
+    long idTrack;
 
     TrackButton(MapsActivity mapsActivity, ImageButton btnTrack, GoogleMap mMap) {
         this.mapsActivity = mapsActivity;
@@ -77,6 +81,10 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "hand");
                 setActiveRouteType((LinearLayout) v);
                 break;
+            case R.id.save:
+                saveTrack(v);
+                break;
+
         }
     }
 
@@ -119,6 +127,13 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         listRouteType.add(layoutMoto);
         listRouteType.add(layoutVelo);
         listRouteType.add(layoutHand);
+
+        LinearLayout lSave =(LinearLayout) layoutRouteMenu.findViewById(R.id.save);
+        lSave.setOnClickListener(this);
+        layoutRouteMenu.findViewById(R.id.back).setOnClickListener(this);
+        layoutRouteMenu.findViewById(R.id.close).setOnClickListener(this);
+        layoutRouteMenu.findViewById(R.id.del).setOnClickListener(this);
+
         for (LinearLayout layout : listRouteType) {
             layout.setOnClickListener(this);
         }
@@ -205,15 +220,37 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
 
     class GetFromServer extends MapQuest {
-
         public GetFromServer(MapsActivity mapsActivity) {
             super(mapsActivity);
         }
-
         @Override
         public void onCallBack(String result) {
             Log.d(TAG, result);
             drawPoly(result);
+        }
+    }
+
+    private void saveTrack(View v){
+        DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
+        dialogSaveTrack.onCreate();
+        dialogSaveTrack.vHide(v);
+        idTrack = db.createRowNameTrack();
+        //toastShow(""+idTrack);
+    }
+    class Dialog extends DialogSaveTrack{
+        public Dialog(Activity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void onOk() {
+            String name = ((TextView)contentDialog.findViewById(R.id.edTextName)).getText().toString();
+            toastShow(name);
+        }
+
+        @Override
+        public void onCancel() {
+
         }
     }
 

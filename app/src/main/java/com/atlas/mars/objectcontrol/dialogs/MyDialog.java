@@ -2,8 +2,10 @@ package com.atlas.mars.objectcontrol.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
@@ -17,6 +19,9 @@ abstract public class MyDialog {
     LayoutInflater inflater;
     DataBaseHelper db;
     final public static String TAG = "myLog";
+    public LinearLayout contentDialog;
+    DisplayMetrics displayMetrics;
+    public float dpHeight, dpWidth, density;
     View viewDialog;
     MyDialog(Activity activity){
         this.activity = activity;

@@ -27,12 +27,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 17;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
     private static final String TABLE_NAME_HISTORY = "history";
     private static final String TABLE_NAME_SETTING = "setting";
+    private static final String TABLE_TRACK_COLLECTION = "trackCollection";
+
+
     public static final String UID = "_id";
     public static final String VALUE_NAME = "valueName";
     public static final String VALUE_NAME_DEVICE = "valueNameDevice";
@@ -83,6 +86,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             +TABLE_NAME_SETTING+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + VALUE_NAME_SETTING_CODE + " VARCHAR(255), " + VALUE_PARAMETER_SETTING +  " VARCHAR(255) " + ");";
 
+    private static final String SQL_CREATE_TABLE_TRACK_COLLECTION = "CREATE TABLE if not exists "
+            +TABLE_TRACK_COLLECTION+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "name" + " VARCHAR(255), " + "date" +  " TIMESTAMP " + ");";
+
 
 
 
@@ -102,6 +109,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_COMMANDS);
         db.execSQL(SQL_CREATE_TABLE_HISTORY);
         db.execSQL(SQL_CREATE_TABLE_SETTING);
+        db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
         fillSetting(CONFIRM_SEND, "1",db);
         fillSetting(MULTIPLE_SEND, "0", db);
         fillSetting(COUNT_MEMORY_HISTORY, "100", db);
@@ -111,7 +119,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
        /* String query = "ALTER TABLE "+TABLE_NAME_HISTORY+" ADD COLUMN "+VALUE_DELIVERED+" INTEGER";
         db.execSQL(query);
         query = "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+0;
@@ -468,12 +476,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public synchronized long  insertHistory(HashMap<String, String> map){
         clearUpLimitHistory();
         sdb = getWritableDatabase();
-       /* String jquery = "INSERT INTO "+ TABLE_NAME_HISTORY + " ("+ VALUE_DATE +", "+ VALUE_ID_COMMAND+" )"
-                +"VALUES ('" +map.get(VALUE_DATE)+"' , '"+ map.get(VALUE_ID_COMMAND)+"');";*/
-      //  sdb.execSQL(jquery);
-
-
-
         ContentValues cv =  new ContentValues();
         cv.put(VALUE_DATE,map.get(VALUE_DATE));
         cv.put(VALUE_ID_COMMAND,map.get(VALUE_ID_COMMAND));
@@ -569,6 +571,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+
+
     public void getSetting(HashMap<String,String> map){
         sdb = getWritableDatabase();
         //HashMap<String,String> map = new HashMap<>();
@@ -581,5 +585,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         sdb.close();
+    }
+    public long createRowNameTrack(){
+
+        ContentValues cv = new ContentValues();
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeStamp = formatter.format(now);
+        cv.put("date", timeStamp);
+        sdb = getWritableDatabase();
+        long id = sdb.insert(TABLE_TRACK_COLLECTION, null, cv);
+        sdb.close();
+        return id;
     }
 }

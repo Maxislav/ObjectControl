@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/car"
+            android:id="@+id/del"
             android:layout_margin="3dp"
             android:layout_weight="1">
             <ImageView
@@ -28,7 +28,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/moto"
+            android:id="@+id/close"
             android:layout_margin="3dp"
             android:layout_weight="1">
             <ImageView
@@ -41,7 +41,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/velo"
+            android:id="@+id/back"
             android:layout_margin="3dp"
             android:layout_weight="1">
 
@@ -53,7 +53,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/hand"
+            android:id="@+id/save"
             android:layout_margin="3dp"
             android:layout_weight="1">
             <ImageView
