@@ -20,11 +20,11 @@ import java.util.Map;
 /**
  * Created by mars on 6/26/15.
  */
-public class MapQuest{
+public class MapQuest {
     MapsActivity mapsActivity;
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
-    private static final String LOGGER_TAG="routing";
+    private static final String LOGGER_TAG = "routing";
     Auth au;
     URLConnection urlConnection;
 
@@ -34,12 +34,12 @@ public class MapQuest{
 
     }
 
-    public void findRoute(String from, String to){
+    public void findRoute(String from, String to, String routeType) {
         au = new Auth();
-        au.execute(from, to);
+        au.execute(from, to, routeType);
     }
 
-    public void onCallBack(String result){
+    public void onCallBack(String result) {
 
     }
 
@@ -51,11 +51,28 @@ public class MapQuest{
             //String from = "50.3891,30.49373";
             String from = params[0];
             String to = params[1];
+
+            String routeType = params[2];
+            switch (routeType) {
+                case "car":
+                    routeType = "fastest";
+                    break;
+                case "moto":
+                    routeType = "shortest";
+                    break;
+                case "velo":
+                    routeType = "bicycle";
+                    break;
+                default:
+                    routeType = "fastest";
+
+            }
+
             //http://www.mapquestapi.com/directions/v2/route?key=geCwAnTQVkpj2ixbLJyHsLpnuZtG742A&from=50.3891,30.49373&to=50.446,30.44852&routeType=bicycle&unit=k&fullShape=true
-            String urlPath = "http://www.mapquestapi.com/directions/v2/route?key="+apiKey+"&from="+from+"&to="+to+"&routeType=shortest&unit=k&fullShape=true";
+            String urlPath = "http://www.mapquestapi.com/directions/v2/route?key=" + apiKey + "&from=" + from + "&to=" + to + "&routeType=" + routeType + "&unit=k&fullShape=true";
 
             Log.d(LOGGER_TAG, urlPath);
-            InputStream in=null;
+            InputStream in = null;
             URL url = null;
             try {
                 url = new URL(urlPath);
@@ -67,20 +84,21 @@ public class MapQuest{
             } catch (MalformedURLException e) {
                 Log.e(LOGGER_TAG, "+++MalformedURLException");
                 e.printStackTrace();
-            }catch (IOException e) {
+            } catch (IOException e) {
                 Log.e(LOGGER_TAG, "+++IOException");
                 e.printStackTrace();
             }
             String resParams = getResponseText(in);
             return resParams;
         }
+
         @Override
         protected void onPostExecute(String result) {
             onCallBack(result);
         }
 
         private String getResponseText(InputStream is) {
-            if(is == null){
+            if (is == null) {
                 return null;
             }
             Log.d(LOGGER_TAG, "+++ InputStream");
@@ -110,7 +128,6 @@ public class MapQuest{
             return sb.toString();
         }
     }
-
 
 
 }

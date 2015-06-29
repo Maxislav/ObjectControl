@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="activeRouteType" type="color">#ff7cc6f6</item>
+    <item name="colorTrack" type="color">#b60001f6</item>
     <item name="titleColor" type="color">#fff4f4ff</item>
     <item name="rowObjectMapBack" type="color">#a6ffffff</item>
     <item name="titleColorPressStart" type="color">#ffeffeff</item>
