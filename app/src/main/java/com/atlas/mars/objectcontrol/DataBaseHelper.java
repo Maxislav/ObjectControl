@@ -689,5 +689,42 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return  list;
     }
+    public LatLng[] getTrack(String id){
+        LatLng [] latLngs = new LatLng[0];
+        String query =  "SELECT * FROM " + TABLE_TRACKS + " WHERE trackId = " + id+ " ORDER BY "+ UID;
+        sdb = getWritableDatabase();
+        Cursor cursor = sdb.rawQuery(query,null);
+        latLngs = new LatLng[cursor.getCount()];
+        int i = 0;
+        while (cursor.moveToNext()) {
+            latLngs[i] = new LatLng(cursor.getDouble(cursor.getColumnIndex("lat")), cursor.getDouble(cursor.getColumnIndex("lng")));
+            i++;
+        }
+        cursor.close();
+        sdb.close();
+        return  latLngs;
+    }
+
+    public boolean delTrack(String id){
+        boolean b = true;
+        String query =  "DELETE  FROM " + TABLE_TRACKS + " WHERE trackId = " + id;
+        sdb = getWritableDatabase();
+        try {
+            sdb.execSQL(query);
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+            b = false;
+        }
+        query =  "DELETE FROM " + TABLE_TRACK_COLLECTION + " WHERE "+UID+" = " + id;
+        try {
+            sdb.execSQL(query);
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+            b = false;
+        }
+
+        sdb.close();
+        return b;
+    }
 
 }

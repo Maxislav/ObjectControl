@@ -106,7 +106,9 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
                         switch (item.getItemId()){
                             case R.id.del:
                                 Log.d(TAG, "Delete track " + _id);
-                                linearLayoutScroll.removeView(row);
+                                if(db.delTrack(_id)){
+                                    linearLayoutScroll.removeView(row);
+                                }
                                 return true;
                         }
 

@@ -290,7 +290,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     public void onSelectIdTrack(String id){
         toastShow("Select id " + id);
-
+        LatLng[] latLngs = db.getTrack(id);
+        drawPoly(latLngs);
     }
 
     private void toastShow(String str) {
