@@ -3,13 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
     <item
-        android:id="@+id/loadFromCd"
+        android:id="@+id/trackList"
         android:orderInCategory="0"
+        android:title="Tracks list"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/loadFromCd"
+        android:orderInCategory="1"
         android:title="Load from CD card"
         app:showAsAction="never" />
     <item
         android:id="@+id/createRoute"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="Create a route"
         app:showAsAction="never" />
 

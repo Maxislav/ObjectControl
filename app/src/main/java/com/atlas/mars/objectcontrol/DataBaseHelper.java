@@ -659,7 +659,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public boolean deleteRowNameTrack(long id){
         boolean  a;
         sdb = getWritableDatabase();
-        String query = "DELETE FROM "+TABLE_NAME_DEVICES+" WHERE _id="+id;
+        String query = "DELETE FROM "+TABLE_TRACK_COLLECTION+" WHERE _id="+id;
         try {
             sdb.execSQL(query);
             a = true;
@@ -669,6 +669,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         sdb.close();
         return a;
+    }
+    public List<HashMap<String, String>> getTraksNameRows(){
+        sdb = getWritableDatabase();
+        List<HashMap<String, String>>  list = new ArrayList<>();
+        String query =  "SELECT * FROM " + TABLE_TRACK_COLLECTION;
+        Cursor cursor = sdb.rawQuery(query,null);
+        while (cursor.moveToNext()) {
+            HashMap<String, String> map = new HashMap<>();
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String date = cursor.getString(cursor.getColumnIndex("date"));
+            map.put("name", name);
+            map.put("date", date);
+            list.add(map);
+        }
+        cursor.close();
+        sdb.close();
+        return  list;
     }
 
 }

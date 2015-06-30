@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
+import com.atlas.mars.objectcontrol.dialogs.DialogListTracks;
 import com.atlas.mars.objectcontrol.dialogs.DialogSaveTrack;
 import com.atlas.mars.objectcontrol.http.MapQuest;
 import com.google.android.gms.maps.GoogleMap;
@@ -66,6 +67,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             case R.id.btnTrack:
                 showPopupMenu(v);
                 break;
+
+
             case R.id.car:
                 mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "car");
                 setActiveRouteType((LinearLayout) v);
@@ -203,6 +206,11 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 }
                 mMap.setOnMapLongClickListener(this);
                 return true;
+            case (R.id.trackList):
+                DialogListTracks dialog = new _DialogListTracks(mapsActivity);
+                dialog.onCreate();
+                dialog.vHide(btnTrack);
+                return true;
         }
         return false;
     }
@@ -241,13 +249,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         timeStampCreated = formatter.format(now);
         idTrack = db.createRowNameTrack();
-
-
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
-
-        //toastShow(""+idTrack);
     }
 
     class Dialog extends DialogSaveTrack {
@@ -271,6 +275,23 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         @Override
         public void onCancel() {
             if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
+        }
+    }
+
+    class _DialogListTracks extends DialogListTracks {
+
+        _DialogListTracks(Activity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void onOk() {
+
+        }
+
+        @Override
+        public void onCancel() {
+
         }
     }
 

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.MyJQuery;
 
 /**
  * Created by mars on 4/8/15.
@@ -18,6 +19,7 @@ abstract public class MyDialog {
     PopupWindow pw;
     LayoutInflater inflater;
     DataBaseHelper db;
+    MyJQuery jQuery;
     final public static String TAG = "myLog";
     public LinearLayout contentDialog;
     DisplayMetrics displayMetrics;
@@ -27,6 +29,7 @@ abstract public class MyDialog {
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         db = new DataBaseHelper(activity);
+        jQuery = new MyJQuery();
     }
 
     abstract View onCreate();
