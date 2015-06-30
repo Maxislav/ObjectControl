@@ -1,8 +1,6 @@
 package com.atlas.mars.objectcontrol.gps;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,7 +24,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +46,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     HashMap<String, String> mapSetting;
     String from;
     DataBaseHelper db;
+    String timeStampCreated;
     long idTrack;
 
     TrackButton(MapsActivity mapsActivity, ImageButton btnTrack, GoogleMap mMap) {
@@ -231,10 +232,17 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     }
 
     private void saveTrack(View v){
+
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        timeStampCreated = formatter.format(now);
+        idTrack = db.createRowNameTrack();
+
+
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
-        idTrack = db.createRowNameTrack();
+
         //toastShow(""+idTrack);
     }
     class Dialog extends DialogSaveTrack{
@@ -243,14 +251,20 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
 
         @Override
+        public void setValueText(TextView text) {
+            text.setText(timeStampCreated);
+        }
+
+        @Override
         public void onOk() {
             String name = ((TextView)contentDialog.findViewById(R.id.edTextName)).getText().toString();
             toastShow(name);
+            db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylyneTrack );
         }
 
         @Override
         public void onCancel() {
-
+            if(!db.deleteRowNameTrack(idTrack)) toastShow("Error");
         }
     }
 

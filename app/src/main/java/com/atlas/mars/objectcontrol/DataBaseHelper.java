@@ -8,11 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.Polyline;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -587,7 +590,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
     }
     public long createRowNameTrack(){
-
         ContentValues cv = new ContentValues();
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -598,4 +600,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return id;
     }
+    public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,  List<Polyline> listPolylyneTrack){
+        boolean  a;
+        sdb = getWritableDatabase();
+        String query = "UPDATE " + TABLE_TRACK_COLLECTION+" SET "+"name = '"+name+"', date = '"+timeStamp+"' WHERE "+UID+"="+idTrack;
+        try {
+            sdb.execSQL(query);
+            Log.d(TAG, "+++ name:  " + name);
+            a = true;
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+            a = false;
+        }
+        sdb.close();
+        return a;
+    }
+    public boolean deleteRowNameTrack(long id){
+        boolean  a;
+        sdb = getWritableDatabase();
+        String query = "DELETE FROM "+TABLE_NAME_DEVICES+" WHERE _id="+id;
+        try {
+            sdb.execSQL(query);
+            a = true;
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+            a = false;
+        }
+        sdb.close();
+        return a;
+    }
+
 }

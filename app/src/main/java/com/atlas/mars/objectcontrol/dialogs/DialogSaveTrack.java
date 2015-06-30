@@ -9,13 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.atlas.mars.objectcontrol.MyJQuery;
 import com.atlas.mars.objectcontrol.R;
 
 /**
  * Created by Администратор on 6/29/15.
  */
-abstract public  class DialogSaveTrack extends MyDialog implements View.OnClickListener{
+abstract public class DialogSaveTrack extends MyDialog implements View.OnClickListener {
 
     public DialogSaveTrack(Activity activity) {
         super(activity);
@@ -29,31 +28,33 @@ abstract public  class DialogSaveTrack extends MyDialog implements View.OnClickL
         dpWidth = displayMetrics.widthPixels / density;
         Log.d(TAG, "Density: " + density + " Width dp: " + dpWidth + " Width Pixels: " + displayMetrics.widthPixels);
         viewDialog = inflater.inflate(R.layout.dialog_save_track, null);
-        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
-       // pw.setOutsideTouchable(false);
+        pw = new PopupWindow(viewDialog, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        // pw.setOutsideTouchable(false);
         pw.setAnimationStyle(R.style.Animation);
-        contentDialog = (LinearLayout)viewDialog.findViewById(R.id.contentDialog);
-        LinearLayout block =(LinearLayout) viewDialog.findViewById(R.id.block);
-        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(310*density),FrameLayout.LayoutParams.WRAP_CONTENT);
+        contentDialog = (LinearLayout) viewDialog.findViewById(R.id.contentDialog);
+
+
+        LinearLayout block = (LinearLayout) viewDialog.findViewById(R.id.block);
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int) (310 * density), FrameLayout.LayoutParams.WRAP_CONTENT);
         parms.gravity = Gravity.TOP;
-        float marginTop = 120*density;
-        parms.setMargins(0,((int)(marginTop)), 0, 0);
+        parms.setMargins(0, ((int) (120 * density)), 0, 0);
         block.setLayoutParams(parms);
         viewDialog.findViewById(R.id.btn_ok).setOnClickListener(this);
         viewDialog.findViewById(R.id.btn_cancel).setOnClickListener(this);
         pw.setFocusable(true);
-      //  pw.update();
+        TextView edTextName = (TextView) contentDialog.findViewById(R.id.edTextName);
+        setValueText(edTextName);
         return viewDialog;
     }
 
     @Override
-   public void vHide(View view) {
-        if(pw==null){
+    public void vHide(View view) {
+        if (pw == null) {
             onCreate();
         }
-        if(pw.isShowing()){
+        if (pw.isShowing()) {
             pw.dismiss();
-        }else{
+        } else {
             pw.showAtLocation(view, Gravity.CENTER, 0, 0);
         }
     }
@@ -65,10 +66,9 @@ abstract public  class DialogSaveTrack extends MyDialog implements View.OnClickL
     }
 
 
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_ok:
 
                 onOk();
@@ -81,8 +81,10 @@ abstract public  class DialogSaveTrack extends MyDialog implements View.OnClickL
         }
     }
 
-    abstract public void onOk();
-    abstract  public void onCancel();
+    abstract public void setValueText(TextView text);
 
+    abstract public void onOk();
+
+    abstract public void onCancel();
 
 }
