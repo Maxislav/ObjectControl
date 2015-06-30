@@ -50,7 +50,7 @@ public class SettingMapActivity extends ActionBarActivity{
         switch (item.getItemId()){
             case R.id.action_save:
                 Intent answerIntent = new Intent();
-                 saveSetting();
+                saveSetting();
                 setResult(RESULT_OK, answerIntent);
                 finish();
                 return true;

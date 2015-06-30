@@ -61,4 +61,6 @@
     <string name="server_protocol_title">Использовать протокол</string>
     <string name="server_url">Адрес сервера к которому пивязаны устройства</string>
     <string name="server_url_title">URL Сервера</string>
+    <string name="select">Выбрать</string>
+    <string name="list_track">Треки</string>
 </resources>

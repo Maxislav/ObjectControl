@@ -89,7 +89,7 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, Marker> hashPopup;
     private HashMap<String, HashMap> hashMapCollection;
     public HashMap<String, String> mapSetting;
-
+    TrackButton trackButton;
     private int countObj = 0;
     /***
      * Тип карты
@@ -163,7 +163,7 @@ public class MapsActivity extends ActionBarActivity {
         setClickListenerBtnList();
         new ChangeMap(this);
         setUpMapIfNeeded();
-        new TrackButton(this, btnTrack, mMap );
+        trackButton =  new TrackButton(this, btnTrack, mMap );
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -250,6 +250,11 @@ public class MapsActivity extends ActionBarActivity {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 //Todo нажато сохранение
+            }
+        }
+        if(requestCode == 1){
+            if (resultCode == RESULT_OK) {
+                trackButton.onSelectIdTrack( data.getStringExtra("selectId"));
             }
         }
     }

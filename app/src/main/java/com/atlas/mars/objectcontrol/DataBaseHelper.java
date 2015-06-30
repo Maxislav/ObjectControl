@@ -679,8 +679,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             HashMap<String, String> map = new HashMap<>();
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String date = cursor.getString(cursor.getColumnIndex("date"));
+            String id = cursor.getString(cursor.getColumnIndex(UID));
             map.put("name", name);
             map.put("date", date);
+            map.put("id", id);
             list.add(map);
         }
         cursor.close();

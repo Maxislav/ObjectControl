@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item
+        android:id="@+id/del"
+        android:orderInCategory="0"
+        android:title="Del track"
+         />
+    <item
+        android:id="@+id/cancel"
+        android:orderInCategory="0"
+        android:title="@string/btn_cancel"
+         />
+</menu>

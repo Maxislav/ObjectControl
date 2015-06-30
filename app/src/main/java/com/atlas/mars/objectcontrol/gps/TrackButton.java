@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol.gps;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.ListObjectActivity;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.dialogs.DialogListTracks;
 import com.atlas.mars.objectcontrol.dialogs.DialogSaveTrack;
@@ -207,9 +209,12 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 mMap.setOnMapLongClickListener(this);
                 return true;
             case (R.id.trackList):
-                DialogListTracks dialog = new _DialogListTracks(mapsActivity);
+                Intent questionIntent;
+                questionIntent = new Intent(mapsActivity, TrackListActivity.class);
+                mapsActivity.startActivityForResult(questionIntent, 1);
+              /*  DialogListTracks dialog = new _DialogListTracks(mapsActivity);
                 dialog.onCreate();
-                dialog.vHide(btnTrack);
+                dialog.vHide(btnTrack);*/
                 return true;
         }
         return false;
@@ -217,6 +222,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     public void drawPoly(String result) {
         LatLng[] latLngs = new Track().parseTrack(result);
+        drawPoly(latLngs);
+    }
+    public void drawPoly(LatLng[] latLngs) {
         if (latLngs != null && 1 < latLngs.length) {
             Polyline polyTrack = mMap.addPolyline(new PolylineOptions()
                     .add(latLngs)
@@ -226,6 +234,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             listPolylyneTrack.add(polyTrack);
         }
     }
+
+
 
 
     class GetFromServer extends MapQuest {
@@ -278,21 +288,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
     }
 
-    class _DialogListTracks extends DialogListTracks {
+    public void onSelectIdTrack(String id){
+        toastShow("Select id " + id);
 
-        _DialogListTracks(Activity activity) {
-            super(activity);
-        }
-
-        @Override
-        public void onOk() {
-
-        }
-
-        @Override
-        public void onCancel() {
-
-        }
     }
 
     private void toastShow(String str) {

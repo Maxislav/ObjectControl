@@ -3,14 +3,17 @@ package com.atlas.mars.objectcontrol.dialogs;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.R;
+import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,10 +23,11 @@ import java.util.List;
  * Created by mars on 6/30/15.
  */
 abstract public class DialogListTracks extends MyDialog  implements View.OnClickListener {
+    List<View> listRows;
+    String selectId;
 
     public DialogListTracks(Activity activity) {
         super(activity);
-
     }
 
     @Override
@@ -42,36 +46,72 @@ abstract public class DialogListTracks extends MyDialog  implements View.OnClick
 
         LinearLayout block = (LinearLayout) viewDialog.findViewById(R.id.block);
         LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int) (310 * density), (int)(dpHeight-(40*density)));
-      //  block.setLayoutParams(parms);
-
         contentDialog.setLayoutParams(parms);
-
-       /* ScrollView scrollView = (ScrollView)viewDialog.findViewById(R.id.scrollView);
-
-        scrollView.setLayoutParams(new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, 350));;*/
-
-
         viewDialog.findViewById(R.id.btn_ok).setOnClickListener(this);
         viewDialog.findViewById(R.id.btn_cancel).setOnClickListener(this);
         pw.setFocusable(true);
         inflateContent();
-       // TextView edTextName = (TextView) contentDialog.findViewById(R.id.edTextName);
-        //setValueText(edTextName);
+
         return viewDialog;
     }
 
     private void inflateContent(){
         List<HashMap<String, String>> list = db.getTraksNameRows();
         LinearLayout  scope = (LinearLayout) contentDialog.findViewById(R.id.linearLayoutScroll);
+        listRows = new ArrayList<>();
         for(HashMap<String, String> map : list){
             View rowView =    inflater.inflate(R.layout.track_row, null);
             scope.addView(rowView);
             ArrayList<View> fields = jQuery.findViewByTagClass((ViewGroup)rowView, TextView.class);
-            TextView textViewName =  (TextView)fields.get(0);
-            TextView textViewDate=  (TextView)fields.get(1);
+            TextView textViewId =  (TextView)fields.get(0);
+            TextView textViewName =  (TextView)fields.get(1);
+            TextView textViewDate=  (TextView)fields.get(2);
+            textViewId.setText(map.get("id")+".");
             textViewName.setText(map.get("name"));
             textViewDate.setText(map.get("date"));
+            listRows.add(rowView);
+            rowSelect(rowView, map.get("id"));
         }
+    }
+
+    private void rowSelect(final View row, final String _id){
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectId = _id;
+                for(View _row : listRows){
+                    if(_row == row){
+                        _row.setBackgroundResource(R.color.activeRouteType);
+                    }else{
+                        _row.setBackground(null);
+                    }
+                }
+            }
+        });
+        row.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(activity, v);
+                popupMenu.inflate(R.menu.del_track);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.del:
+                                Log.d(TAG, "Delete track " + _id);
+                                LinearLayout parent = (LinearLayout) contentDialog.findViewById(R.id.linearLayoutScroll);
+                                parent.removeView(row);
+                                return true;
+                        }
+
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -95,16 +135,17 @@ abstract public class DialogListTracks extends MyDialog  implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ok:
-                onOk();
+                onOk(selectId);
                 onDismiss();
                 break;
             case R.id.btn_cancel:
+                selectId = null;
                 onCancel();
                 onDismiss();
                 break;
         }
     }
-    abstract public void onOk();
+    abstract public void onOk(String id);
 
     abstract public void onCancel();
 }
