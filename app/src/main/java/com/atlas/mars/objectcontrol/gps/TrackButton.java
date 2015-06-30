@@ -129,7 +129,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         listRouteType.add(layoutVelo);
         listRouteType.add(layoutHand);
 
-        LinearLayout lSave =(LinearLayout) layoutRouteMenu.findViewById(R.id.save);
+        LinearLayout lSave = (LinearLayout) layoutRouteMenu.findViewById(R.id.save);
         lSave.setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.back).setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.close).setOnClickListener(this);
@@ -139,12 +139,12 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             layout.setOnClickListener(this);
         }
         String mapRouteType = mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE);
-        if(mapRouteType==null){
+        if (mapRouteType == null) {
             setActiveRouteType(layoutCar);
             mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "car");
             db.setSetting(mapSetting);
-        }else{
-            switch (mapRouteType){
+        } else {
+            switch (mapRouteType) {
                 case "car":
                     setActiveRouteType(layoutCar);
                     break;
@@ -224,6 +224,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         public GetFromServer(MapsActivity mapsActivity) {
             super(mapsActivity);
         }
+
         @Override
         public void onCallBack(String result) {
             Log.d(TAG, result);
@@ -231,8 +232,11 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
     }
 
-    private void saveTrack(View v){
-
+    private void saveTrack(View v) {
+        if (listPolylyneTrack.size() < 1) {
+            toastShow("Empty track");
+            return;
+        }
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         timeStampCreated = formatter.format(now);
@@ -245,7 +249,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         //toastShow(""+idTrack);
     }
-    class Dialog extends DialogSaveTrack{
+
+    class Dialog extends DialogSaveTrack {
         public Dialog(Activity activity) {
             super(activity);
         }
@@ -257,14 +262,15 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         @Override
         public void onOk() {
-            String name = ((TextView)contentDialog.findViewById(R.id.edTextName)).getText().toString();
-            toastShow(name);
-            db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylyneTrack );
+            String name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
+            if (db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylyneTrack)) {
+                toastShow("Save Ok");
+            }
         }
 
         @Override
         public void onCancel() {
-            if(!db.deleteRowNameTrack(idTrack)) toastShow("Error");
+            if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
         }
     }
 

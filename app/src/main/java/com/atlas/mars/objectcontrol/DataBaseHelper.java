@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.text.SimpleDateFormat;
@@ -30,13 +31,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
     private static final String TABLE_NAME_HISTORY = "history";
     private static final String TABLE_NAME_SETTING = "setting";
     private static final String TABLE_TRACK_COLLECTION = "trackCollection";
+    private static final String TABLE_TRACKS = "traks";
 
 
     public static final String UID = "_id";
@@ -93,6 +95,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             +TABLE_TRACK_COLLECTION+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "name" + " VARCHAR(255), " + "date" +  " TIMESTAMP " + ");";
 
+    private static final String SQL_CREATE_TABLE_TRACKS = "CREATE TABLE if not exists "
+            +TABLE_TRACKS+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "trackId" + " INTEGER, lat DOUBLE, lng DOUBLE, date TIMESTAMP);";
+
 
 
 
@@ -113,6 +119,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_HISTORY);
         db.execSQL(SQL_CREATE_TABLE_SETTING);
         db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
+        db.execSQL(SQL_CREATE_TABLE_TRACKS);
         fillSetting(CONFIRM_SEND, "1",db);
         fillSetting(MULTIPLE_SEND, "0", db);
         fillSetting(COUNT_MEMORY_HISTORY, "100", db);
@@ -123,6 +130,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
+        db.execSQL(SQL_CREATE_TABLE_TRACKS);
        /* String query = "ALTER TABLE "+TABLE_NAME_HISTORY+" ADD COLUMN "+VALUE_DELIVERED+" INTEGER";
         db.execSQL(query);
         query = "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+0;
@@ -613,8 +621,41 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             a = false;
         }
         sdb.close();
+        if(a){
+           a = fillTracks(idTrack,  listPolylyneTrack);
+        }
+
         return a;
     }
+
+    private boolean fillTracks(long idTrack, List<Polyline> listPolylyneTrack){
+        boolean  a = true;
+        ContentValues cv = new ContentValues();
+        sdb = getWritableDatabase();
+        cv.put("trackId", idTrack);
+        for(Polyline line : listPolylyneTrack){
+           List<LatLng> latLngList =  line.getPoints();
+            for(LatLng latLng : latLngList){
+                Double lat = latLng.latitude;
+                Double lng = latLng.longitude;
+                cv.put("lat", lat);
+                cv.put("lng", lng);
+                try {
+                    sdb.insert(TABLE_TRACKS, null, cv);
+
+                }catch (SQLException e){
+                    Log.e(TAG, "+++SQLException " + e.toString());
+                    a = false;
+
+                }
+
+            }
+        }
+        sdb.close();
+        return a;
+    }
+
+
     public boolean deleteRowNameTrack(long id){
         boolean  a;
         sdb = getWritableDatabase();
