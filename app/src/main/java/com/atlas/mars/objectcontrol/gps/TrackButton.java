@@ -61,6 +61,10 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         btnTrack.setOnClickListener(this);
         db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
+        if(mapSetting.get("startTrackDraw")==null){
+            mapSetting.put("startTrackDraw", "current");
+            db.setSetting(mapSetting);
+        }
     }
 
     @Override
@@ -91,7 +95,14 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             case R.id.fromPoint:
                 PopupMenu popupMenu = new PopupMenu(mapsActivity, v);
                 popupMenu.inflate(R.menu.menu_select_from);
-                popupMenu.getMenu().findItem(R.id.red).setChecked(true);
+
+                if(mapSetting.get("startTrackDraw").equals("current")){
+                    popupMenu.getMenu().findItem(R.id.current).setChecked(true);
+                }
+                if(mapSetting.get("startTrackDraw").equals("hand")){
+                    popupMenu.getMenu().findItem(R.id.handStart).setChecked(true);
+                }
+
                 popupMenu.setOnMenuItemClickListener(this);
                 popupMenu.show();
                 break;
@@ -197,8 +208,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     @Override
     public void onMapLongClick(LatLng latLng) {
         toastShow("" + latLng.latitude + ": " + latLng.longitude);
-        //    mMap.setOnMapLongClickListener(null);
-
         Marker trackPointMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))
@@ -234,27 +243,19 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 questionIntent = new Intent(mapsActivity, TrackListActivity.class);
                 mapsActivity.startActivityForResult(questionIntent, 1);
                 return true;
-            case (R.id.red):
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                toastShow("Ololo");
+            case (R.id.current):
+                item.setChecked(true);
+                mapSetting.put("startTrackDraw", "current");
+                db.setSetting(mapSetting);
+                return true;
+            case (R.id.handStart):
+                item.setChecked(true);
+                mapSetting.put("startTrackDraw", "hand");
+                db.setSetting(mapSetting);
                 return true;
         }
         return false;
     }
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.red:
-            case R.id.blue:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
-
     public void drawPoly(String result) {
         LatLng[] latLngs = new Track().parseTrack(result);
         drawPoly(latLngs);
@@ -269,9 +270,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             listPolylyneTrack.add(polyTrack);
         }
     }
-
-
-
 
     class GetFromServer extends MapQuest {
         public GetFromServer(MapsActivity mapsActivity) {
