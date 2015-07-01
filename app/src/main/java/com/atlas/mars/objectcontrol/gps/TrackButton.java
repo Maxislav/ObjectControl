@@ -14,9 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
-import com.atlas.mars.objectcontrol.ListObjectActivity;
 import com.atlas.mars.objectcontrol.R;
-import com.atlas.mars.objectcontrol.dialogs.DialogListTracks;
 import com.atlas.mars.objectcontrol.dialogs.DialogSaveTrack;
 import com.atlas.mars.objectcontrol.http.MapQuest;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +40,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     ImageButton btnTrack;
     LinearLayout layoutRouteType;
     LinearLayout layoutRouteMenu;
+    LinearLayout layoutStartEnd;
+
     List<LinearLayout> listRouteType;
     private GoogleMap mMap;
     List<Marker> listMarkerPoints;
@@ -69,8 +69,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             case R.id.btnTrack:
                 showPopupMenu(v);
                 break;
-
-
             case R.id.car:
                 mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "car");
                 setActiveRouteType((LinearLayout) v);
@@ -89,6 +87,16 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 break;
             case R.id.save:
                 saveTrack(v);
+                break;
+            case R.id.fromPoint:
+                PopupMenu popupMenu = new PopupMenu(mapsActivity, v);
+                popupMenu.inflate(R.menu.menu_select_from);
+                popupMenu.getMenu().findItem(R.id.red).setChecked(true);
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
+                break;
+            case R.id.toPoint:
+              //  saveTrack(v);
                 break;
 
         }
@@ -111,6 +119,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
         layoutRouteType = (LinearLayout) view;
         frameLayout.addView(layoutRouteType);
+        float density = mapsActivity.getResources().getDisplayMetrics().density;
         float width = mapsActivity.getResources().getDisplayMetrics().density * 160;
         float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
@@ -123,6 +132,18 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         FrameLayout.LayoutParams layoutParamsMenu = new FrameLayout.LayoutParams((int) width, (int) height);
         layoutParamsMenu.gravity = Gravity.TOP | Gravity.CENTER;
         layoutRouteMenu.setLayoutParams(layoutParamsMenu);
+
+
+        layoutStartEnd = (LinearLayout)layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
+        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int)(50*density), (int) (100*density));
+        layoutStartEndParams.gravity = Gravity.TOP | Gravity.LEFT;
+        layoutStartEnd.setLayoutParams(layoutStartEndParams);
+        layoutStartEnd.findViewById(R.id.fromPoint).setOnClickListener(this);
+        layoutStartEnd.findViewById(R.id.toPoint).setOnClickListener(this);
+
+
+        frameLayout.addView(layoutStartEnd);
+
 
         listRouteType = new ArrayList<>();
         LinearLayout layoutCar = (LinearLayout) layoutRouteType.findViewById(R.id.car);
@@ -212,13 +233,27 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 Intent questionIntent;
                 questionIntent = new Intent(mapsActivity, TrackListActivity.class);
                 mapsActivity.startActivityForResult(questionIntent, 1);
-              /*  DialogListTracks dialog = new _DialogListTracks(mapsActivity);
-                dialog.onCreate();
-                dialog.vHide(btnTrack);*/
+                return true;
+            case (R.id.red):
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                toastShow("Ololo");
                 return true;
         }
         return false;
     }
+   /* @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.red:
+            case R.id.blue:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
 
     public void drawPoly(String result) {
         LatLng[] latLngs = new Track().parseTrack(result);
