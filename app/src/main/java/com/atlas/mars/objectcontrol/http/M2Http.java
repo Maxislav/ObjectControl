@@ -218,6 +218,8 @@ public class M2Http {
                 out.print(postParameters);
                 out.close();
 
+
+
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
                 cookiesHeader = headers.get("Set-Cookie");
 
@@ -232,11 +234,10 @@ public class M2Http {
 
 
             } catch (IOException e) {
-               // in = null;
                 e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
-                  //  urlConnection.disconnect();
+                    urlConnection.disconnect();
                 }
             }
 
@@ -280,40 +281,33 @@ public class M2Http {
 
         @Override
         protected String doInBackground(String... params) {
-            URL url = null;
+            URL url;
             String response = "";
-
             try {
                 url = new URL(params[0]);
-              //  url.
-              //  url.
-
                 urlConnection = (HttpURLConnection) url.openConnection();
                 String cookie = "";
-                int count = cookiesHeader.size();
-                int i = 0;
-                for(String value: cookiesHeader){
-                    cookie+=value;
+                int count = cookiesHeader.size()-1;
+                for (int i = 0; i<cookiesHeader.size(); i++){
+                    cookie+=cookiesHeader.get(i);
                     if(i!=count){
-                        cookie+=" ;";
+                        cookie+=";"  ;
                     }
-                    i++;
                 }
                 urlConnection.addRequestProperty("Cookie", cookie);
                 Scanner inStream = new Scanner(urlConnection.getInputStream());
                 while(inStream.hasNextLine()){
                     response+=(inStream.nextLine());
                 }
-
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
-
-
             return response;
         }
         @Override

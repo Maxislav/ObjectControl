@@ -6,6 +6,12 @@
     <item name="rowObjectMapBack" type="color">#a6ffffff</item>
     <item name="titleColorPressStart" type="color">#ffeffeff</item>
     <item name="titleColorPressEnd" type="color">#ffb9b9b9</item>
+    <item name="titleColorPressEnd0" type="color">#ffd8e7e8</item>
+
+    <item name="menuPressStart" type="color">#ffdcdce7</item>
+    <item name="menuPressEnd" type="color">#ffd0d0db</item>
+
+
 
 
     <item name="startColor" type="color">#ffeaf3f6</item>
