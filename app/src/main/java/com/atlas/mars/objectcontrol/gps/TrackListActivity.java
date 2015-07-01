@@ -58,7 +58,7 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
             textViewName.setText(map.get("name"));
             textViewDate.setText(map.get("date"));
             listRows.add(rowView);
-            rowSelect(rowView, map.get("id"));
+            rowEventListener(rowView, map.get("id"));
         }
     }
 
@@ -81,23 +81,25 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
 
     }
 
-    private void rowSelect(final View row, final String _id){
+    private void rowEventListener(final View row, final String _id){
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectId = _id;
-                for(View _row : listRows){
+                selectRow(row);
+                /*for(View _row : listRows){
                     if(_row == row){
                         _row.setBackgroundResource(R.color.activeRouteType);
                     }else{
                         _row.setBackground(null);
                     }
-                }
+                }*/
             }
         });
         row.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                selectRow(v);
                 PopupMenu popupMenu = new PopupMenu(TrackListActivity.this, v);
                 popupMenu.inflate(R.menu.del_track);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -119,6 +121,17 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
                 return false;
             }
         });
+
+    }
+
+    private  void selectRow(View row){
+        for(View _row : listRows){
+            if(_row == row){
+                _row.setBackgroundResource(R.color.activeRouteType);
+            }else{
+                _row.setBackground(null);
+            }
+        }
 
     }
 }

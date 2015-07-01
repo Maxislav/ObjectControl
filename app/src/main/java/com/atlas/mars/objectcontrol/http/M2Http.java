@@ -25,13 +25,23 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.Timer;
 
 
@@ -42,15 +52,20 @@ public class M2Http {
     MapsActivity mapsActivity;
     static ObjectMapper mapper = new ObjectMapper();
     private static final String TAG = "myLog";
+    private static final char PARAMETER_DELIMITER = '&';
+    private static final char PARAMETER_EQUALS_CHAR = '=';
 
     getPointsAsync mt;
-    Auth au;
+    _Auth au;
     DataBaseHelper db;
     HashMap<String, String> mapSetting;
     HttpClient httpClient;
     private Timer mTimer;
     private boolean doIt = false;
     private boolean goRecursion = true;
+    HttpURLConnection urlConnection;
+    HttpURLConnection urlConnection2;
+    List<String> cookiesHeader;
 
 
     public  void stopTimer(){
@@ -74,10 +89,12 @@ public class M2Http {
         this.mapsActivity = mapsActivity;
         db = new DataBaseHelper(mapsActivity);
         mapSetting = db.hashSetting;
+        CookieManager msCookieManager = new CookieManager();
+        CookieHandler.setDefault(msCookieManager);
     }
 
     public void postData() {
-        if(httpClient==null){
+        if(urlConnection==null){
             getAuth();
         }else{
             getPoints();
@@ -90,16 +107,14 @@ public class M2Http {
         PASS = mapSetting.get(db.MAP_PASS);
         SERVERURL = mapSetting.get(db.MAP_SERVER_URL);
         if (LOGIN != null && PASS!= null && SERVERURL != null && !SERVERURL.isEmpty()) {
-            au = new Auth();
+            au = new _Auth();
             au.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
         }
     }
 
-
-
     private void getPoints(){
         Log.d(TAG, "Http Post Response2: +++ ");
-        getPointsAsync mt = new getPointsAsync(mapsActivity);
+        GetPoints mt = new GetPoints(mapsActivity);
         mt.execute(mapSetting.get(db.MAP_SERVER_URL) + "/loadevents.php?param=icars");
     }
 
@@ -172,61 +187,139 @@ public class M2Http {
 
     }
 
-    class  Auth extends AsyncTask<String, Void, String>{
+    class _Auth extends  AsyncTask<String, Void, String>{
+
+        CookieManager msCookieManager = new CookieManager();
+
         @Override
         protected String doInBackground(String... params) {
-            httpClient = new DefaultHttpClient();
-            String resText = null;
-            String login = params[0];
-            String pass = params[1];
-            String urlAuth = params[2] + "/login.php";
-            httpClient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-            httpClient.getParams().setParameter("http.protocol.content-charset", "cp1251");
-            Log.d(TAG, "+++ doInBackground");
-            @SuppressWarnings("deprecation")
-            HttpPost httpPost = new HttpPost(urlAuth);
-            @SuppressWarnings("deprecation")
-            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-            nameValuePair.add(new BasicNameValuePair("login", login));
-            nameValuePair.add(new BasicNameValuePair("password", pass));
+            //List<NameValuePair> _params = new LinkedList<NameValuePair>();
+           // params.add(new BasicNameValuePair("login", "demo"));
+
+            URL url = null;
+            InputStream in = null;
+            String response = "";
             try {
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                Log.e(TAG, "UnsupportedEncodingException+++" + e.toString());
-            }
-            try {
-                HttpResponse response = httpClient.execute(httpPost);
-                HttpEntity entity = response.getEntity();
-                String content = EntityUtils.toString(entity);
-                resText = content.toString();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-                Log.e(TAG, "ClientProtocolException++ " + e.toString());
+                url = new URL("http://gps-tracker.com.ua/login.php");
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestMethod("POST");
+              //  urlConnection.setUseCaches(true);
+               // urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                Map<String, String> mapParams = new HashMap<>();
+                mapParams.put("login","demo");
+                mapParams.put("password","accepted");
+                String postParameters = createQueryStringForParameters(mapParams);
+
+                urlConnection.setFixedLengthStreamingMode(postParameters.getBytes().length);
+                urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                out.print(postParameters);
+                out.close();
+
+                Map<String, List<String>> headers = urlConnection.getHeaderFields();
+                cookiesHeader = headers.get("Set-Cookie");
+
+                Scanner inStream = new Scanner(urlConnection.getInputStream());
+                while(inStream.hasNextLine()){
+                    response+=(inStream.nextLine());
+                }
+                int statusCode = urlConnection.getResponseCode();
+                if (statusCode != HttpURLConnection.HTTP_OK) {
+                    // throw some exception
+                }
+
 
             } catch (IOException e) {
+               // in = null;
                 e.printStackTrace();
-                Log.e(TAG, "IOException ++ " + e.toString());
+            } finally {
+                if (urlConnection != null) {
+                  //  urlConnection.disconnect();
+                }
             }
 
-            return resText;
+
+            return response;//getResponseText(in);
         }
         @Override
         protected void onPostExecute(String result) {
-            // super.onPostExecute(result);
             ObjectNode root = null;
+            if(result == null){
+                Log.d(TAG, "result = null"+ result);
+                mapsActivity.toastShow("Unable to connection");
+                return;
+            }
+            Log.d(TAG, "++++++"+ result);
             try {
                 root = (ObjectNode) mapper.readTree(result);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             JsonNode successNode = root.path("success");
             boolean res = successNode.asBoolean();
             if(res){
                 getPoints();
-               // timerito();
-               // getPoints(result);
+            }
+        }
+
+    }
+
+    class GetPoints extends AsyncTask<String, Void, String> {
+        MapsActivity mapsActivity;
+        GetPoints(MapsActivity mapsActivity){
+            super();
+            this.mapsActivity = mapsActivity;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // tvInfo.setText("Begin");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            URL url = null;
+            String response = "";
+
+            try {
+                url = new URL(params[0]);
+              //  url.
+              //  url.
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                String cookie = "";
+                int count = cookiesHeader.size();
+                int i = 0;
+                for(String value: cookiesHeader){
+                    cookie+=value;
+                    if(i!=count){
+                        cookie+=" ;";
+                    }
+                    i++;
+                }
+                urlConnection.addRequestProperty("Cookie", cookie);
+                Scanner inStream = new Scanner(urlConnection.getInputStream());
+                while(inStream.hasNextLine()){
+                    response+=(inStream.nextLine());
+                }
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return response;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            if(goRecursion){
+                resData(result);
             }
         }
     }
@@ -283,5 +376,87 @@ public class M2Http {
         }
     }
 
+    public static String createQueryStringForParameters(Map<String, String> parameters) {
+        StringBuilder parametersAsQueryString = new StringBuilder();
+        if (parameters != null) {
+            boolean firstParameter = true;
+
+            for (String parameterName : parameters.keySet()) {
+                if (!firstParameter) {
+                    parametersAsQueryString.append(PARAMETER_DELIMITER);
+                }
+
+                parametersAsQueryString.append(parameterName)
+                        .append(PARAMETER_EQUALS_CHAR)
+                        .append(URLEncoder.encode(
+                                parameters.get(parameterName)));
+
+                firstParameter = false;
+            }
+        }
+        return parametersAsQueryString.toString();
+    }
+
+
+    class  Auth extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... params) {
+            httpClient = new DefaultHttpClient();
+            String resText = null;
+            String login = params[0];
+            String pass = params[1];
+            String urlAuth = params[2] + "/login.php";
+            httpClient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+            httpClient.getParams().setParameter("http.protocol.content-charset", "cp1251");
+            Log.d(TAG, "+++ doInBackground");
+            //  @SuppressWarnings("deprecation")
+            HttpPost httpPost = new HttpPost(urlAuth);
+            @SuppressWarnings("deprecation")
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+            nameValuePair.add(new BasicNameValuePair("login", login));
+            nameValuePair.add(new BasicNameValuePair("password", pass));
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                Log.e(TAG, "UnsupportedEncodingException+++" + e.toString());
+            }
+            try {
+                HttpResponse response = httpClient.execute(httpPost);
+                HttpEntity entity = response.getEntity();
+                String content = EntityUtils.toString(entity);
+                resText = content.toString();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+                Log.e(TAG, "ClientProtocolException++ " + e.toString());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                resText = null;
+                Log.e(TAG, "IOException ++ " + e.toString());
+            }
+
+            return resText;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            // super.onPostExecute(result);
+            ObjectNode root = null;
+            if(result!=null){
+                try {
+                    root = (ObjectNode) mapper.readTree(result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                JsonNode successNode = root.path("success");
+                boolean res = successNode.asBoolean();
+                if(res){
+                    getPoints();
+                }
+            }
+
+        }
+    }
 
 }
