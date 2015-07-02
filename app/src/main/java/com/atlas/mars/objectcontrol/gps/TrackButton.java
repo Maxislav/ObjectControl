@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,8 +46,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     List<LinearLayout> listRouteType;
     private GoogleMap mMap;
-    List<Marker> listMarkerPoints;
-    List<Polyline> listPolylyneTrack;
+    List<Marker> listMarkerPoints; //Лист  маркеров по пути маршрута;
+    List<Polyline> listPolylineTrack;
     HashMap<String, String> mapSetting;
     String from;
     DataBaseHelper db;
@@ -57,7 +59,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         this.btnTrack = btnTrack;
         this.mMap = mMap;
         listMarkerPoints = new ArrayList<>();
-        listPolylyneTrack = new ArrayList<>();
+        listPolylineTrack = new ArrayList<>();
         btnTrack.setOnClickListener(this);
         db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
@@ -205,9 +207,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         popupMenu.show();
     }
 
-    @Override
-    public void onMapLongClick(LatLng latLng) {
-        toastShow("" + latLng.latitude + ": " + latLng.longitude);
+    private void addMarker(LatLng latLng){
         Marker trackPointMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))
@@ -215,15 +215,83 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.track_control_point)));
         listMarkerPoints.add(trackPointMarker);
 
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        GetFromServer getFromServer = new GetFromServer(mapsActivity);
+        toastShow("Accept: " + round(latLng.latitude, 4) + "; " + round(latLng.longitude, 4));
+        if( mapSetting.get("startTrackDraw").equals("hand") && listMarkerPoints.size() == 0){
+            addMarker(latLng);
+            from = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);
+            return;
+        }
+        if (mapSetting.get("startTrackDraw").equals("hand")){
+            addMarker(latLng);
+            Marker from = listMarkerPoints.get(listMarkerPoints.size()-2);
+            Marker to = listMarkerPoints.get(listMarkerPoints.size()-1);
+            String strFrom  = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
+            String strTo  = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+            getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+            return;
+        }
+
+        if(mapSetting.get("startTrackDraw").equals("current")){
+            if(listMarkerPoints.size() == 0){
+                addMarker(mapsActivity.myPos);
+            }
+            addMarker(latLng);
+            Marker from = listMarkerPoints.get(listMarkerPoints.size()-2);
+            Marker to = listMarkerPoints.get(listMarkerPoints.size()-1);
+            String strFrom  = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
+            String strTo  = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+            getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+            return;
+        }
+
+
+
+
+       /* addMarker(latLng);
+
+
+
+
+
+
+      *//*  Marker trackPointMarker = mMap.addMarker(
+                new MarkerOptions()
+                        .position(new LatLng(latLng.latitude, latLng.longitude))
+                        .anchor(0.5f, 0.5f)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.track_control_point)));
+        listMarkerPoints.add(trackPointMarker);*//*
+
         GetFromServer getFromServer = new GetFromServer(mapsActivity);
         if (from == null) {
             from = String.valueOf(mapsActivity.myPos.latitude) + "," + String.valueOf(mapsActivity.myPos.longitude);
         }
         String to = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);
-        getFromServer.findRoute(from, to, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
-        from = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);
-    }
 
+        //Запрос пошел
+        getFromServer.findRoute(from, to, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+
+        from = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);*/
+    }
+    public void drawPoly(String result) {
+        TrackParser track = new TrackParser(result);
+        LatLng[] latLngs = track.getLatLngs();
+        drawPoly(latLngs);
+    }
+    public void drawPoly(LatLng[] latLngs) {
+        if (latLngs != null && 1 < latLngs.length) {
+            Polyline polyTrack = mMap.addPolyline(new PolylineOptions()
+                    .add(latLngs)
+                    .width(8)
+                    .color(mapsActivity.getResources().getColor(R.color.colorTrack)));
+            polyTrack.setZIndex(2.0f);
+            listPolylineTrack.add(polyTrack);
+        }
+    }
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -256,20 +324,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
         return false;
     }
-    public void drawPoly(String result) {
-        LatLng[] latLngs = new Track().parseTrack(result);
-        drawPoly(latLngs);
-    }
-    public void drawPoly(LatLng[] latLngs) {
-        if (latLngs != null && 1 < latLngs.length) {
-            Polyline polyTrack = mMap.addPolyline(new PolylineOptions()
-                    .add(latLngs)
-                    .width(8)
-                    .color(R.color.colorTrack));
-            polyTrack.setZIndex(2.0f);
-            listPolylyneTrack.add(polyTrack);
-        }
-    }
+
 
     class GetFromServer extends MapQuest {
         public GetFromServer(MapsActivity mapsActivity) {
@@ -284,7 +339,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     }
 
     private void saveTrack(View v) {
-        if (listPolylyneTrack.size() < 1) {
+        if (listPolylineTrack.size() < 1) {
             toastShow("Empty track");
             return;
         }
@@ -310,7 +365,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         @Override
         public void onOk() {
             String name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
-            if (db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylyneTrack)) {
+            if (db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylineTrack)) {
                 toastShow("Save Ok");
             }
         }
@@ -329,5 +384,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     private void toastShow(String str) {
         mapsActivity.toastShow(str);
+    }
+    private double round(double d, int prec){
+        return new BigDecimal(d).setScale(prec, RoundingMode.UP).doubleValue();
     }
 }

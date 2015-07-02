@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
-import com.atlas.mars.objectcontrol.gps.Track;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -14,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +43,12 @@ public class MapQuest {
 
     }
 
+
+
+
+    public void onCancelled(){
+        if (au!=null) au.onCancelled();
+    }
 
     class Auth extends AsyncTask<String, Void, String> {
         @Override
@@ -96,6 +102,11 @@ public class MapQuest {
         protected void onPostExecute(String result) {
             onCallBack(result);
         }
+        @Override
+        protected void onCancelled(){
+            super.onCancelled();
+        }
+
 
         private String getResponseText(InputStream is) {
             if (is == null) {
