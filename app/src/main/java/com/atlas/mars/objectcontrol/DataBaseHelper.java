@@ -69,6 +69,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_SHOW_LIST = "mapShowList";
     public static final String MAP_ROUTE_TYPE = "mapRouteType";
 
+    public static final String MAP_CURRENT_ID_TRACK = "mapCurrentIdTrack"; //Некущий отображаемый трек
+
     public static HashMap<String, String> hashSetting;
 
 

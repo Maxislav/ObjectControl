@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/del"
+            android:id="@+id/delTrack"
             android:layout_margin="3dp"
             android:layout_weight="1">
             <ImageView
@@ -28,7 +28,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/close"
+            android:id="@+id/closePath"
             android:layout_margin="3dp"
             android:layout_weight="1">
             <ImageView

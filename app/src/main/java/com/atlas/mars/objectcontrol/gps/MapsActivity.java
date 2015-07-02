@@ -2,7 +2,6 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -42,8 +41,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
@@ -202,6 +199,10 @@ public class MapsActivity extends ActionBarActivity {
         mapSetting.put(dataBaseHelper.MAP_START_LAT, Double.toString(lat));
         mapSetting.put(dataBaseHelper.MAP_START_LNG, Double.toString(lng));
         mapSetting.put(dataBaseHelper.MAP_START_ZOOM, Float.toString(zoom));
+
+        if(trackButton!=null){
+            trackButton.onPause();
+        }
         dataBaseHelper.setSetting(mapSetting);
         super.onPause();
     }
@@ -223,6 +224,8 @@ public class MapsActivity extends ActionBarActivity {
         if (haveNetworkConnection()) {
             m2Http.onResume();
         }
+
+
     }
 
     @Override
@@ -260,24 +263,24 @@ public class MapsActivity extends ActionBarActivity {
     }
     public void drawPoly(String path){
         String state = Environment.getExternalStorageState();
-
         if (!(state.equals(Environment.MEDIA_MOUNTED))) {
-            //Toast.makeText(this, "There is no any sd card", Toast.LENGTH_LONG).show();
-
             toastShow("There is no any sd card");
             return;
-        }else{
-
         }
-
-
         Mytrack mytrack = new Mytrack(path);
 
-        Polyline line = mMap.addPolyline(new PolylineOptions()
+        if(trackButton!=null){
+            LatLng[] latLngs = mytrack.getTrack();
+            trackButton.drawPoly(latLngs);
+            trackButton.addMarker(latLngs[0]);
+            trackButton.addMarker(latLngs[latLngs.length-1]);
+        }
+
+        /*Polyline line = mMap.addPolyline(new PolylineOptions()
                 .add(mytrack.getTrack())
                 .width(5)
                 .color(Color.BLUE));
-        line.setZIndex(2.0f);
+        line.setZIndex(2.0f);*/
         //return null;
     }
 
@@ -329,7 +332,6 @@ public class MapsActivity extends ActionBarActivity {
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(countObj<1){
                     toastShow("Empty list objects");
                     return;
@@ -735,14 +737,11 @@ public class MapsActivity extends ActionBarActivity {
 
         @Override
         public View getInfoWindow(Marker marker) {
-
             return null;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-
-
             HashMap<String, String> map = hashObjects.get(marker.getSnippet());
             View v = getLayoutInflater().inflate(R.layout.infowindow_layout, null);
             if (map != null && !map.isEmpty()) {

@@ -54,7 +54,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     String from;
     DataBaseHelper db;
     String timeStampCreated;
-    long idTrack;
+    long idTrack=0;
     GetFromServer getFromServer;
 
     TrackButton(MapsActivity mapsActivity, ImageButton btnTrack, GoogleMap mMap) {
@@ -69,6 +69,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         if (mapSetting.get("startTrackDraw") == null) {
             mapSetting.put("startTrackDraw", "current");
             db.setSetting(mapSetting);
+        }
+        if(mapSetting.get(DataBaseHelper.MAP_CURRENT_ID_TRACK)!=null && !mapSetting.get(DataBaseHelper.MAP_CURRENT_ID_TRACK).equals("0")){
+            onSelectIdTrack(mapSetting.get(DataBaseHelper.MAP_CURRENT_ID_TRACK));
         }
     }
 
@@ -99,6 +102,12 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 break;
             case R.id.back:
                 stepBack();
+                break;
+            case R.id.closePath:
+                closePath();
+                break;
+            case R.id.delTrack:
+                delTrack();
                 break;
             case R.id.fromPoint:
                 PopupMenu popupMenu = new PopupMenu(mapsActivity, v);
@@ -177,8 +186,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         LinearLayout lSave = (LinearLayout) layoutRouteMenu.findViewById(R.id.save);
         lSave.setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.back).setOnClickListener(this);
-        layoutRouteMenu.findViewById(R.id.close).setOnClickListener(this);
-        layoutRouteMenu.findViewById(R.id.del).setOnClickListener(this);
+        layoutRouteMenu.findViewById(R.id.closePath).setOnClickListener(this);
+        layoutRouteMenu.findViewById(R.id.delTrack).setOnClickListener(this);
 
         for (LinearLayout layout : listRouteType) {
             layout.setOnClickListener(this);
@@ -213,7 +222,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         popupMenu.show();
     }
 
-    private void addMarker(LatLng latLng) {
+    public void addMarker(LatLng latLng) {
         Marker trackPointMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))
@@ -259,17 +268,42 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
     }
 
-    public void stepBack() {
-        getFromServer.onCancelled();
+    private void stepBack() {
+        if( getFromServer!=null){
+            getFromServer.onCancelled();
+        }
         if (0 < listMarkerPoints.size()) {
             listMarkerPoints.remove(listMarkerPoints.size() - 1).remove();
             if (listPolylineTrack.size() == listMarkerPoints.size() && 0<listPolylineTrack.size() ) {
                 listPolylineTrack.remove(listPolylineTrack.size() - 1).remove();
             }
         }
-       /* if(0<listPolylineTrack.size()){
-
-        }*/
+    }
+    private void closePath(){
+        if(listMarkerPoints.size()<2){
+            toastShow("Are necessary two points");
+            return;
+        }
+        LatLng latLng = new LatLng(listMarkerPoints.get(0).getPosition().latitude, listMarkerPoints.get(0).getPosition().longitude);
+        addMarker(latLng);
+        addMarker(latLng);
+        Marker from =listMarkerPoints.get(listMarkerPoints.size()-2) ;
+        Marker to = listMarkerPoints.get(listMarkerPoints.size()-1);
+        toastShow("Accept: "+  round(to.getPosition().latitude, 4) + "; " + round(to.getPosition().longitude, 4));
+        String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
+        String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+        getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+    }
+    private void delTrack(){
+       while (0<listMarkerPoints.size()){
+           listMarkerPoints.remove(listMarkerPoints.size() - 1).remove();
+       }
+        while (0<listPolylineTrack.size()){
+            listPolylineTrack.remove(listPolylineTrack.size()-1).remove();
+        }
+        idTrack = 0;
+        mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, "0");
+        db.setSetting(mapSetting);
     }
 
     public void drawPoly(String result) {
@@ -290,6 +324,12 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             polyTrack.setZIndex(2.0f);
             listPolylineTrack.add(polyTrack);
         }
+    }
+
+    public void onPause(){
+        Log.d(TAG, "++++ ID Track: " +String.valueOf(idTrack));
+        mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, String.valueOf(idTrack));
+       // db.setSetting(mapSetting);
     }
 
     @Override
@@ -336,8 +376,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             Log.d(TAG, result);
             drawPoly(result);
         }
-
-
     }
 
     private void saveTrack(View v) {
@@ -352,13 +390,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
-        /*Thread thread;
-        thread = new Thread() {
-            public void run() {
-
-            }
-        };*/
-
     }
 
 
@@ -366,16 +397,35 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         private class MyHundler extends Handler {
             public static final int ID_0 = 0;
-
             @Override
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case 0:
                         toastShow(msg.obj.toString());
                         Log.d(TAG, msg.obj.toString());
+
                         break;
                 }
-
+            }
+        }
+        private class MyThread extends Thread{
+            final List<HashMap<String, Double>> listControlPointsTrack;
+            final DataBaseHelper _db = new DataBaseHelper(mapsActivity);
+            Handler h;
+            String name;
+            MyThread(List<HashMap<String, Double>> listControlPointsTrack , Handler h){
+                super();
+                this.listControlPointsTrack = listControlPointsTrack;
+                this.h = h;
+                name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
+            }
+            @Override
+            public void run(){
+                if (_db.fillRowNameTrack(idTrack, timeStampCreated, name, listControlPointsTrack)) {
+                    Message msg = Message.obtain(h, MyHundler.ID_0);
+                    msg.obj = "Save Ok" + idTrack;
+                    h.sendMessage(msg);
+                }
             }
         }
 
@@ -407,29 +457,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             thread.start();
         }
 
-        private class MyThread extends Thread{
-            final List<HashMap<String, Double>> listControlPointsTrack;
-            final DataBaseHelper _db = new DataBaseHelper(mapsActivity);
-            Handler h;
-            String name;
-            MyThread(List<HashMap<String, Double>> listControlPointsTrack , Handler h){
-              super();
-              this.listControlPointsTrack = listControlPointsTrack;
-              this.h = h;
-              name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
-            }
-            @Override
-            public void run(){
-                if (_db.fillRowNameTrack(idTrack, timeStampCreated, name, listControlPointsTrack)) {
-                    Message msg = Message.obtain(h, MyHundler.ID_0);
-                    msg.obj = "Save Ok";
-                    h.sendMessage(msg);
-                }
-            }
-        }
-
-
-
         @Override
         public void onCancel() {
             if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
@@ -437,8 +464,11 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     }
 
     public void onSelectIdTrack(String id) {
-        toastShow("Select id " + id);
+        idTrack = Long.valueOf(id).longValue();
+       // toastShow("Select id " + id);
         LatLng[] latLngs = db.getTrack(id);
+        addMarker(latLngs[0]);
+        addMarker(latLngs[latLngs.length-1]);
         drawPoly(latLngs);
     }
 
