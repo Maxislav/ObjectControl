@@ -402,7 +402,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         timeStampCreated = formatter.format(now);
-        idTrack = db.createRowNameTrack();
+       // idTrack = db.createRowNameTrack();
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
@@ -410,7 +410,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
 
     class Dialog extends DialogSaveTrack {
-
+        private long _idTrack = idTrack;
         private class MyHundler extends Handler {
             public static final int ID_0 = 0;
 
@@ -460,6 +460,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         @Override
         public void onOk() {
+            idTrack = db.createRowNameTrack();
             final Handler h = new MyHundler();
             List<HashMap<String, Double>> listControlPointsTrack = new ArrayList<>();
             for (Polyline line : listPolylineTrack) {
@@ -480,6 +481,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         @Override
         public void onCancel() {
             if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
+            idTrack = _idTrack;
         }
     }
 
@@ -487,6 +489,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         idTrack = Long.valueOf(id).longValue();
         // toastShow("Select id " + id);
         LatLng[] latLngs = db.getTrack(id);
+        if(latLngs.length<1){
+           return;
+        }
         addMarker(latLngs[0]);
         addMarker(latLngs[latLngs.length - 1]);
         drawPoly(latLngs);
