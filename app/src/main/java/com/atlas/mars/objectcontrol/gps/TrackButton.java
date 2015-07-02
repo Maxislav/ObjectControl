@@ -292,7 +292,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
         LatLng latLng = new LatLng(listMarkerPoints.get(0).getPosition().latitude, listMarkerPoints.get(0).getPosition().longitude);
         addMarker(latLng);
-        addMarker(latLng);
+       // addMarker(latLng);
         Marker from = listMarkerPoints.get(listMarkerPoints.size() - 2);
         Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
         toastShow("Accept: " + round(to.getPosition().latitude, 4) + "; " + round(to.getPosition().longitude, 4));
@@ -443,7 +443,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             public void run() {
                 if (_db.fillRowNameTrack(idTrack, timeStampCreated, name, listControlPointsTrack)) {
                     Message msg = Message.obtain(h, MyHundler.ID_0);
-                    msg.obj = "Save Ok" + idTrack;
+                    msg.obj = "Save Ok, ID: " + idTrack;
                     h.sendMessage(msg);
                 }
             }
