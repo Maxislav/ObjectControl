@@ -54,6 +54,7 @@ public class M2Http {
     private static final String TAG = "myLog";
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
+    private boolean isAuth = false;
 
     getPointsAsync mt;
     _Auth au;
@@ -94,7 +95,7 @@ public class M2Http {
     }
 
     public void postData() {
-        if(urlConnection==null){
+        if(!isAuth){
             getAuth();
         }else{
             getPoints();
@@ -208,8 +209,8 @@ public class M2Http {
               //  urlConnection.setUseCaches(true);
                // urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 Map<String, String> mapParams = new HashMap<>();
-                mapParams.put("login","demo");
-                mapParams.put("password","accepted");
+                mapParams.put("login", params[0]);
+                mapParams.put("password",params[1]);
                 String postParameters = createQueryStringForParameters(mapParams);
 
                 urlConnection.setFixedLengthStreamingMode(postParameters.getBytes().length);
@@ -261,6 +262,7 @@ public class M2Http {
             JsonNode successNode = root.path("success");
             boolean res = successNode.asBoolean();
             if(res){
+                isAuth = true;
                 getPoints();
             }
         }
@@ -281,6 +283,15 @@ public class M2Http {
 
         @Override
         protected String doInBackground(String... params) {
+            try {
+                if(doIt){
+                    Thread.sleep(5000);
+                }else{
+                    doIt = true;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             URL url;
             String response = "";
             try {

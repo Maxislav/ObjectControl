@@ -2,6 +2,8 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -53,6 +55,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     DataBaseHelper db;
     String timeStampCreated;
     long idTrack;
+    GetFromServer getFromServer;
 
     TrackButton(MapsActivity mapsActivity, ImageButton btnTrack, GoogleMap mMap) {
         this.mapsActivity = mapsActivity;
@@ -63,7 +66,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         btnTrack.setOnClickListener(this);
         db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
-        if(mapSetting.get("startTrackDraw")==null){
+        if (mapSetting.get("startTrackDraw") == null) {
             mapSetting.put("startTrackDraw", "current");
             db.setSetting(mapSetting);
         }
@@ -94,14 +97,17 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             case R.id.save:
                 saveTrack(v);
                 break;
+            case R.id.back:
+                stepBack();
+                break;
             case R.id.fromPoint:
                 PopupMenu popupMenu = new PopupMenu(mapsActivity, v);
                 popupMenu.inflate(R.menu.menu_select_from);
 
-                if(mapSetting.get("startTrackDraw").equals("current")){
+                if (mapSetting.get("startTrackDraw").equals("current")) {
                     popupMenu.getMenu().findItem(R.id.current).setChecked(true);
                 }
-                if(mapSetting.get("startTrackDraw").equals("hand")){
+                if (mapSetting.get("startTrackDraw").equals("hand")) {
                     popupMenu.getMenu().findItem(R.id.handStart).setChecked(true);
                 }
 
@@ -109,7 +115,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 popupMenu.show();
                 break;
             case R.id.toPoint:
-              //  saveTrack(v);
+                //  saveTrack(v);
                 break;
 
         }
@@ -147,8 +153,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         layoutRouteMenu.setLayoutParams(layoutParamsMenu);
 
 
-        layoutStartEnd = (LinearLayout)layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
-        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int)(50*density), (int) (100*density));
+        layoutStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
+        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (50 * density), (int) (100 * density));
         layoutStartEndParams.gravity = Gravity.TOP | Gravity.LEFT;
         layoutStartEnd.setLayoutParams(layoutStartEndParams);
         layoutStartEnd.findViewById(R.id.fromPoint).setOnClickListener(this);
@@ -207,7 +213,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         popupMenu.show();
     }
 
-    private void addMarker(LatLng latLng){
+    private void addMarker(LatLng latLng) {
         Marker trackPointMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))
@@ -219,69 +225,62 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        GetFromServer getFromServer = new GetFromServer(mapsActivity);
-        toastShow("Accept: " + round(latLng.latitude, 4) + "; " + round(latLng.longitude, 4));
-        if( mapSetting.get("startTrackDraw").equals("hand") && listMarkerPoints.size() == 0){
-            addMarker(latLng);
-            from = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);
-            return;
+        if (getFromServer == null) {
+            getFromServer = new GetFromServer(mapsActivity);
         }
-        if (mapSetting.get("startTrackDraw").equals("hand")){
+
+        toastShow("Accept: " + round(latLng.latitude, 4) + "; " + round(latLng.longitude, 4));
+
+        if (mapSetting.get("startTrackDraw").equals("hand")) {
+            if (listMarkerPoints.size() == 0) {
+                addMarker(latLng);
+                return;
+            }
             addMarker(latLng);
-            Marker from = listMarkerPoints.get(listMarkerPoints.size()-2);
-            Marker to = listMarkerPoints.get(listMarkerPoints.size()-1);
-            String strFrom  = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
-            String strTo  = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+            Marker from = listMarkerPoints.get(listMarkerPoints.size() - 2);
+            Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
+            String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
+            String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
             getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
             return;
         }
 
-        if(mapSetting.get("startTrackDraw").equals("current")){
-            if(listMarkerPoints.size() == 0){
+        if (mapSetting.get("startTrackDraw").equals("current")) {
+            if (listMarkerPoints.size() == 0) {
                 addMarker(mapsActivity.myPos);
             }
             addMarker(latLng);
-            Marker from = listMarkerPoints.get(listMarkerPoints.size()-2);
-            Marker to = listMarkerPoints.get(listMarkerPoints.size()-1);
-            String strFrom  = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
-            String strTo  = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+            Marker from = listMarkerPoints.get(listMarkerPoints.size() - 2);
+            Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
+            String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
+            String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
             getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
             return;
         }
+    }
 
-
-
-
-       /* addMarker(latLng);
-
-
-
-
-
-
-      *//*  Marker trackPointMarker = mMap.addMarker(
-                new MarkerOptions()
-                        .position(new LatLng(latLng.latitude, latLng.longitude))
-                        .anchor(0.5f, 0.5f)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.track_control_point)));
-        listMarkerPoints.add(trackPointMarker);*//*
-
-        GetFromServer getFromServer = new GetFromServer(mapsActivity);
-        if (from == null) {
-            from = String.valueOf(mapsActivity.myPos.latitude) + "," + String.valueOf(mapsActivity.myPos.longitude);
+    public void stepBack() {
+        getFromServer.onCancelled();
+        if (0 < listMarkerPoints.size()) {
+            listMarkerPoints.remove(listMarkerPoints.size() - 1).remove();
+            if (listPolylineTrack.size() == listMarkerPoints.size() && 0<listPolylineTrack.size() ) {
+                listPolylineTrack.remove(listPolylineTrack.size() - 1).remove();
+            }
         }
-        String to = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);
+       /* if(0<listPolylineTrack.size()){
 
-        //Запрос пошел
-        getFromServer.findRoute(from, to, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
-
-        from = String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude);*/
+        }*/
     }
+
     public void drawPoly(String result) {
-        TrackParser track = new TrackParser(result);
-        LatLng[] latLngs = track.getLatLngs();
-        drawPoly(latLngs);
+        if (result != null) {
+            TrackParser track = new TrackParser(result);
+            LatLng[] latLngs = track.getLatLngs();
+            drawPoly(latLngs);
+        }
+
     }
+
     public void drawPoly(LatLng[] latLngs) {
         if (latLngs != null && 1 < latLngs.length) {
             Polyline polyTrack = mMap.addPolyline(new PolylineOptions()
@@ -292,6 +291,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             listPolylineTrack.add(polyTrack);
         }
     }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -336,6 +336,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             Log.d(TAG, result);
             drawPoly(result);
         }
+
+
     }
 
     private void saveTrack(View v) {
@@ -350,9 +352,33 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
+        /*Thread thread;
+        thread = new Thread() {
+            public void run() {
+
+            }
+        };*/
+
     }
 
+
     class Dialog extends DialogSaveTrack {
+
+        private class MyHundler extends Handler {
+            public static final int ID_0 = 0;
+
+            @Override
+            public void handleMessage(android.os.Message msg) {
+                switch (msg.what) {
+                    case 0:
+                        toastShow(msg.obj.toString());
+                        Log.d(TAG, msg.obj.toString());
+                        break;
+                }
+
+            }
+        }
+
         public Dialog(Activity activity) {
             super(activity);
         }
@@ -364,11 +390,45 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         @Override
         public void onOk() {
-            String name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
-            if (db.fillRowNameTrack(idTrack, timeStampCreated, name, listPolylineTrack)) {
-                toastShow("Save Ok");
+            final Handler h = new MyHundler();
+            List<HashMap<String, Double>> listControlPointsTrack = new ArrayList<>();
+            for(Polyline line : listPolylineTrack){
+                List<LatLng> latLngList =  line.getPoints();
+                for(LatLng latLng : latLngList){
+                    Double lat = latLng.latitude;
+                    Double lng = latLng.longitude;
+                    HashMap<String, Double> hm = new HashMap<>();
+                    hm.put("lat", lat);
+                    hm.put("lng", lng);
+                    listControlPointsTrack.add(hm);
+                }
+            }
+            Thread thread = new MyThread(listControlPointsTrack, h);
+            thread.start();
+        }
+
+        private class MyThread extends Thread{
+            final List<HashMap<String, Double>> listControlPointsTrack;
+            final DataBaseHelper _db = new DataBaseHelper(mapsActivity);
+            Handler h;
+            String name;
+            MyThread(List<HashMap<String, Double>> listControlPointsTrack , Handler h){
+              super();
+              this.listControlPointsTrack = listControlPointsTrack;
+              this.h = h;
+              name = ((TextView) contentDialog.findViewById(R.id.edTextName)).getText().toString();
+            }
+            @Override
+            public void run(){
+                if (_db.fillRowNameTrack(idTrack, timeStampCreated, name, listControlPointsTrack)) {
+                    Message msg = Message.obtain(h, MyHundler.ID_0);
+                    msg.obj = "Save Ok";
+                    h.sendMessage(msg);
+                }
             }
         }
+
+
 
         @Override
         public void onCancel() {
@@ -376,7 +436,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
     }
 
-    public void onSelectIdTrack(String id){
+    public void onSelectIdTrack(String id) {
         toastShow("Select id " + id);
         LatLng[] latLngs = db.getTrack(id);
         drawPoly(latLngs);
@@ -385,7 +445,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     private void toastShow(String str) {
         mapsActivity.toastShow(str);
     }
-    private double round(double d, int prec){
+
+    private double round(double d, int prec) {
         return new BigDecimal(d).setScale(prec, RoundingMode.UP).doubleValue();
     }
 }

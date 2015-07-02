@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,32 +25,37 @@ public class MapQuest {
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
     private static final String LOGGER_TAG = "routing";
-    Auth au;
+    FromMapQuest au;
     URLConnection urlConnection;
+    List<FromMapQuest> listFromMapQuest;
+
 
     public MapQuest(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
+        listFromMapQuest = new ArrayList<>();
         urlConnection = null;
 
     }
 
     public void findRoute(String from, String to, String routeType) {
-        au = new Auth();
+        au = new FromMapQuest();
+        listFromMapQuest.add(au);
         au.execute(from, to, routeType);
     }
 
     public void onCallBack(String result) {
 
     }
-
-
-
-
     public void onCancelled(){
-        if (au!=null) au.onCancelled();
+        for(FromMapQuest au : listFromMapQuest){
+            if (au!=null && au.getStatus() == AsyncTask.Status.RUNNING){
+                au.onCancelled();
+            }
+        }
     }
 
-    class Auth extends AsyncTask<String, Void, String> {
+    class FromMapQuest extends AsyncTask<String, Void, String> {
+        boolean onCancel=false;
         @Override
         protected String doInBackground(String... params) {
             String apiKey = "geCwAnTQVkpj2ixbLJyHsLpnuZtG742A";
@@ -94,17 +99,22 @@ public class MapQuest {
                 Log.e(LOGGER_TAG, "+++IOException");
                 e.printStackTrace();
             }
+            if(onCancel){
+                return null;
+            }
             String resParams = getResponseText(in);
             return resParams;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            onCallBack(result);
+            super.onPostExecute(result);
+            if(!onCancel) onCallBack(result);
         }
         @Override
         protected void onCancelled(){
             super.onCancelled();
+            onCancel = true;
         }
 
 

@@ -138,7 +138,7 @@ public class MapsActivity extends ActionBarActivity {
         // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
         if (haveNetworkConnection()) {
             m2Http = new M2Http(this);
-            m2Http.postData();
+           // m2Http.postData();
         }
 
         try {

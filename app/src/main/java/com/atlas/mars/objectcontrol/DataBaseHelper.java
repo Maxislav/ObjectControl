@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -608,7 +607,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sdb.close();
         return id;
     }
-    public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,  List<Polyline> listPolylyneTrack){
+   /* public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,  List<Polyline> listPolylyneTrack){
         boolean  a;
         sdb = getWritableDatabase();
         String query = "UPDATE " + TABLE_TRACK_COLLECTION+" SET "+"name = '"+name+"', date = '"+timeStamp+"' WHERE "+UID+"="+idTrack;
@@ -626,15 +625,35 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         return a;
+    }*/
+
+    public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,   List<HashMap<String, Double>> listControlPointsTrack){
+        boolean  a;
+        sdb = getWritableDatabase();
+        String query = "UPDATE " + TABLE_TRACK_COLLECTION+" SET "+"name = '"+name+"', date = '"+timeStamp+"' WHERE "+UID+"="+idTrack;
+        try {
+            sdb.execSQL(query);
+            Log.d(TAG, "+++ name:  " + name);
+            a = true;
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+            a = false;
+        }
+        sdb.close();
+        if(a){
+            a = fillTracks(idTrack,  listControlPointsTrack);
+        }
+
+        return a;
     }
 
-    private boolean fillTracks(long idTrack, List<Polyline> listPolylyneTrack){
+    /*private synchronized boolean fillTracks(long idTrack, List<Polyline> listPolylyneTrack){
         boolean  a = true;
         ContentValues cv = new ContentValues();
         sdb = getWritableDatabase();
         cv.put("trackId", idTrack);
         for(Polyline line : listPolylyneTrack){
-           List<LatLng> latLngList =  line.getPoints();
+            List<LatLng> latLngList =  line.getPoints();
             for(LatLng latLng : latLngList){
                 Double lat = latLng.latitude;
                 Double lng = latLng.longitude;
@@ -650,6 +669,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 }
 
             }
+        }
+        sdb.close();
+        return a;
+    }
+*/
+    private synchronized boolean fillTracks(long idTrack,   List<HashMap<String, Double>> listControlPointsTrack ){
+        boolean  a = true;
+        ContentValues cv = new ContentValues();
+        sdb = getWritableDatabase();
+        cv.put("trackId", idTrack);
+        for(HashMap<String, Double> map : listControlPointsTrack){
+
+                Double lat = map.get("lat");
+                Double lng = map.get("lng");
+                cv.put("lat", lat);
+                cv.put("lng", lng);
+                try {
+                    sdb.insert(TABLE_TRACKS, null, cv);
+
+                }catch (SQLException e){
+                    Log.e(TAG, "+++SQLException " + e.toString());
+                    a = false;
+
+                }
+
+
         }
         sdb.close();
         return a;
