@@ -5,7 +5,7 @@
     <item
         android:id="@+id/trackList"
         android:orderInCategory="0"
-        android:title="Tracks list"
+        android:title="Список сохраненных треков"
         app:showAsAction="never" />
     <item
         android:id="@+id/loadFromCd"

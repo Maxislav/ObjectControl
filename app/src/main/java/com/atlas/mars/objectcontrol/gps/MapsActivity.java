@@ -337,7 +337,10 @@ public class MapsActivity extends ActionBarActivity {
                     return;
                 }
                 if (listContainer.isShown()) {
-                    aniOut.setAnimationListener(new Animation.AnimationListener() {
+
+                    hideListObject();
+
+                  /*  aniOut.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
 
@@ -354,30 +357,73 @@ public class MapsActivity extends ActionBarActivity {
 
                         }
                     });
-                    listContainer.startAnimation(aniOut);
+                    listContainer.startAnimation(aniOut);*/
                 } else {
-
-                    animIn.setAnimationListener(new Animation.AnimationListener() {
+                    showListObgects();
+                   /* animIn.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
                             listContainer.setVisibility(View.VISIBLE);
                             mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
                         }
-
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             //btnList.setVisibility(View.INVISIBLE);
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {
 
                         }
                     });
-                    listContainer.startAnimation(animIn);
+                    listContainer.startAnimation(animIn);*/
                 }
             }
         });
+    }
+
+    public void showListObgects(){
+
+        final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
+
+        animIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                listContainer.setVisibility(View.VISIBLE);
+                mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //btnList.setVisibility(View.INVISIBLE);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        listContainer.startAnimation(animIn);
+    }
+    public void hideListObject(){
+        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
+        if(trackButton!=null) trackButton.toObject = false;
+
+        aniOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                listContainer.setVisibility(View.INVISIBLE);
+                mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        listContainer.startAnimation(aniOut);
     }
 
 
@@ -781,10 +827,7 @@ public class MapsActivity extends ActionBarActivity {
 
     private void addRowObject(final HashMap<String, String> map) {
         String id = map.get("id");
-
         LayoutInflater ltInflater = getLayoutInflater();
-
-
         View view = hashViewRow.get(id) != null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
@@ -804,12 +847,14 @@ public class MapsActivity extends ActionBarActivity {
             linearLayoutInScroll.addView(view);
         }
         view.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                    if(trackButton!=null){
+                        trackButton.onListObjectClick(pos);
+                    }
                 }
             }
         });
