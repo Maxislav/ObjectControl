@@ -729,6 +729,9 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        public MarkerInfoWindowAdapter (){
+            super();
+        }
 
         @Override
         public View getInfoWindow(Marker marker) {
