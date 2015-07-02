@@ -480,8 +480,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         @Override
         public void onCancel() {
-            if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
-            idTrack = _idTrack;
+            /*if (!db.deleteRowNameTrack(idTrack)) toastShow("Error");
+            idTrack = _idTrack;*/
         }
     }
 
