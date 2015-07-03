@@ -137,6 +137,8 @@ public class MapsActivity extends ActionBarActivity {
             m2Http = new M2Http(this);
            // m2Http.postData();
         }
+        //todo  авторизация на навазоне
+       // new NaviZone().init();
 
         try {
             MapsInitializer.initialize(getApplicationContext());
