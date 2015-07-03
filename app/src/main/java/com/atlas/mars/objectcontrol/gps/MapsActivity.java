@@ -462,6 +462,7 @@ public class MapsActivity extends ActionBarActivity {
             @Override
             public URL getTileUrl(int x, int y, int zoom) {
                 String s;
+
                 switch (mapName){
                     case "mapQuest":
                         s = String.format("http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png", zoom, x, y);

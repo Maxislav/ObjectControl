@@ -3,6 +3,7 @@
 
 
     <string name="app_name" translatable="false">AnyControl</string>
+    <string name="app_error" translatable="false">AnyControl ERROR</string>
     <string name="create_command">Create command</string>
     <string name="create_object">Create object</string>
     <string name="hello_world">Hello world!</string>

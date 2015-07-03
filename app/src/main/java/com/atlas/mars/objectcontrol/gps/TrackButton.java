@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +39,7 @@ import java.util.List;
  */
 public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongClickListener, PopupMenu.OnMenuItemClickListener {
     private final String TAG = "myLog";
+    InflateRoteMenu menu;
     MapsActivity mapsActivity;
     ImageButton btnTrack;
     LinearLayout layoutRouteType;
@@ -62,11 +62,14 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         this.mapsActivity = mapsActivity;
         this.btnTrack = btnTrack;
         this.mMap = mMap;
+        menu = new InflateRoteMenu(mapsActivity, this);
+
         listMarkerPoints = new ArrayList<>();
         listPolylineTrack = new ArrayList<>();
         btnTrack.setOnClickListener(this);
         db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
+        listRouteType = new ArrayList<>();
         if (mapSetting.get("startTrackDraw") == null) {
             mapSetting.put("startTrackDraw", "current");
             db.setSetting(mapSetting);
@@ -134,12 +137,56 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
         }
     }
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case (R.id.loadFromCd):
+                OpenFileDialog fileDialog = new OpenFileDialog(mapsActivity);
+                mapsActivity.toastShow("JSON format only");
+                fileDialog.show();
+                return true;
+            case (R.id.createRoute):
+                menu.showRouteType();
+                menu.showRouteMenu();
+                menu.showRouteStartEnd();
+                mMap.setOnMapLongClickListener(this);
+                return true;
+            case (R.id.trackList):
+                Intent questionIntent;
+                questionIntent = new Intent(mapsActivity, TrackListActivity.class);
+                mapsActivity.startActivityForResult(questionIntent, 1);
+                return true;
+            case (R.id.current):
+                item.setChecked(true);
+                mapSetting.put("startTrackDraw", "current");
+                db.setSetting(mapSetting);
+                return true;
+            case (R.id.handStart):
+                item.setChecked(true);
+                mapSetting.put("startTrackDraw", "hand");
+                db.setSetting(mapSetting);
+                return true;
+            case R.id.selectObject:
+                toObject = true;
+                if (mapSetting.get("startTrackDraw").equals("hand") && listMarkerPoints.size() < 1) {
+                    toastShow("Are necessary select start point");
+                    return true;
+                }
+                mapsActivity.showListObgects();
+                return true;
+        }
+        return false;
+    }
+
+    protected void offLongClickListener(){
+        mMap.setOnMapLongClickListener(null);
+    }
 
 
-    private void setActiveRouteType(LinearLayout layout) {
+    public void setActiveRouteType(LinearLayout layout) {
         for (LinearLayout _layout : listRouteType) {
             if (_layout == layout) {
-                _layout.setBackgroundResource(R.color.activeRouteType);
+                _layout.setBackground(mapsActivity.getResources().getDrawable(R.drawable.background_select));
             } else {
                 _layout.setBackground(null);
             }
@@ -148,26 +195,36 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     private void inflateLayoutRouteType() {
         LayoutInflater layoutInflater = mapsActivity.getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.route_type, null, false);
-        FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
-        layoutRouteType = (LinearLayout) view;
-        frameLayout.addView(layoutRouteType);
-        float density = mapsActivity.getResources().getDisplayMetrics().density;
-        float width = mapsActivity.getResources().getDisplayMetrics().density * 160;
-        float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
-        layoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
-        layoutRouteType.setLayoutParams(layoutParams);
 
-        view = layoutInflater.inflate(R.layout.route_menu, null, false);
-        layoutRouteMenu = (LinearLayout) view;
+
+
+       /* View view = layoutInflater.inflate(R.layout.route_type, null, false);
+        FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
+        layoutRouteType = (LinearLayout) view;*/
+       // frameLayout.addView(layoutRouteType);
+        //float density = mapsActivity.getResources().getDisplayMetrics().density;
+        //float width = mapsActivity.getResources().getDisplayMetrics().density * 160;
+        //float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
+        //FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
+        //layoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
+       // layoutRouteType.setLayoutParams(layoutParams);
+
+
+        FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
+       // View view = layoutInflater.inflate(R.layout.route_menu, null, false);
+        float density = mapsActivity.getResources().getDisplayMetrics().density;
+
+       /* layoutRouteMenu = (LinearLayout) view;
         frameLayout.addView(layoutRouteMenu);
+        float width = mapsActivity.getResources().getDisplayMetrics().density * 200;
+        float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
+
         FrameLayout.LayoutParams layoutParamsMenu = new FrameLayout.LayoutParams((int) width, (int) height);
         layoutParamsMenu.gravity = Gravity.TOP | Gravity.CENTER;
-        layoutRouteMenu.setLayoutParams(layoutParamsMenu);
+        layoutRouteMenu.setLayoutParams(layoutParamsMenu);*/
 
 
-        layoutStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
+       /* layoutStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
         LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (50 * density), (int) (100 * density));
         layoutStartEndParams.gravity = Gravity.TOP | Gravity.LEFT;
         layoutStartEnd.setLayoutParams(layoutStartEndParams);
@@ -175,29 +232,28 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         layoutStartEnd.findViewById(R.id.toPoint).setOnClickListener(this);
 
 
-        frameLayout.addView(layoutStartEnd);
+        frameLayout.addView(layoutStartEnd);*/
 
 
-        listRouteType = new ArrayList<>();
-        LinearLayout layoutCar = (LinearLayout) layoutRouteType.findViewById(R.id.car);
+
+       /* LinearLayout layoutCar = (LinearLayout) layoutRouteType.findViewById(R.id.car);
         LinearLayout layoutMoto = (LinearLayout) layoutRouteType.findViewById(R.id.moto);
         LinearLayout layoutVelo = (LinearLayout) layoutRouteType.findViewById(R.id.velo);
         LinearLayout layoutHand = (LinearLayout) layoutRouteType.findViewById(R.id.hand);
         listRouteType.add(layoutCar);
         listRouteType.add(layoutMoto);
         listRouteType.add(layoutVelo);
-        listRouteType.add(layoutHand);
+        listRouteType.add(layoutHand);*/
 
-        LinearLayout lSave = (LinearLayout) layoutRouteMenu.findViewById(R.id.save);
-        lSave.setOnClickListener(this);
+      /*  layoutRouteMenu.findViewById(R.id.save).setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.back).setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.closePath).setOnClickListener(this);
         layoutRouteMenu.findViewById(R.id.delTrack).setOnClickListener(this);
-
-        for (LinearLayout layout : listRouteType) {
+*/
+       /* for (LinearLayout layout : listRouteType) {
             layout.setOnClickListener(this);
-        }
-        String mapRouteType = mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE);
+        }*/
+        /*String mapRouteType = mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE);
         if (mapRouteType == null) {
             setActiveRouteType(layoutCar);
             mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "car");
@@ -217,7 +273,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                     setActiveRouteType(layoutHand);
                     break;
             }
-        }
+        }*/
     }
 
     private void showPopupMenu(View v) {
@@ -331,6 +387,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                     .color(mapsActivity.getResources().getColor(R.color.colorTrack)));
             polyTrack.setZIndex(2.0f);
             listPolylineTrack.add(polyTrack);
+            if(menu.routeMenu == null || !menu.routeMenu.isShown()){
+                menu.showRouteMenu();
+            }
         }
     }
 
@@ -340,46 +399,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         // db.setSetting(mapSetting);
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case (R.id.loadFromCd):
-                OpenFileDialog fileDialog = new OpenFileDialog(mapsActivity);
-                mapsActivity.toastShow("JSON format only");
-                fileDialog.show();
-                return true;
-            case (R.id.createRoute):
-                if (layoutRouteType == null) {
-                    inflateLayoutRouteType();
-                }
-                mMap.setOnMapLongClickListener(this);
-                return true;
-            case (R.id.trackList):
-                Intent questionIntent;
-                questionIntent = new Intent(mapsActivity, TrackListActivity.class);
-                mapsActivity.startActivityForResult(questionIntent, 1);
-                return true;
-            case (R.id.current):
-                item.setChecked(true);
-                mapSetting.put("startTrackDraw", "current");
-                db.setSetting(mapSetting);
-                return true;
-            case (R.id.handStart):
-                item.setChecked(true);
-                mapSetting.put("startTrackDraw", "hand");
-                db.setSetting(mapSetting);
-                return true;
-            case R.id.selectObject:
-                toObject = true;
-                if (mapSetting.get("startTrackDraw").equals("hand") && listMarkerPoints.size() < 1) {
-                    toastShow("Are necessary select start point");
-                    return true;
-                }
-                mapsActivity.showListObgects();
-                return true;
-        }
-        return false;
-    }
 
 
     class GetFromServer extends MapQuest {
