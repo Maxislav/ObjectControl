@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -193,88 +191,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
     }
 
-    private void inflateLayoutRouteType() {
-        LayoutInflater layoutInflater = mapsActivity.getLayoutInflater();
 
-
-
-       /* View view = layoutInflater.inflate(R.layout.route_type, null, false);
-        FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
-        layoutRouteType = (LinearLayout) view;*/
-       // frameLayout.addView(layoutRouteType);
-        //float density = mapsActivity.getResources().getDisplayMetrics().density;
-        //float width = mapsActivity.getResources().getDisplayMetrics().density * 160;
-        //float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
-        //FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
-        //layoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
-       // layoutRouteType.setLayoutParams(layoutParams);
-
-
-        FrameLayout frameLayout = (FrameLayout) mapsActivity.findViewById(R.id.globalLayout);
-       // View view = layoutInflater.inflate(R.layout.route_menu, null, false);
-        float density = mapsActivity.getResources().getDisplayMetrics().density;
-
-       /* layoutRouteMenu = (LinearLayout) view;
-        frameLayout.addView(layoutRouteMenu);
-        float width = mapsActivity.getResources().getDisplayMetrics().density * 200;
-        float height = mapsActivity.getResources().getDisplayMetrics().density * 40;
-
-        FrameLayout.LayoutParams layoutParamsMenu = new FrameLayout.LayoutParams((int) width, (int) height);
-        layoutParamsMenu.gravity = Gravity.TOP | Gravity.CENTER;
-        layoutRouteMenu.setLayoutParams(layoutParamsMenu);*/
-
-
-       /* layoutStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
-        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (50 * density), (int) (100 * density));
-        layoutStartEndParams.gravity = Gravity.TOP | Gravity.LEFT;
-        layoutStartEnd.setLayoutParams(layoutStartEndParams);
-        layoutStartEnd.findViewById(R.id.fromPoint).setOnClickListener(this);
-        layoutStartEnd.findViewById(R.id.toPoint).setOnClickListener(this);
-
-
-        frameLayout.addView(layoutStartEnd);*/
-
-
-
-       /* LinearLayout layoutCar = (LinearLayout) layoutRouteType.findViewById(R.id.car);
-        LinearLayout layoutMoto = (LinearLayout) layoutRouteType.findViewById(R.id.moto);
-        LinearLayout layoutVelo = (LinearLayout) layoutRouteType.findViewById(R.id.velo);
-        LinearLayout layoutHand = (LinearLayout) layoutRouteType.findViewById(R.id.hand);
-        listRouteType.add(layoutCar);
-        listRouteType.add(layoutMoto);
-        listRouteType.add(layoutVelo);
-        listRouteType.add(layoutHand);*/
-
-      /*  layoutRouteMenu.findViewById(R.id.save).setOnClickListener(this);
-        layoutRouteMenu.findViewById(R.id.back).setOnClickListener(this);
-        layoutRouteMenu.findViewById(R.id.closePath).setOnClickListener(this);
-        layoutRouteMenu.findViewById(R.id.delTrack).setOnClickListener(this);
-*/
-       /* for (LinearLayout layout : listRouteType) {
-            layout.setOnClickListener(this);
-        }*/
-        /*String mapRouteType = mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE);
-        if (mapRouteType == null) {
-            setActiveRouteType(layoutCar);
-            mapSetting.put(DataBaseHelper.MAP_ROUTE_TYPE, "car");
-            db.setSetting(mapSetting);
-        } else {
-            switch (mapRouteType) {
-                case "car":
-                    setActiveRouteType(layoutCar);
-                    break;
-                case "moto":
-                    setActiveRouteType(layoutMoto);
-                    break;
-                case "velo":
-                    setActiveRouteType(layoutVelo);
-                    break;
-                case "hand":
-                    setActiveRouteType(layoutHand);
-                    break;
-            }
-        }*/
-    }
 
     private void showPopupMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(mapsActivity, v);
@@ -311,7 +228,17 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
             String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
             String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
-            getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+
+            if(mapSetting.get(db.MAP_ROUTE_TYPE).equals("hand")){
+                LatLng[] latLngs = new LatLng[2];
+                latLngs[0] = new LatLng(from.getPosition().latitude, from.getPosition().longitude);
+                latLngs[1] = new LatLng(to.getPosition().latitude, to.getPosition().longitude);
+                drawPoly(latLngs);
+            }else{
+                getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+            }
+
+
             return;
         }
 
@@ -324,9 +251,21 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
             String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
             String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
-            getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+
+            if(mapSetting.get(db.MAP_ROUTE_TYPE).equals("hand")) {
+                LatLng[] latLngs = new LatLng[2];
+                latLngs[0] = new LatLng(from.getPosition().latitude, from.getPosition().longitude);
+                latLngs[1] = new LatLng(to.getPosition().latitude, to.getPosition().longitude);
+                drawPoly(latLngs);
+            }else{
+                getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+            }
+
+
             return;
         }
+
+
     }
 
     private void stepBack() {
