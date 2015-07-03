@@ -260,8 +260,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             }else{
                 getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
             }
-
-
             return;
         }
 
@@ -293,8 +291,16 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         toastShow("Accept: " + round(to.getPosition().latitude, 4) + "; " + round(to.getPosition().longitude, 4));
         String strFrom = String.valueOf(from.getPosition().latitude) + "," + String.valueOf(from.getPosition().longitude);
         String strTo = String.valueOf(to.getPosition().latitude) + "," + String.valueOf(to.getPosition().longitude);
+        if(mapSetting.get(db.MAP_ROUTE_TYPE).equals("hand")) {
+            LatLng[] latLngs = new LatLng[2];
+            latLngs[0] = new LatLng(from.getPosition().latitude, from.getPosition().longitude);
+            latLngs[1] = new LatLng(to.getPosition().latitude, to.getPosition().longitude);
+            drawPoly(latLngs);
+        }else{
+            getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+        }
 
-        getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
+
     }
 
     private void delTrack() {
