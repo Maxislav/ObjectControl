@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+
     android:id="@+id/globalLayout"
     android:orientation="vertical">
 
@@ -10,16 +13,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ImageButton
-        android:id="@+id/btnList"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/list" />
-
     <LinearLayout
         android:id="@+id/listContainer"
         android:layout_width="250dp"
@@ -46,8 +39,6 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
         android:background="@drawable/target" />
 
     <ImageButton
@@ -55,16 +46,14 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="95dp"
+        android:layout_marginTop="45dp"
         android:background="@drawable/bitmap_nord" />
     <ImageButton
         android:id="@+id/btnTrack"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="90dp"
         android:background="@drawable/bitmap_track_show" />
 
     <ImageButton
@@ -72,9 +61,26 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="185dp"
+        android:layout_marginTop="135dp"
         android:background="@drawable/bitmap_layers" />
 
 
+
+    <ImageButton
+        android:id="@+id/btnList"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="180dp"
+        android:background="@drawable/list" />
+
+    <fragment
+        android:id="@+id/fragment_zoom"
+        android:name="com.atlas.mars.objectcontrol.gps.FragmentZoomControl"
+        android:layout_width="40dp"
+        android:layout_height="80dp"
+        android:clickable="true"
+
+        android:layout_gravity="bottom|end"
+        tools:layout="@layout/fragment_zoom" />
 </FrameLayout>

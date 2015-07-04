@@ -56,7 +56,8 @@
     <item name="colorDelivered" type="color">#e9008d12</item>
     <item name="colorCircle" type="color">#e972dfe7</item>
 
-    <item name="targetBack" type="color">#693e4245</item>
+    <item name="targetBack" type="color">#a8b7b7b7</item>
+    <item name="targetBackPress" type="color">#a87c7c7c</item>
     <item name="fillColorAccuracy" type="color">#1b13b9ff</item>
     <item name="strokeColorAccuracy" type="color">#8c1083ff</item>
 

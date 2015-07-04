@@ -52,7 +52,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MapsActivity extends ActionBarActivity {
+public class MapsActivity extends ActionBarActivity implements FragmentZoomControl.OnClickListener {
 
     DisplayMetrics displayMetrics;
     public DataBaseHelper dataBaseHelper;
@@ -87,6 +87,7 @@ public class MapsActivity extends ActionBarActivity {
     private HashMap<String, HashMap> hashMapCollection;
     public HashMap<String, String> mapSetting;
     TrackButton trackButton;
+    FragmentZoomControl fragmentZoomControl;
     private int countObj = 0;
     /***
      * Тип карты
@@ -131,6 +132,8 @@ public class MapsActivity extends ActionBarActivity {
         hashViewRow = new HashMap<>();
         hashPopup = new HashMap<>();
         hashMapCollection = new HashMap<>();
+
+        fragmentZoomControl = new FragmentZoomControl();
 
         // Log.d(TAG, "haveNetworkConnection +++ "+ haveNetworkConnection());
         if (haveNetworkConnection()) {
@@ -278,12 +281,6 @@ public class MapsActivity extends ActionBarActivity {
             trackButton.addMarker(latLngs[latLngs.length-1]);
         }
 
-        /*Polyline line = mMap.addPolyline(new PolylineOptions()
-                .add(mytrack.getTrack())
-                .width(5)
-                .color(Color.BLUE));
-        line.setZIndex(2.0f);*/
-        //return null;
     }
 
     protected void setClickListenerImgBearing(final ImageView img) {
@@ -339,45 +336,9 @@ public class MapsActivity extends ActionBarActivity {
                     return;
                 }
                 if (listContainer.isShown()) {
-
                     hideListObject();
-
-                  /*  aniOut.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            listContainer.setVisibility(View.INVISIBLE);
-                            mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    listContainer.startAnimation(aniOut);*/
                 } else {
                     showListObgects();
-                   /* animIn.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            listContainer.setVisibility(View.VISIBLE);
-                            mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
-                        }
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            //btnList.setVisibility(View.INVISIBLE);
-                        }
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    listContainer.startAnimation(animIn);*/
                 }
             }
         });
@@ -600,38 +561,9 @@ public class MapsActivity extends ActionBarActivity {
         if(strZoom!=null){
             zoom = Float.parseFloat(strZoom);
         }
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startPos, zoom));
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-        mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setOnCameraChangeListener(mOnCameraChangeListener);
-
-        // MapView mapView = (MapView)findViewById(R.id.map);
-
-        /*mMap.addMarker(new MarkerOptions().position(kiev).title("Home").flat(true)
-                .anchor(0.5f,0.5f)
-                .alpha(0.7f)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));*/
-
-
-
-
-         /*mMap.addMarker(new MarkerOptions().position(kiev).title("Melbourne")
-
-        LatLng MELBOURNE = new LatLng(-37.813, 144.962);
-         Marker melbourne = mMap.addMarker(new MarkerOptions()
-
-                .title("Melbourne")
-                .snippet("Population: 4,137,400")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_minus))
-                 .position(kiev));
-
-//Todo поворот карты
-/*
-        CameraPosition oldPos = mMap.getCameraPosition();
-        CameraPosition pos = CameraPosition.builder(oldPos).bearing(45.0f).build();
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
-*/
     }
 
 
@@ -778,6 +710,28 @@ public class MapsActivity extends ActionBarActivity {
         hashPopup.get(id).remove();
         drawIcon(map);
     }
+
+    @Override
+    public void onItemSelected(View v) {
+        CameraPosition oldPos = mMap.getCameraPosition();
+        CameraPosition pos;
+        Log.d(TAG,"+++ zoom in out");
+        float zoom = oldPos.zoom;
+        switch (v.getId()){
+            case R.id.zoomIn:
+                zoom++;
+                pos = CameraPosition.builder(oldPos).zoom(zoom).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300,MyCancelableCallback );
+                break;
+            case R.id.zoomOut:
+                zoom--;
+                pos = CameraPosition.builder(oldPos).zoom(zoom).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300,MyCancelableCallback );
+                break;
+        }
+
+    }
+
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         public MarkerInfoWindowAdapter (){
