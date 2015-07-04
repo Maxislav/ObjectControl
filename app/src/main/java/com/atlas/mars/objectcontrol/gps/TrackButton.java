@@ -140,7 +140,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         switch (item.getItemId()) {
             case (R.id.loadFromCd):
                 OpenFileDialog fileDialog = new OpenFileDialog(mapsActivity);
-                mapsActivity.toastShow("JSON format only");
                 fileDialog.show();
                 return true;
             case (R.id.createRoute):
@@ -201,6 +200,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     }
 
     public void addMarker(LatLng latLng) {
+
         Marker trackPointMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))

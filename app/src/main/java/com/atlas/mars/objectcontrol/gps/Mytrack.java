@@ -1,13 +1,24 @@
 package com.atlas.mars.objectcontrol.gps;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Array;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Администратор on 6/14/15.
@@ -20,8 +31,53 @@ public class Mytrack {
         LoadFile loadFile= new LoadFile(path);
         TRACK = loadFile.getText();
     }
+    public LatLng[] getTrack(){
+        LatLng[] latLngs = new LatLng[0];
+        return pareGpx();
+    }
 
-    public LatLng[] getTrack() {
+    public LatLng[] pareGpx() {
+        LatLng[] latLngs = new LatLng[0];
+        try {
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(TRACK));
+            Document doc = db.parse(is);
+            NodeList trkseg = doc.getElementsByTagName("trkseg");
+            int i = 0, k =0, count=0;
+            for (i = 0; i < trkseg.getLength(); i++){
+                Element element = (Element) trkseg.item(i);
+                NodeList trkpt = element.getElementsByTagName("trkpt");
+                for(k = 0; k<trkpt.getLength(); k++){
+                   count++;
+                }
+            }
+            latLngs = new LatLng[count];
+            count=0;
+            for (i = 0; i < trkseg.getLength(); i++) {
+                Element element = (Element) trkseg.item(i);
+                NodeList trkpt = element.getElementsByTagName("trkpt");
+                for(k = 0; k<trkpt.getLength(); k++){
+                    Element ff = (Element) trkpt.item(k);
+                    String lat =  ff.getAttribute("lat");
+                    String lng =  ff.getAttribute("lon");
+                    latLngs[count] = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
+                    count ++;
+                    Log.d("myLog", lat+" : " + lng);
+                }
+            }
+
+        }catch (Exception e){
+            Log.e("myLog", "pareGpx +++ " + e.toString(), e);
+        }
+
+
+
+
+        return latLngs;
+    }
+
+    public LatLng[] _getTrack() {
         LatLng[] latLngs = new LatLng[0];
         ObjectNode root = null;
         try {

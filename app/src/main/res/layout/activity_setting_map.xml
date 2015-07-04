@@ -46,8 +46,8 @@
                         android:layout_margin="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:entries="@array/array_servers"
-                        android:prompt="@string/list_servers_title"></Spinner>
+
+                      ></Spinner>
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent">

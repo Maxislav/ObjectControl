@@ -277,7 +277,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
         if(trackButton!=null){
             LatLng[] latLngs = mytrack.getTrack();
+            if(latLngs.length<2){
+                return;
+            }
             trackButton.drawPoly(latLngs);
+
             trackButton.addMarker(latLngs[0]);
             trackButton.addMarker(latLngs[latLngs.length-1]);
         }
