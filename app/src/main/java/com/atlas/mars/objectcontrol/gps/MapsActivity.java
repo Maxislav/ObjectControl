@@ -169,6 +169,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+
     }
 
     @Override

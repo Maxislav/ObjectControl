@@ -83,4 +83,6 @@
 
         android:layout_gravity="bottom|end"
         tools:layout="@layout/fragment_zoom" />
+
+
 </FrameLayout>

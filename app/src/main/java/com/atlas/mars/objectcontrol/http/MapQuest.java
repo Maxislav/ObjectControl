@@ -3,6 +3,7 @@ package com.atlas.mars.objectcontrol.http;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.atlas.mars.objectcontrol.gps.LoaderBar;
 import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import java.io.BufferedInputStream;
@@ -28,12 +29,14 @@ public class MapQuest {
     FromMapQuest au;
     URLConnection urlConnection;
     List<FromMapQuest> listFromMapQuest;
+    LoaderBar loader;
 
 
     public MapQuest(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         listFromMapQuest = new ArrayList<>();
         urlConnection = null;
+        loader = new LoaderBar(mapsActivity);
 
     }
 
@@ -107,8 +110,15 @@ public class MapQuest {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loader.show();
+        }
+
+        @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            loader.hide();
             if(!onCancel) onCallBack(result);
         }
         @Override
