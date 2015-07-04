@@ -148,7 +148,7 @@ public class InflateRoteMenu implements View.OnClickListener {
     private void inflateStartEnd() {
         routeStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
         routeStartEnd.setVisibility(View.INVISIBLE);
-        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (50 * density), (int) (100 * density));
+        LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (40 * density), (int) (100 * density));
         layoutStartEndParams.gravity = Gravity.TOP | Gravity.LEFT;
         routeStartEnd.setLayoutParams(layoutStartEndParams);
         routeStartEnd.findViewById(R.id.fromPoint).setOnClickListener(trackButton);
