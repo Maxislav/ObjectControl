@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.M2Http;
+import com.atlas.mars.objectcontrol.http.OkoServ;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -142,6 +143,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
         //todo  авторизация на навазоне
        // new NaviZone().init();
+        //todo  авторизация на Oko
+        //new OkoServ().init();
 
         try {
             MapsInitializer.initialize(getApplicationContext());
