@@ -121,13 +121,13 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         LOGIN = edTextServerLogin.getText().toString();
         PASS = edTextServerPass.getText().toString();
 
-        if(URL!=null && !URL.isEmpty()){
+        if(URL!=null){
             mapSetting.put(db.MAP_SERVER_URL, URL);
         }
-        if(LOGIN!=null && !LOGIN.isEmpty()){
+        if(LOGIN!=null){
             mapSetting.put(db.MAP_LOGIN, LOGIN);
         }
-        if(PASS!=null && !PASS.isEmpty()){
+        if(PASS!=null){
             mapSetting.put(db.MAP_PASS, PASS);
         }
         db.setSetting(mapSetting);
@@ -136,7 +136,7 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            toastShow(position+"");
+          //  toastShow(position+"");
     }
 
     @Override
