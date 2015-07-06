@@ -27,7 +27,7 @@ public class MapQuest {
     private static final String LOGGER_TAG = "routing";
     FromMapQuest au;
     URLConnection urlConnection;
-    List<FromMapQuest> listFromMapQuest;
+    static List<FromMapQuest> listFromMapQuest;
 
 
     public MapQuest(MapsActivity mapsActivity) {
