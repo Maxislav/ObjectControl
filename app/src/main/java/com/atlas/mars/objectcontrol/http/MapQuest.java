@@ -33,7 +33,7 @@ public class MapQuest {
     private static final String TAG = "routing";
     FromMapQuest au;
     URLConnection urlConnection;
-    List<FromMapQuest> listFromMapQuest;
+    static List<FromMapQuest> listFromMapQuest;
     LoaderBar loader;
 
 

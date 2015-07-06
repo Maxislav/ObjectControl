@@ -298,7 +298,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             drawPoly(latLngs);
         }else{
             if(getFromServer == null){
-                new GetFromServer(mapsActivity);
+                getFromServer = new GetFromServer(mapsActivity);
             }
             getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
         }
