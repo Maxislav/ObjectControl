@@ -89,7 +89,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public HashMap<String, String> mapSetting;
     TrackButton trackButton;
     FragmentZoomControl fragmentZoomControl;
-    private int countObj = 0;
+    public int countObj = 0;
     /***
      * Тип карты
      */
@@ -339,13 +339,17 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(countObj<1){
+               /* if(countObj<1){
                     toastShow("Empty list objects");
                     return;
-                }
+                }*/
                 if (listContainer.isShown()) {
                     hideListObject();
                 } else {
+                    if(countObj<1){
+                        toastShow("Empty list objects");
+                        return;
+                    }
                     showListObgects();
                 }
             }

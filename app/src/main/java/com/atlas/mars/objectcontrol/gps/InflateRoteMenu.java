@@ -88,7 +88,7 @@ public class InflateRoteMenu implements View.OnClickListener {
         View view = layoutInflater.inflate(R.layout.route_type, null, false);
         routeType = (LinearLayout) view;
         routeType.setVisibility(View.INVISIBLE);
-        globalLayout.addView(routeType);
+        globalLayout.addView(routeType, 1);
         width = activity.getResources().getDisplayMetrics().density * 160;
         height = activity.getResources().getDisplayMetrics().density * 40;
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
@@ -132,7 +132,7 @@ public class InflateRoteMenu implements View.OnClickListener {
         View view = layoutInflater.inflate(R.layout.route_menu, null, false);
         routeMenu = (LinearLayout) view;
         routeMenu.setVisibility(View.INVISIBLE);
-        globalLayout.addView(routeMenu);
+        globalLayout.addView(routeMenu, 1);
         float width = density * 200;
         float height = density * 40;
         FrameLayout.LayoutParams layoutParamsMenu = new FrameLayout.LayoutParams((int) width, (int) height);
@@ -153,7 +153,7 @@ public class InflateRoteMenu implements View.OnClickListener {
         routeStartEnd.setLayoutParams(layoutStartEndParams);
         routeStartEnd.findViewById(R.id.fromPoint).setOnClickListener(trackButton);
         routeStartEnd.findViewById(R.id.toPoint).setOnClickListener(trackButton);
-        globalLayout.addView(routeStartEnd);
+        globalLayout.addView(routeStartEnd, 1);
 
     }
 

@@ -127,6 +127,10 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 popupMenu.show();
                 break;
             case R.id.toPoint:
+                if(mapsActivity.countObj<1){
+                    toastShow("Empty list objects. Select end point on map.");
+                    return;
+                }
                 popupMenu = new PopupMenu(mapsActivity, v);
                 popupMenu.inflate(R.menu.menu_end_point);
                 popupMenu.setOnMenuItemClickListener(this);
