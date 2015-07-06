@@ -30,6 +30,7 @@
 
     <string-array name="array_servers">
         <item>M2 gps-tracker.com.ua</item>
+        <item>NaviZone navi.zone</item>
     </string-array>
 
     <string name="multiple_send_help">Позволяет выбрать несколько команд</string>

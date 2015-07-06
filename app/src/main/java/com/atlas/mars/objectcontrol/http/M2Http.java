@@ -114,7 +114,7 @@ public class M2Http {
     }
 
     private void getPoints(){
-        Log.d(TAG, "Http Post Response2: +++ ");
+        Log.d(TAG, "Http Post: +++ ");
         GetPoints mt = new GetPoints(mapsActivity);
         mt.execute(mapSetting.get(db.MAP_SERVER_URL) + "/loadevents.php?param=icars");
     }
@@ -222,19 +222,24 @@ public class M2Http {
 
 
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
-                cookiesHeader = headers.get("Set-Cookie");
+                if(headers!=null && 0<headers.size()){
+                    cookiesHeader = headers.get("Set-Cookie");
+                    Scanner inStream = new Scanner(urlConnection.getInputStream());
+                    while(inStream.hasNextLine()){
+                        response+=(inStream.nextLine());
+                    }
+                    int statusCode = urlConnection.getResponseCode();
+                    if (statusCode != HttpURLConnection.HTTP_OK) {
+                        isAuth = false;
+                        // throw some exception
+                    }
+                }
 
-                Scanner inStream = new Scanner(urlConnection.getInputStream());
-                while(inStream.hasNextLine()){
-                    response+=(inStream.nextLine());
-                }
-                int statusCode = urlConnection.getResponseCode();
-                if (statusCode != HttpURLConnection.HTTP_OK) {
-                    // throw some exception
-                }
+
 
 
             } catch (IOException e) {
+                isAuth = false;
                 e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
@@ -264,6 +269,8 @@ public class M2Http {
             if(res){
                 isAuth = true;
                 getPoints();
+            }else{
+              isAuth = false;
             }
         }
 

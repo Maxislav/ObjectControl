@@ -10,19 +10,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
 import com.squareup.phrase.Phrase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by mars on 5/5/15.
  */
-public class SettingMapActivity extends ActionBarActivity{
+public class SettingMapActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
     String web;
     Spinner spinner;
     DataBaseHelper db;
@@ -62,10 +66,27 @@ public class SettingMapActivity extends ActionBarActivity{
         serverUrl = (EditText)findViewById(R.id.serverUrl);
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
+
+       /* List<String> SpinnerArray = new ArrayList<String>();
+        SpinnerArray.add("Item 1");
+        SpinnerArray.add("Item 2");
+        SpinnerArray.add("Item 3");
+        SpinnerArray.add("Item 4");
+        SpinnerArray.add("Item 5");*/
+
+
+
         spinner = (Spinner)findViewById(R.id.spinner);
-       // mapSetting = new HashMap<>();
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_servers, android.R.layout.simple_spinner_item);
+
+      //  ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, SpinnerArray);
+      //  adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(0);
         db = new DataBaseHelper(this);
-      //  db.getSetting(mapSetting);
         LOGIN = mapSetting.get(db.MAP_LOGIN);
         PASS = mapSetting.get(db.MAP_PASS);
         URL = mapSetting.get(db.MAP_SERVER_URL);
@@ -81,17 +102,7 @@ public class SettingMapActivity extends ActionBarActivity{
         }
         web = getString(R.string.web);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         onDraw();
     }
     private void onDraw(){
@@ -110,18 +121,29 @@ public class SettingMapActivity extends ActionBarActivity{
         LOGIN = edTextServerLogin.getText().toString();
         PASS = edTextServerPass.getText().toString();
 
-        if(URL!=null && !URL.isEmpty()){
+        if(URL!=null){
             mapSetting.put(db.MAP_SERVER_URL, URL);
         }
-        if(LOGIN!=null && !LOGIN.isEmpty()){
+        if(LOGIN!=null){
             mapSetting.put(db.MAP_LOGIN, LOGIN);
         }
-        if(PASS!=null && !PASS.isEmpty()){
+        if(PASS!=null){
             mapSetting.put(db.MAP_PASS, PASS);
         }
         db.setSetting(mapSetting);
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          //  toastShow(position+"");
+    }
 
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+    public void toastShow(String str) {
+        Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
+    }
 }
