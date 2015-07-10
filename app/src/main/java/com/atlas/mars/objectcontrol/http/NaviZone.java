@@ -4,6 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -35,28 +39,38 @@ public class NaviZone {
     HashMap<String, String> mapSetting;
     String cookies;
     List<HashMap<String, String>> listCoocies;
+    List<String> idDevs;
+    boolean recursy = false;
+    MyTcp2 myTcp2;
 
 
     public NaviZone() {
         mapSetting = DataBaseHelper.hashSetting;
+        idDevs = new ArrayList<>();
     }
 
     public void init() {
-        //PhpSess au = new PhpSess();
-        //au.execute(mapSetting.get(DataBaseHelper.MAP_LOGIN), mapSetting.get(DataBaseHelper.MAP_PASS), mapSetting.get(DataBaseHelper.MAP_SERVER_URL));
-        //tryAuth();
-
         new MyTcp().execute();
     }
 
-    public void tryAuth() {
+    private void getDevices() {
+      /*  synchronized (myTcp2) {
+
+        }*/
+        myTcp2 = new MyTcp2();
+        myTcp2.execute();
+
+    }
+
+  /*  public void tryAuth() {
         Auth au = new Auth();
         au.execute(mapSetting.get(DataBaseHelper.MAP_LOGIN), mapSetting.get(DataBaseHelper.MAP_PASS), mapSetting.get(DataBaseHelper.MAP_SERVER_URL));
-    }
+    }*/
 
     class MyTcp extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            String resline = null;
             try {
                 String sentence;
                 String modifiedSentence;
@@ -68,8 +82,6 @@ public class NaviZone {
                 //sentence = "POST /data/login?login=max&password=demo HTTP/1.0\n" +"host: 192.168.126.73\n\n\n";
                 //sentence = "\r\nPOST /user/login?email=lmaxim%40mail.ru&password=gliderman&submit= HTTP/1.0\n" +
                 sentence = "" +
-
-
                         "POST /user/login HTTP/1.1\n" +
                         "Host: navi.zone\n" +
                         "Connection: keep-alive\n" +
@@ -86,6 +98,7 @@ public class NaviZone {
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Connection: keep-alive\n" +
                         "Host: navi.zone\r\n\r\n";
+
                 sentence += "email=lmaxim%40mail.ru&password=gliderman&submit=";
 
                 outToServer.writeBytes(sentence);
@@ -95,87 +108,262 @@ public class NaviZone {
 
                 String line = "";
                 while ((line = inFromServer.readLine()) != null) {
-                    //str.match(/[^\=]+$/)
                     stringBuilder.append(line + "\n");
                     Pattern pattern = Pattern.compile("^(Set-Cookie:).+$");
                     Matcher matcher = pattern.matcher(line);
                     while (matcher.find()) {
                         String match = matcher.group();
                         cookies = match.replaceAll("^Set-Cookie:\\s", "");
-                        logTrace("+++ COOKIES: " + cookies);
                         listCoocies = setCoocies(cookies);
-
                     }
                 }
-
-                // modifiedSentence = inFromServer.readLine();
-                //System.out.println("FROM SERVER: " + modifiedSentence);
+                resline = stringBuilder.toString();
                 clientSocket.close();
-                logTrace("\r\nAUTH: \r\n" + stringBuilder.toString());
 
             } catch (Exception e) {
-                Log.e(TAG, "Auth +++ " + e.toString(), e);
-                // Log.e(TAG, "Auth +++ "+   Log.getStackTraceString(e));
+                Log.e(TAG, "Auth Exception +++ " + e.toString(), e);
             }
-            return null;
+            return resline;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            new MyTcp2().execute();
+            logTrace("\nAUTH RESPONSE  \n" + result);
+            getDevices();
         }
     }
 
     class MyTcp2 extends AsyncTask<String, Void, String> {
+        Socket clientSocket;
+
+        MyTcp2() {
+            super();
+
+
+        }
+
+
         @Override
         protected String doInBackground(String... params) {
             String resp = "";
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Log.e(TAG, "InterruptedException +++ " + e.toString(), e);
-            }
+
+
+
+
             try {
                 String sentence;
-                Socket clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
+                clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
-                        "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n" +
-                        //  "Cookie: "+ "PHPSESSID=ui1l1u96336a6hlbluisa9gvv7\n"+
-                        "host: navi.zone\n\n\n";
-                sentence += "\n";
-                logTrace("PHPSESSID=" + getCookie("PHPSESSID", listCoocies));
+                // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
+                sentence = "" +
+                        "POST /map/devices HTTP/1.0\n"
+                        + "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n"
+                        + "host: navi.zone\n";
+                sentence += "\r\n\r\n";
+                //  logTrace("PHPSESSID=" + getCookie("PHPSESSID", listCoocies));
+
+               // outToServer.writeUTF(sentence); // отсылаем введенную строку текста серверу.
+                //outToServer.flush();
                 outToServer.writeBytes(sentence);
+                outToServer.flush();
+
 
                 StringBuilder stringBuilder = new StringBuilder();
 
 
                 String line = "";
+                boolean head = true;
                 while ((line = inFromServer.readLine()) != null) {
-                    stringBuilder.append(line + "\n");
+                    if (line.isEmpty()) {
+                        head = false;
+                    }
+                    if (!head) {
+                        stringBuilder.append(line + "\n");
+                    }
                 }
-
-
+                outToServer.close();
                 clientSocket.close();
+//                clientSocket.shutdownInput();
+                //              clientSocket.shutdownOutput();
+                //clientSocket = null;
+
                 resp = stringBuilder.toString();
+                if (resp != null) {
+                    resp = resp.replaceAll("\\n", "");
+                }
+                //HTTP/1.1 200 OKServer: nginx/1.0.15Date: Fri, 10 Jul 2015 14:30:48 GMTContent-Type: text/htmlConnection: closeX-Powered-By: PHP/5.4.34Expires: Thu, 19 Nov 1981 08:52:00 GMTCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0Pragma: no-cache{"devices":[{"d_id":"49","d_type":"2","d_imei":"353492049085856","d_title":"\u043c\u0430\u0448\u0438\u043d\u0430 1","d_status":"2","d_tracking":null,"d_icon":"0.png","t_id":null,"t_time_text":null,"t_time":null,"t_time_diff":null,"t_longitude":null,"t_latitude":null,"t_altitude":null,"t_satellite":0,"t_speed":null,"t_stop_time":null,"icons":{"is_online":false,"online_class":"icon-offline","move_class":"icon-stop","move_text":"\u0441\u0442\u043e\u0438\u0442 \u0432 \u0442\u0435\u0447\u0435\u043d\u0438\u0435 "},"sat_state":"red","power":"acum-empty"}],"success":true}
+//
                 //logTrace("\r\nFROM SERVER: \r\n" + stringBuilder.toString());
 
             } catch (Exception e) {
-                Log.e(TAG, "Auth +++ " + e.toString(), e);
+                Log.e(TAG, "Devices Exception +++ " + e.toString(), e);
                 // Log.e(TAG, "Auth +++ "+   Log.getStackTraceString(e));
             }
-
-
             return resp;
         }
 
         protected void onPostExecute(String result) {
-            logTrace("\r\n FROM Server: \r\n " + result);
+            logTrace("\r\n Devices response: \r\n " + result);
+            //doInBackground();
+             new MyTcp3().execute(result);
+        }
+    }
+
+    class MyTcp3 extends AsyncTask<String, Void, String> {
+        ObjectMapper mapper = new ObjectMapper();
+
+        MyTcp3() {
         }
 
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+
+                if(recursy){
+                    Thread.sleep(5000);
+                }else {
+                    Thread.sleep(500);
+                    recursy = true;
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Log.e(TAG, "InterruptedException +++ " + e.toString(), e);
+            }
+
+            try {
+                ObjectNode root = (ObjectNode) mapper.readTree(params[0]);
+                ArrayNode devices = (ArrayNode) root.get("devices");
+                for (JsonNode device : devices) {
+                    String idDev = device.path("d_id").asText();
+                    idDevs.add(idDev);
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "ObjectNode Exception +++ " + e.toString(), e);
+            }
+
+            Map<String, String> reqParmMap = new HashMap<>();
+
+            reqParmMap.put("device[0][device]", idDevs.get(0));
+            reqParmMap.put("device[0][lastId]", "");
+            reqParmMap.put("device[0][loadTrack]", "0");
+
+            String reqString = createQueryStringForParameters(reqParmMap);
+
+
+            int contentLength = reqString.getBytes().length;
+
+
+            String resp = "";
+            try {
+                String sentence;
+                Socket clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
+                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
+                sentence = "" +
+                        "POST /map/deviceTrack HTTP/1.1\n" +
+                        "Host: navi.zone\n" +
+                        "Connection: keep-alive\n" +
+                        "Content-Length: " + contentLength + "\n" +
+                        "Pragma: no-cache\n" +
+                        "Cache-Control: no-cache\n" +
+                        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
+                        "Origin: http://navi.zone\n" +
+                        "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
+                        "Content-Type: application/x-www-form-urlencoded\n" +
+                        "Referer: http://navi.zone/\n" +
+                        "Accept-Encoding: gzip,deflate\n" +
+                        "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
+                        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
+                        "Connection: keep-alive\n" +
+                        "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n" +
+                        "Host: navi.zone\r\n\r\n";
+                sentence += reqString;
+                outToServer.writeBytes(sentence);
+                outToServer.flush();
+                StringBuilder stringBuilder = new StringBuilder();
+
+
+                String line = "";
+                boolean head = true;
+                while ((line = inFromServer.readLine()) != null) {
+                    if (line.isEmpty()) {
+                        head = false;
+                    }
+                    if (!head) {
+                        // line = line.replaceAll("^.+\\{", "");
+                        stringBuilder.append(line + "\n");
+                    }
+                }
+                outToServer.close();
+                clientSocket.close();
+                resp = stringBuilder.toString();
+
+                if (resp != null) {
+                    resp = resp.replaceAll("\\n", "");
+                    resp = resp.replaceAll("^.+?\\{", "{");
+                    resp = resp.replaceAll("\\}([^\\}])+$", "}");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
+            }
+            return resp;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            logTrace("\r\n DevicesTrack response: \r\n " + result);
+            new MyTcp3().execute(result);
+            new Parser().execute(result);
+        }
+    }
+
+
+    class Parser extends AsyncTask<String, Void, ArrayList<HashMap>> {
+
+
+
+        @Override
+        protected ArrayList<HashMap> doInBackground(String... params) {
+            ArrayList<HashMap> arrayListObjects = new ArrayList<>();
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode root = null;
+            //[{"d_id":"49","d_type":"2","d_imei":"353492049085856","d_title":"машина 1","d_status":"2","d_tracking":null,"d_icon":"0.png","t_id":null,"t_time_text":null,"t_time":null,"t_time_diff":null,"t_longitude":null,"t_latitude":null,"t_altitude":null,"t_satellite":null,"t_speed":null,"t_stop_time":null,"icons":{"is_online":false,"online_class":"icon-offline","move_class":"icon-stop","move_text":"стоит в течение "},"sat_state":"red","io":{"values":[]},"power":"acum-empty"}]
+            try {
+                root = (ObjectNode) mapper.readTree(params[0]);
+                ArrayNode devices = (ArrayNode) root.get("devices");
+                for (JsonNode device : devices) {
+                    HashMap<String, Object> map = new HashMap<>();
+                    String idDev = device.path("d_id").asText();
+                    String imei = device.path("d_imei").asText();
+
+                    map.put("id", imei);
+                    map.put("name", device.path("d_title").asText());
+                    map.put("lat", device.path("t_latitude").asDouble());
+                    arrayListObjects.add(map);
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+            return arrayListObjects;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<HashMap> arrayListObjects) {
+
+            // logTrace("\r\n DevicesTrack response: \r\n " + result);
+        }
     }
 
 
@@ -201,192 +389,9 @@ public class NaviZone {
                 if (entry.getKey().equals(key)) {
                     return entry.getValue().toString();
                 }
-
-                /*System.out.println("Key: " + entry.getKey() + " Value: "
-                        + entry.getValue());*/
             }
         }
         return null;
-    }
-
-
-    class Auth extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            URL url;
-            String response = "";
-            try {
-                url = new URL("http://navi.zone/user/login");
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestMethod("POST");
-                logTrace("+++ doInBackground");
-                /*String cookie = "";
-                int count = cookiesHeader.size() - 1;
-                for (int i = 0; i < cookiesHeader.size(); i++) {
-                    cookie += cookiesHeader.get(i);
-                    if (i != count) {
-                        cookie += ";";
-                    }
-                }
-                urlConnection.addRequestProperty("Cookie", cookie);*/
-                // urlConnection.setUseCaches(true);
-
-
-                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                urlConnection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                urlConnection.setRequestProperty("Accept-Encoding", "identity");
-                urlConnection.setRequestProperty("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2");
-                urlConnection.setRequestProperty("Cache-Control", "no-cache");
-                urlConnection.setRequestProperty("Connection", "keep-alive");
-                urlConnection.setRequestProperty("Host", "navi.zone");
-                urlConnection.setRequestProperty("Origin", "http://navi.zone");
-                urlConnection.setRequestProperty("Referer", "http://navi.zone/");
-
-                Map<String, String> mapParams = new HashMap<>();
-                mapParams.put("email", "lmaxim@mail.ru");
-                mapParams.put("password", "gliderman");
-                mapParams.put("submit", "");
-                String reqParm = "email=lmaxim%40mail.ru&password=gliderman&submit=";
-
-                logTrace("Lenght =  " + String.valueOf(reqParm.getBytes().length));
-
-                //
-                String postParameters = createQueryStringForParameters(mapParams);
-                urlConnection.setRequestProperty("Content-Length", String.valueOf(postParameters.getBytes().length));
-                urlConnection.setRequestProperty("Origin", "http://navi.zone");
-                urlConnection.setRequestProperty("Pragma", "no-cache");
-                urlConnection.setRequestProperty("Referer", "http://navi.zone/");
-                urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36");
-                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                urlConnection.setRequestProperty("Connection", "close");
-                /*if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) {
-                    urlConnection.setRequestProperty("Connection", "close");
-                }*/
-                logTrace(postParameters);
-
-                // urlConnection.setFixedLengthStreamingMode(postParameters.getBytes().length);
-
-                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-                out.print(postParameters);
-                out.close();
-
-                Map<String, List<String>> headers = urlConnection.getHeaderFields();
-                cookiesHeader = headers.get("Set-Cookie");
-
-                int statusCode = urlConnection.getResponseCode();
-                if (statusCode != HttpURLConnection.HTTP_OK) {
-
-                    // throw some exception
-                }
-
-                logTrace("" + statusCode);
-
-               /* Map<String, List<String>> headers = urlConnection.getHeaderFields();
-                if (headers != null) {
-                    cookiesHeader = headers.get("Set-Cookie");
-                }*/
-
-
-               /* Scanner inStream = new Scanner(urlConnection.getInputStream());
-                while (inStream.hasNextLine()) {
-                    response += (inStream.nextLine());
-                }
-*/
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Auth +++ " + e.toString(), e);
-                Log.e(TAG, "Auth +++ " + Log.getStackTraceString(e));
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-            Log.d(TAG, "response +++ " + response);
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-        }
-    }
-
-
-    class PhpSess extends AsyncTask<String, Void, Boolean> {
-        CookieManager msCookieManager = new CookieManager();
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            //List<NameValuePair> _params = new LinkedList<NameValuePair>();
-            // params.add(new BasicNameValuePair("login", "demo"));
-
-            URL url = null;
-            InputStream in = null;
-            String response = "";
-            try {
-                // url = new URL("http://navi.zone/user/login");
-                url = new URL("http://navi.zone/user/login");
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                //  urlConnection.setUseCaches(true);
-                // urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-               /* Map<String, String> mapParams = new HashMap<>();
-                mapParams.put("email","lmaxim@mail.ru");
-                mapParams.put("password","gliderman");
-                String postParameters = createQueryStringForParameters(mapParams);
-
-                urlConnection.setFixedLengthStreamingMode(postParameters.getBytes().length);
-                urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-                out.print(postParameters);
-                out.close();
-*/
-
-
-                Map<String, List<String>> headers = urlConnection.getHeaderFields();
-                cookiesHeader = headers.get("Set-Cookie");
-                for (String c : cookiesHeader) {
-                    logTrace(c);
-                }
-
-             /*   Scanner inStream = new Scanner(urlConnection.getInputStream());
-                while(inStream.hasNextLine()){
-                    response+=(inStream.nextLine());
-                }*/
-                int statusCode = urlConnection.getResponseCode();
-                if (statusCode != HttpURLConnection.HTTP_OK) {
-                    return false;
-                    // throw some exception
-                }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                logTrace(e.toString(), 1);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-
-            return true;//getResponseText(in);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                tryAuth();
-            }
-        }
-
     }
 
 
