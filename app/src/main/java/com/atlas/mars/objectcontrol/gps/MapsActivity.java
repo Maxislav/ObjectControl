@@ -110,6 +110,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public float myBearing;
 
     M2Http m2Http;
+    NaviZone naviZone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,6 +201,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
         MyLocationListenerGps.statusGps = false;
         if (m2Http != null) m2Http.onPause();
+        if (naviZone != null) naviZone.onPause();
+
         LatLng startLatLng = mMap.getCameraPosition().target;
         double lat  = startLatLng.latitude;
         double lng  = startLatLng.longitude;
@@ -231,10 +234,18 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
         if (haveNetworkConnection()) {
-            m2Http.onResume();
+            if(mapSetting.get(SettingMapActivity.PROTOCOL_TYPE)==null || mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("0") ){
+                if(m2Http==null){
+                    m2Http = new M2Http(this);
+                }
+                m2Http.onResume();
+            }else if(mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("1")){
+                if(naviZone == null){
+                    naviZone =  new NaviZone(this);
+                }
+                naviZone.onResume();
+            }
         }
-
-
     }
 
     @Override

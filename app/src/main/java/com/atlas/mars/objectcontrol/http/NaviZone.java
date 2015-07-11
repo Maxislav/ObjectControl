@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.gps.MapsActivity;
+import com.fasterxml.jackson.core.io.UTF8Writer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -15,11 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +37,7 @@ import java.util.regex.Pattern;
  */
 public class NaviZone {
     HttpURLConnection urlConnection;
+    MapsActivity mapsActivity;
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
     private final String TAG = "naviZone";
@@ -42,9 +48,12 @@ public class NaviZone {
     List<String> idDevs;
     boolean recursy = false;
     MyTcp2 myTcp2;
+    DataBaseHelper db;
 
 
-    public NaviZone() {
+    public NaviZone(MapsActivity mapsActivity) {
+        this.mapsActivity = mapsActivity;
+        db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
         idDevs = new ArrayList<>();
     }
@@ -52,6 +61,16 @@ public class NaviZone {
     public void init() {
         new MyTcp().execute();
     }
+
+    public void onResume(){
+        new MyTcp().execute();
+    }
+
+    public  void  onPause(){
+
+    }
+
+
 
     private void getDevices() {
       /*  synchronized (myTcp2) {
@@ -70,6 +89,15 @@ public class NaviZone {
     class MyTcp extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            String login = mapSetting.get(db.MAP_LOGIN);
+            String pass = mapSetting.get(db.MAP_PASS);
+            Map <String, String> mapReqParam = new HashMap<>();
+            mapReqParam.put("email", login);
+            mapReqParam.put("password", pass);
+            mapReqParam.put("submit", "");
+            String stringReqParam = createQueryStringForParameters(mapReqParam);
+
+
             String resline = null;
             try {
                 String sentence;
@@ -99,7 +127,8 @@ public class NaviZone {
                         "Connection: keep-alive\n" +
                         "Host: navi.zone\r\n\r\n";
 
-                sentence += "email=lmaxim%40mail.ru&password=gliderman&submit=";
+                //sentence += "email=lmaxim%40mail.ru&password=gliderman&submit=";
+                sentence += stringReqParam;
 
                 outToServer.writeBytes(sentence);
 
@@ -247,14 +276,14 @@ public class NaviZone {
             }
 
             Map<String, String> reqParmMap = new HashMap<>();
-
-            reqParmMap.put("device[0][device]", idDevs.get(0));
-            reqParmMap.put("device[0][lastId]", "");
-            reqParmMap.put("device[0][loadTrack]", "0");
-
+            try {
+                reqParmMap.put(URLEncoder.encode("device[0][device]", "UTF-8"), idDevs.get(0));
+                reqParmMap.put(URLEncoder.encode("device[0][lastId]", "UTF-8"), "");
+                reqParmMap.put(URLEncoder.encode("device[0][loadTrack]",  "UTF-8"), "0");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String reqString = createQueryStringForParameters(reqParmMap);
-
-
             int contentLength = reqString.getBytes().length;
 
 
@@ -282,7 +311,8 @@ public class NaviZone {
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Connection: keep-alive\n" +
                         "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n" +
-                        "Host: navi.zone\r\n\r\n";
+                        "Host: navi.zone" +
+                        "\n\n";
                 sentence += reqString;
                 outToServer.writeBytes(sentence);
                 outToServer.flush();
@@ -339,19 +369,41 @@ public class NaviZone {
                 root = (ObjectNode) mapper.readTree(params[0]);
                 ArrayNode devices = (ArrayNode) root.get("devices");
                 for (JsonNode device : devices) {
-                    HashMap<String, Object> map = new HashMap<>();
+                    HashMap<String, String> map = new HashMap<>();
                     String idDev = device.path("d_id").asText();
                     String imei = device.path("d_imei").asText();
 
                     map.put("id", imei);
                     map.put("name", device.path("d_title").asText());
-                    map.put("lat", device.path("t_latitude").asDouble());
+                    if(device.path("t_latitude").asText().equals("null")){
+                        map.put("lat", "");
+                    }else{
+                        map.put("lat", device.path("t_latitude").asText());
+                    }
+
+                    if(device.path("t_longitude").asText().equals("null")){
+                        map.put("lng", "");
+                    }else{
+                        map.put("lng", device.path("t_longitude").asText());
+                    }
+
+                    map.put("speed", device.path("t_speed").asText());
+                    map.put("dateLong", device.path("t_time").asText());
+                    map.put("date", device.path("t_time_text").asText());
+                    map.put("time", device.path("t_time_text").asText());
+                    map.put("gps_level", device.path("t_satellite").asText());
+                    map.put("bat_level", device.path("power").asText());
+
+
+
+
                     arrayListObjects.add(map);
                 }
 
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
             }
 
 
@@ -361,8 +413,7 @@ public class NaviZone {
 
         @Override
         protected void onPostExecute(ArrayList<HashMap> arrayListObjects) {
-
-            // logTrace("\r\n DevicesTrack response: \r\n " + result);
+            mapsActivity.setObjectMarkers(arrayListObjects);
         }
     }
 

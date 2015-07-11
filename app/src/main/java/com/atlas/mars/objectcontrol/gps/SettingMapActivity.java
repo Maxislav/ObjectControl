@@ -33,6 +33,9 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
     HashMap<String,String> mapSetting = DataBaseHelper.hashSetting;
     String LOGIN, PASS, URL;
     EditText serverUrl, edTextServerLogin, edTextServerPass;
+    boolean isInit = false;
+    public  static final String PROTOCOL_TYPE = "protocolType";
+    private int spinnerPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +88,20 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        spinner.setSelection(0);
+        if(mapSetting.get(PROTOCOL_TYPE) == null){
+            spinnerPosition = 0;
+        }else{
+            switch (mapSetting.get(PROTOCOL_TYPE)){
+                case "0":
+                    spinnerPosition = 0;
+                    break;
+                case "1":
+                    spinnerPosition = 1;
+                    break;
+            }
+
+        }
+        spinner.setSelection(spinnerPosition);
         db = new DataBaseHelper(this);
         LOGIN = mapSetting.get(db.MAP_LOGIN);
         PASS = mapSetting.get(db.MAP_PASS);
@@ -130,13 +146,18 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         if(PASS!=null){
             mapSetting.put(db.MAP_PASS, PASS);
         }
+        mapSetting.put(PROTOCOL_TYPE, Integer.valueOf(spinnerPosition).toString());
         db.setSetting(mapSetting);
     }
 
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-          //  toastShow(position+"");
+          if(isInit){
+              spinnerPosition = position;
+          }else {
+              isInit = true;
+          }
     }
 
     @Override
