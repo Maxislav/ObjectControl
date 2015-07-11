@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
@@ -101,11 +102,11 @@ public class NaviZone {
             String resline = null;
             try {
                 String sentence;
-                String modifiedSentence;
-                BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+              //  String modifiedSentence;
+              //  BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
                 Socket clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
 
                 //sentence = "POST /data/login?login=max&password=demo HTTP/1.0\n" +"host: 192.168.126.73\n\n\n";
                 //sentence = "\r\nPOST /user/login?email=lmaxim%40mail.ru&password=gliderman&submit= HTTP/1.0\n" +
@@ -134,9 +135,13 @@ public class NaviZone {
 
                 StringBuilder stringBuilder = new StringBuilder();
 
+                BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+
+
 
                 String line = "";
-                while ((line = inFromServer.readLine()) != null) {
+                while ((line = inFromServer.readLine()) != null ) {
                     stringBuilder.append(line + "\n");
                     Pattern pattern = Pattern.compile("^(Set-Cookie:).+$");
                     Matcher matcher = pattern.matcher(line);
@@ -144,6 +149,9 @@ public class NaviZone {
                         String match = matcher.group();
                         cookies = match.replaceAll("^Set-Cookie:\\s", "");
                         listCoocies = setCoocies(cookies);
+                    }
+                    if(line.isEmpty()){
+                        break;
                     }
                 }
                 resline = stringBuilder.toString();
@@ -296,24 +304,26 @@ public class NaviZone {
                 // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
                 sentence = "" +
                         "POST /map/deviceTrack HTTP/1.1\n" +
-                        "Host: navi.zone\n" +
+                        "host: navi.zone\n" +
                         "Connection: keep-alive\n" +
                         "Content-Length: " + contentLength + "\n" +
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
+                        "X-Requested-With: XMLHttpRequest\n"+
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Origin: http://navi.zone\n" +
                         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
-                        "Content-Type: application/x-www-form-urlencoded\n" +
-                        "Referer: http://navi.zone/\n" +
+                        "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\n" +
+                        "Referer: http://navi.zone/map\n" +
                         "Accept-Encoding: gzip,deflate\n" +
                         "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Connection: keep-alive\n" +
-                        "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n" +
-                        "Host: navi.zone" +
+                        "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) +
+                        //"Host: navi.zone" +
                         "\n\n";
                 sentence += reqString;
+
                 outToServer.writeBytes(sentence);
                 outToServer.flush();
                 StringBuilder stringBuilder = new StringBuilder();
@@ -321,24 +331,34 @@ public class NaviZone {
 
                 String line = "";
                 boolean head = true;
+                boolean found = false;
+                Pattern p = Pattern.compile("\\{.+\\}");
                 while ((line = inFromServer.readLine()) != null) {
                     if (line.isEmpty()) {
                         head = false;
                     }
                     if (!head) {
-                        // line = line.replaceAll("^.+\\{", "");
-                        stringBuilder.append(line + "\n");
+
+                        Matcher m = p.matcher(line);
+                        if(m.matches()){
+                            stringBuilder.append(line);
+                            break;
+                        }
+
                     }
                 }
                 outToServer.close();
+                inFromServer.close();
+//                clientSocket.shutdownInput();
+          //      clientSocket.shutdownOutput();
                 clientSocket.close();
                 resp = stringBuilder.toString();
 
-                if (resp != null) {
+               /* if (resp != null) {
                     resp = resp.replaceAll("\\n", "");
                     resp = resp.replaceAll("^.+?\\{", "{");
                     resp = resp.replaceAll("\\}([^\\}])+$", "}");
-                }
+                }*/
             } catch (Exception e) {
                 Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
             }
