@@ -68,19 +68,18 @@ public class NaviZone {
         new MyTcp().execute();
     }
 
-    public void onResume(){
-        HOST = mapSetting.get(db.MAP_SERVER_URL)!=null ? mapSetting.get(db.MAP_SERVER_URL).replaceAll("^http://", "") : null;
-        if(HOST!=null){
+    public void onResume() {
+        HOST = mapSetting.get(db.MAP_SERVER_URL) != null ? mapSetting.get(db.MAP_SERVER_URL).replaceAll("^http://", "") : null;
+        if (HOST != null) {
             idDevs = new ArrayList<>();
             new MyTcp().execute();
         }
     }
 
-    public  void  onPause(){
-        myTcp2.onCancelled();
-        myTcp3.onCancelled();
+    public void onPause() {
+        if (myTcp2 != null) myTcp2.onCancelled();
+        if (myTcp3 != null) myTcp3.onCancelled();
     }
-
 
 
     private void getDevices() {
@@ -88,6 +87,7 @@ public class NaviZone {
         myTcp2.execute();
 
     }
+
     class MyTcp extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -95,8 +95,7 @@ public class NaviZone {
             String pass = mapSetting.get(db.MAP_PASS);
 
 
-
-            Map <String, String> mapReqParam = new HashMap<>();
+            Map<String, String> mapReqParam = new HashMap<>();
             mapReqParam.put("email", login);
             mapReqParam.put("password", pass);
             mapReqParam.put("submit", "");
@@ -106,7 +105,7 @@ public class NaviZone {
             String resline = null;
             try {
                 String sentence;
-                Socket clientSocket = new Socket( HOST, 80); //http://178.62.44.54/
+                Socket clientSocket = new Socket(HOST, 80); //http://178.62.44.54/
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
                 sentence = "" +
                         "POST /user/login HTTP/1.1\n" +
@@ -115,15 +114,15 @@ public class NaviZone {
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
-                        "Origin: http://"+HOST+"\n" +
+                        "Origin: http://" + HOST + "\n" +
                         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
                         "Content-Type: application/x-www-form-urlencoded\n" +
-                        "Referer: http://"+HOST+"/\n" +
+                        "Referer: http://" + HOST + "/\n" +
                         "Accept-Encoding: gzip,deflate\n" +
                         "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Connection: keep-alive\n" +
-                        "Host: "+HOST+"\r\n\r\n";
+                        "Host: " + HOST + "\r\n\r\n";
 
                 //sentence += "email=lmaxim%40mail.ru&password=gliderman&submit=";
                 sentence += stringReqParam;
@@ -135,10 +134,8 @@ public class NaviZone {
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 
-
-
                 String line = "";
-                while ((line = inFromServer.readLine()) != null ) {
+                while ((line = inFromServer.readLine()) != null) {
                     stringBuilder.append(line + "\n");
                     Pattern pattern = Pattern.compile("^(Set-Cookie:).+$");
                     Matcher matcher = pattern.matcher(line);
@@ -147,7 +144,7 @@ public class NaviZone {
                         cookies = match.replaceAll("^Set-Cookie:\\s", "");
                         listCoocies = setCoocies(cookies);
                     }
-                    if(line.isEmpty()){
+                    if (line.isEmpty()) {
                         break;
                     }
                 }
@@ -172,6 +169,7 @@ public class NaviZone {
         ObjectMapper mapper;
         boolean success = false;
         boolean onStop = false;
+
         MyTcp2() {
             super();
             mapper = new ObjectMapper();
@@ -196,11 +194,11 @@ public class NaviZone {
                 sentence = "" +
                         "POST /map/devices HTTP/1.0\n"
                         + "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n"
-                        + "host: "+HOST+"\n";
+                        + "host: " + HOST + "\n";
                 sentence += "\r\n\r\n";
                 //  logTrace("PHPSESSID=" + getCookie("PHPSESSID", listCoocies));
 
-               // outToServer.writeUTF(sentence); // отсылаем введенную строку текста серверу.
+                // outToServer.writeUTF(sentence); // отсылаем введенную строку текста серверу.
                 //outToServer.flush();
                 outToServer.writeBytes(sentence);
                 outToServer.flush();
@@ -234,7 +232,7 @@ public class NaviZone {
             try {
                 ObjectNode root = (ObjectNode) mapper.readTree(resp);
                 ArrayNode devices = (ArrayNode) root.get("devices");
-                success  = root.path("success").asBoolean();
+                success = root.path("success").asBoolean();
                 for (JsonNode device : devices) {
                     String idDev = device.path("d_id").asText();
                     idDevs.add(idDev);
@@ -246,11 +244,12 @@ public class NaviZone {
 
             return resp;
         }
+
         protected void onPostExecute(String result) {
             logTrace("\r\n Devices response: \r\n " + result);
-            if(success && !onStop){
-               myTcp3  =  new MyTcp3();
-               myTcp3.execute(result);
+            if (success && !onStop) {
+                myTcp3 = new MyTcp3();
+                myTcp3.execute(result);
             }
         }
     }
@@ -271,9 +270,9 @@ public class NaviZone {
 
             try {
 
-                if(recursy){
+                if (recursy) {
                     Thread.sleep(5000);
-                }else {
+                } else {
                     Thread.sleep(500);
                     recursy = true;
                 }
@@ -284,14 +283,13 @@ public class NaviZone {
             }
 
 
-
             Map<String, String> reqParmMap = new HashMap<>();
 
             try {
-                for(int i = 0; i<idDevs.size(); i++){
-                    reqParmMap.put(URLEncoder.encode("device["+i+"][device]", "UTF-8"), idDevs.get(i));
-                    reqParmMap.put(URLEncoder.encode("device["+i+"][lastId]", "UTF-8"), "");
-                    reqParmMap.put(URLEncoder.encode("device["+i+"][loadTrack]",  "UTF-8"), "0");
+                for (int i = 0; i < idDevs.size(); i++) {
+                    reqParmMap.put(URLEncoder.encode("device[" + i + "][device]", "UTF-8"), idDevs.get(i));
+                    reqParmMap.put(URLEncoder.encode("device[" + i + "][lastId]", "UTF-8"), "");
+                    reqParmMap.put(URLEncoder.encode("device[" + i + "][loadTrack]", "UTF-8"), "0");
                 }
 
             } catch (UnsupportedEncodingException e) {
@@ -309,17 +307,17 @@ public class NaviZone {
                 // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
                 sentence = "" +
                         "POST /map/deviceTrack HTTP/1.1\n" +
-                        "host: "+HOST+"\n" +
+                        "host: " + HOST + "\n" +
                         "Connection: keep-alive\n" +
                         "Content-Length: " + contentLength + "\n" +
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
-                        "X-Requested-With: XMLHttpRequest\n"+
+                        "X-Requested-With: XMLHttpRequest\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
-                        "Origin: http://"+HOST+"\n" +
+                        "Origin: http://" + HOST + "\n" +
                         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
                         "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\n" +
-                        "Referer: http://"+HOST+"/map\n" +
+                        "Referer: http://" + HOST + "/map\n" +
                         "Accept-Encoding: gzip,deflate\n" +
                         "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
@@ -345,7 +343,7 @@ public class NaviZone {
                     if (!head) {
 
                         Matcher m = p.matcher(line);
-                        if(m.matches()){
+                        if (m.matches()) {
                             stringBuilder.append(line);
                             break;
                         }
@@ -365,7 +363,7 @@ public class NaviZone {
             try {
                 root = (ObjectNode) mapper.readTree(resp);
                 success = root.path("success").asBoolean();
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, "ObjectNode Exception  +++ " + e.toString(), e);
             }
             return resp;
@@ -374,8 +372,8 @@ public class NaviZone {
         @Override
         protected void onPostExecute(String result) {
             logTrace("\r\n DevicesTrack response: \r\n " + result);
-            if(success && !onStop){
-                myTcp3 =  new MyTcp3();
+            if (success && !onStop) {
+                myTcp3 = new MyTcp3();
                 myTcp3.execute(result);
                 new Parser().execute(result);
             }
@@ -402,22 +400,22 @@ public class NaviZone {
 
                     map.put("id", imei);
                     map.put("name", device.path("d_title").asText());
-                    if(device.path("t_latitude").asText().equals("null")){
+                    if (device.path("t_latitude").asText().equals("null")) {
                         map.put("lat", "");
-                    }else{
+                    } else {
                         map.put("lat", device.path("t_latitude").asText());
                     }
 
-                    if(device.path("t_longitude").asText().equals("null")){
+                    if (device.path("t_longitude").asText().equals("null")) {
                         map.put("lng", "");
-                    }else{
+                    } else {
                         map.put("lng", device.path("t_longitude").asText());
                     }
 
                     map.put("speed", device.path("t_speed").asText());
                     map.put("dateLong", device.path("t_time").asText());
 
-                    if(device.path("t_time_text").asText()!=null && !device.path("t_time").asText().equals("null")){
+                    if (device.path("t_time_text").asText() != null && !device.path("t_time").asText().equals("null")) {
                         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                         //12.07.2015 15:04:10
                         Date d = null;
@@ -435,9 +433,9 @@ public class NaviZone {
                     }
 
                     map.put("gps_level", device.path("t_satellite").asText());
-                    if(device.path("power").asText().equals("acum-empty")){
+                    if (device.path("power").asText().equals("acum-empty")) {
                         map.put("bat_level", "n/a");
-                    }else{
+                    } else {
                         map.put("bat_level", device.path("power").asText());
                     }
                     arrayListObjects.add(map);
@@ -448,7 +446,6 @@ public class NaviZone {
                 e.printStackTrace();
                 Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
             }
-
 
 
             return arrayListObjects;
