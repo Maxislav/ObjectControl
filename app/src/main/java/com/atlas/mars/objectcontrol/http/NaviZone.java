@@ -101,7 +101,7 @@ public class NaviZone {
             mapReqParam.put("submit", "");
             String stringReqParam = createQueryStringForParameters(mapReqParam);
 
-
+            int contentLength = stringReqParam.getBytes().length;
             String resline = null;
             try {
                 String sentence;
@@ -110,7 +110,7 @@ public class NaviZone {
                 sentence = "" +
                         "POST /user/login HTTP/1.1\n" +
                         "Connection: keep-alive\n" +
-                        "Content-Length: 49\n" +
+                        "Content-Length: "+contentLength+"\n" +
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
