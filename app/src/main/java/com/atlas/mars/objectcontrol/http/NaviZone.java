@@ -52,6 +52,7 @@ public class NaviZone {
     List<String> idDevs;
     boolean recursy = false;
     MyTcp2 myTcp2;
+    MyTcp3 myTcp3;
     DataBaseHelper db;
     static String HOST;
 
@@ -76,7 +77,8 @@ public class NaviZone {
     }
 
     public  void  onPause(){
-
+        myTcp2.onCancelled();
+        myTcp3.onCancelled();
     }
 
 
@@ -168,21 +170,23 @@ public class NaviZone {
     class MyTcp2 extends AsyncTask<String, Void, String> {
         Socket clientSocket;
         ObjectMapper mapper;
-
+        boolean success = false;
+        boolean onStop = false;
         MyTcp2() {
             super();
             mapper = new ObjectMapper();
         }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            success = false;
+            onStop = true;
+        }
 
         @Override
         protected String doInBackground(String... params) {
             String resp = "";
-
-
-
-
-
             try {
                 String sentence;
                 clientSocket = new Socket(HOST, 80); //http://178.62.44.54/
@@ -230,6 +234,7 @@ public class NaviZone {
             try {
                 ObjectNode root = (ObjectNode) mapper.readTree(resp);
                 ArrayNode devices = (ArrayNode) root.get("devices");
+                success  = root.path("success").asBoolean();
                 for (JsonNode device : devices) {
                     String idDev = device.path("d_id").asText();
                     idDevs.add(idDev);
@@ -239,17 +244,27 @@ public class NaviZone {
                 Log.e(TAG, "ObjectNode Exception +++ " + e.toString(), e);
             }
 
-
-
             return resp;
         }
         protected void onPostExecute(String result) {
             logTrace("\r\n Devices response: \r\n " + result);
-            new MyTcp3().execute(result);
+            if(success && !onStop){
+               myTcp3  =  new MyTcp3();
+               myTcp3.execute(result);
+            }
         }
     }
 
     class MyTcp3 extends AsyncTask<String, Void, String> {
+        boolean success = false;
+        boolean onStop = false;
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            success = false;
+            onStop = true;
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -345,21 +360,30 @@ public class NaviZone {
             } catch (Exception e) {
                 Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
             }
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode root = null;
+            try {
+                root = (ObjectNode) mapper.readTree(resp);
+                success = root.path("success").asBoolean();
+            }catch (Exception e){
+                Log.e(TAG, "ObjectNode Exception  +++ " + e.toString(), e);
+            }
             return resp;
         }
 
         @Override
         protected void onPostExecute(String result) {
             logTrace("\r\n DevicesTrack response: \r\n " + result);
-            new MyTcp3().execute(result);
-            new Parser().execute(result);
+            if(success && !onStop){
+                myTcp3 =  new MyTcp3();
+                myTcp3.execute(result);
+                new Parser().execute(result);
+            }
         }
     }
 
 
     class Parser extends AsyncTask<String, Void, ArrayList<HashMap>> {
-
-
 
         @Override
         protected ArrayList<HashMap> doInBackground(String... params) {
