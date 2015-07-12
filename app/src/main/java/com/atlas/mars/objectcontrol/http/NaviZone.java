@@ -50,13 +50,14 @@ public class NaviZone {
     boolean recursy = false;
     MyTcp2 myTcp2;
     DataBaseHelper db;
+    static String HOST;
 
 
     public NaviZone(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         db = new DataBaseHelper(mapsActivity);
         mapSetting = DataBaseHelper.hashSetting;
-        idDevs = new ArrayList<>();
+        //idDevs = new ArrayList<>();
     }
 
     public void init() {
@@ -64,7 +65,11 @@ public class NaviZone {
     }
 
     public void onResume(){
-        new MyTcp().execute();
+        HOST = mapSetting.get(db.MAP_SERVER_URL)!=null ? mapSetting.get(db.MAP_SERVER_URL).replaceAll("^http://", "") : null;
+        if(HOST!=null){
+            idDevs = new ArrayList<>();
+            new MyTcp().execute();
+        }
     }
 
     public  void  onPause(){
@@ -74,24 +79,18 @@ public class NaviZone {
 
 
     private void getDevices() {
-      /*  synchronized (myTcp2) {
-
-        }*/
         myTcp2 = new MyTcp2();
         myTcp2.execute();
 
     }
-
-  /*  public void tryAuth() {
-        Auth au = new Auth();
-        au.execute(mapSetting.get(DataBaseHelper.MAP_LOGIN), mapSetting.get(DataBaseHelper.MAP_PASS), mapSetting.get(DataBaseHelper.MAP_SERVER_URL));
-    }*/
-
     class MyTcp extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             String login = mapSetting.get(db.MAP_LOGIN);
             String pass = mapSetting.get(db.MAP_PASS);
+
+
+
             Map <String, String> mapReqParam = new HashMap<>();
             mapReqParam.put("email", login);
             mapReqParam.put("password", pass);
@@ -102,31 +101,24 @@ public class NaviZone {
             String resline = null;
             try {
                 String sentence;
-              //  String modifiedSentence;
-              //  BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-                Socket clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
+                Socket clientSocket = new Socket( HOST, 80); //http://178.62.44.54/
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-
-
-                //sentence = "POST /data/login?login=max&password=demo HTTP/1.0\n" +"host: 192.168.126.73\n\n\n";
-                //sentence = "\r\nPOST /user/login?email=lmaxim%40mail.ru&password=gliderman&submit= HTTP/1.0\n" +
                 sentence = "" +
                         "POST /user/login HTTP/1.1\n" +
-                        "Host: navi.zone\n" +
                         "Connection: keep-alive\n" +
                         "Content-Length: 49\n" +
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
-                        "Origin: http://navi.zone\n" +
+                        "Origin: http://"+HOST+"\n" +
                         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
                         "Content-Type: application/x-www-form-urlencoded\n" +
-                        "Referer: http://navi.zone/\n" +
+                        "Referer: http://"+HOST+"/\n" +
                         "Accept-Encoding: gzip,deflate\n" +
                         "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
                         "Connection: keep-alive\n" +
-                        "Host: navi.zone\r\n\r\n";
+                        "Host: "+HOST+"\r\n\r\n";
 
                 //sentence += "email=lmaxim%40mail.ru&password=gliderman&submit=";
                 sentence += stringReqParam;
@@ -172,11 +164,11 @@ public class NaviZone {
 
     class MyTcp2 extends AsyncTask<String, Void, String> {
         Socket clientSocket;
+        ObjectMapper mapper;
 
         MyTcp2() {
             super();
-
-
+            mapper = new ObjectMapper();
         }
 
 
@@ -190,14 +182,14 @@ public class NaviZone {
 
             try {
                 String sentence;
-                clientSocket = new Socket("navi.zone", 80); //http://178.62.44.54/
+                clientSocket = new Socket(HOST, 80); //http://178.62.44.54/
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
                 sentence = "" +
                         "POST /map/devices HTTP/1.0\n"
                         + "Cookie: " + "PHPSESSID=" + getCookie("PHPSESSID", listCoocies) + "\n"
-                        + "host: navi.zone\n";
+                        + "host: "+HOST+"\n";
                 sentence += "\r\n\r\n";
                 //  logTrace("PHPSESSID=" + getCookie("PHPSESSID", listCoocies));
 
@@ -222,37 +214,39 @@ public class NaviZone {
                 }
                 outToServer.close();
                 clientSocket.close();
-//                clientSocket.shutdownInput();
-                //              clientSocket.shutdownOutput();
-                //clientSocket = null;
 
                 resp = stringBuilder.toString();
                 if (resp != null) {
                     resp = resp.replaceAll("\\n", "");
                 }
-                //HTTP/1.1 200 OKServer: nginx/1.0.15Date: Fri, 10 Jul 2015 14:30:48 GMTContent-Type: text/htmlConnection: closeX-Powered-By: PHP/5.4.34Expires: Thu, 19 Nov 1981 08:52:00 GMTCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0Pragma: no-cache{"devices":[{"d_id":"49","d_type":"2","d_imei":"353492049085856","d_title":"\u043c\u0430\u0448\u0438\u043d\u0430 1","d_status":"2","d_tracking":null,"d_icon":"0.png","t_id":null,"t_time_text":null,"t_time":null,"t_time_diff":null,"t_longitude":null,"t_latitude":null,"t_altitude":null,"t_satellite":0,"t_speed":null,"t_stop_time":null,"icons":{"is_online":false,"online_class":"icon-offline","move_class":"icon-stop","move_text":"\u0441\u0442\u043e\u0438\u0442 \u0432 \u0442\u0435\u0447\u0435\u043d\u0438\u0435 "},"sat_state":"red","power":"acum-empty"}],"success":true}
-//
-                //logTrace("\r\nFROM SERVER: \r\n" + stringBuilder.toString());
 
             } catch (Exception e) {
                 Log.e(TAG, "Devices Exception +++ " + e.toString(), e);
-                // Log.e(TAG, "Auth +++ "+   Log.getStackTraceString(e));
             }
+
+            try {
+                ObjectNode root = (ObjectNode) mapper.readTree(resp);
+                ArrayNode devices = (ArrayNode) root.get("devices");
+                for (JsonNode device : devices) {
+                    String idDev = device.path("d_id").asText();
+                    idDevs.add(idDev);
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "ObjectNode Exception +++ " + e.toString(), e);
+            }
+
+
+
             return resp;
         }
-
         protected void onPostExecute(String result) {
             logTrace("\r\n Devices response: \r\n " + result);
-            //doInBackground();
-             new MyTcp3().execute(result);
+            new MyTcp3().execute(result);
         }
     }
 
     class MyTcp3 extends AsyncTask<String, Void, String> {
-        ObjectMapper mapper = new ObjectMapper();
-
-        MyTcp3() {
-        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -271,30 +265,23 @@ public class NaviZone {
                 Log.e(TAG, "InterruptedException +++ " + e.toString(), e);
             }
 
-            try {
-                ObjectNode root = (ObjectNode) mapper.readTree(params[0]);
-                ArrayNode devices = (ArrayNode) root.get("devices");
-                for (JsonNode device : devices) {
-                    String idDev = device.path("d_id").asText();
-                    idDevs.add(idDev);
-                }
 
-            } catch (Exception e) {
-                Log.e(TAG, "ObjectNode Exception +++ " + e.toString(), e);
-            }
 
             Map<String, String> reqParmMap = new HashMap<>();
+
             try {
-                reqParmMap.put(URLEncoder.encode("device[0][device]", "UTF-8"), idDevs.get(0));
-                reqParmMap.put(URLEncoder.encode("device[0][lastId]", "UTF-8"), "");
-                reqParmMap.put(URLEncoder.encode("device[0][loadTrack]",  "UTF-8"), "0");
+                for(int i = 0; i<idDevs.size(); i++){
+                    reqParmMap.put(URLEncoder.encode("device["+i+"][device]", "UTF-8"), idDevs.get(i));
+                    reqParmMap.put(URLEncoder.encode("device["+i+"][lastId]", "UTF-8"), "");
+                    reqParmMap.put(URLEncoder.encode("device["+i+"][loadTrack]",  "UTF-8"), "0");
+                }
+
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                Log.e(TAG, "URLEncoder +++ " + e.toString(), e);
             }
             String reqString = createQueryStringForParameters(reqParmMap);
             int contentLength = reqString.getBytes().length;
-
-
             String resp = "";
             try {
                 String sentence;
@@ -304,17 +291,17 @@ public class NaviZone {
                 // sentence = "\r\nPOST /map/devices HTTP/1.0\n" +
                 sentence = "" +
                         "POST /map/deviceTrack HTTP/1.1\n" +
-                        "host: navi.zone\n" +
+                        "host: "+HOST+"\n" +
                         "Connection: keep-alive\n" +
                         "Content-Length: " + contentLength + "\n" +
                         "Pragma: no-cache\n" +
                         "Cache-Control: no-cache\n" +
                         "X-Requested-With: XMLHttpRequest\n"+
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
-                        "Origin: http://navi.zone\n" +
+                        "Origin: http://"+HOST+"\n" +
                         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36\n" +
                         "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\n" +
-                        "Referer: http://navi.zone/map\n" +
+                        "Referer: http://"+HOST+"/map\n" +
                         "Accept-Encoding: gzip,deflate\n" +
                         "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,uk;q=0.2,sr;q=0.2\n" +
                         "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n" +
@@ -349,16 +336,9 @@ public class NaviZone {
                 }
                 outToServer.close();
                 inFromServer.close();
-//                clientSocket.shutdownInput();
-          //      clientSocket.shutdownOutput();
                 clientSocket.close();
                 resp = stringBuilder.toString();
 
-               /* if (resp != null) {
-                    resp = resp.replaceAll("\\n", "");
-                    resp = resp.replaceAll("^.+?\\{", "{");
-                    resp = resp.replaceAll("\\}([^\\}])+$", "}");
-                }*/
             } catch (Exception e) {
                 Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
             }
