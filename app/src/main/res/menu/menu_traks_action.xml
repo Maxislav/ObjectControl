@@ -10,12 +10,12 @@
     <item
         android:id="@+id/loadFromCd"
         android:orderInCategory="1"
-        android:title="Load from CD card"
+        android:title="@string/load_from_cd_card"
         app:showAsAction="never" />
     <item
         android:id="@+id/createRoute"
         android:orderInCategory="2"
-        android:title="Create a route"
+        android:title="@string/create_a_route"
         app:showAsAction="never" />
 
 </menu>

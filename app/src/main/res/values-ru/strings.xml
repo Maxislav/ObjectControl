@@ -54,14 +54,16 @@
     <string name="action_settings_map">Настройки</string>
     <string name="list_servers_title">Сервер</string>
     <string name="map">Карта</string>
-    <string name="server_login">Логин</string>
-    <string name="server_login_title">Логин на сервере</string>
+    <string name="server_login">   Логин на сервере</string>
     <string name="server_pass">Пароль на сервере</string>
     <string name="server_pass_title">Пароль</string>
     <string name="server_protocol">Тип протокола</string>
     <string name="server_protocol_title">Использовать протокол</string>
-    <string name="server_url">Адрес сервера к которому пивязаны устройства</string>
+    <string name="server_url">Адрес сервера к которому пивязанны устройства</string>
     <string name="server_url_title">URL Сервера</string>
     <string name="select">Выбрать</string>
     <string name="list_track">Треки</string>
+    <string name="load_from_cd_card">Загрузить с CD карты</string>
+    <string name="create_a_route">Проложить маршрут</string>
+    <string name="server_login_title">Логин</string>
 </resources>

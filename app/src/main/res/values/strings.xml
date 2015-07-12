@@ -67,4 +67,6 @@
     <string name="count_command_history">The total number of commands that will be remembered history</string>
     <string name="count_command_history_in_start_title">The number of commands in the history displayed at startup</string>
     <string name="count_command_history_in_start">The number of commands in the history displayed when the application starts. The more teams, the more difficult the application will load the first time</string>
+    <string name="load_from_cd_card">Load from CD card</string>
+    <string name="create_a_route">Create a route</string>
 </resources>

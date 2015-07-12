@@ -26,7 +26,10 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +44,7 @@ public class NaviZone {
     MapsActivity mapsActivity;
     private static final char PARAMETER_DELIMITER = '&';
     private static final char PARAMETER_EQUALS_CHAR = '=';
-    private final String TAG = "naviZone";
+    private static final String TAG = "naviZone";
     List<String> cookiesHeader;
     HashMap<String, String> mapSetting;
     String cookies;
@@ -389,14 +392,30 @@ public class NaviZone {
 
                     map.put("speed", device.path("t_speed").asText());
                     map.put("dateLong", device.path("t_time").asText());
-                    map.put("date", device.path("t_time_text").asText());
-                    map.put("time", device.path("t_time_text").asText());
+
+                    if(device.path("t_time_text").asText()!=null && !device.path("t_time").asText().equals("null")){
+                        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                        //12.07.2015 15:04:10
+                        Date d = null;
+                        try {
+                            d = f.parse(device.path("t_time_text").asText());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yyyy");
+                        SimpleDateFormat df3 = new SimpleDateFormat("HH:mm:ss");
+                        String dateDate = df2.format(d);
+                        String dateTime = df3.format(d);
+                        map.put("date", dateDate);
+                        map.put("time", dateTime);
+                    }
+
                     map.put("gps_level", device.path("t_satellite").asText());
-                    map.put("bat_level", device.path("power").asText());
-
-
-
-
+                    if(device.path("power").asText().equals("acum-empty")){
+                        map.put("bat_level", "n/a");
+                    }else{
+                        map.put("bat_level", device.path("power").asText());
+                    }
                     arrayListObjects.add(map);
                 }
 
@@ -447,6 +466,7 @@ public class NaviZone {
 
 
     public static String createQueryStringForParameters(Map<String, String> parameters) {
+
         StringBuilder parametersAsQueryString = new StringBuilder();
         if (parameters != null) {
             boolean firstParameter = true;
@@ -456,10 +476,15 @@ public class NaviZone {
                     parametersAsQueryString.append(PARAMETER_DELIMITER);
                 }
 
-                parametersAsQueryString.append(parameterName)
-                        .append(PARAMETER_EQUALS_CHAR)
-                        .append(URLEncoder.encode(
-                                parameters.get(parameterName)));
+
+                try {
+                    parametersAsQueryString.append(parameterName)
+                            .append(PARAMETER_EQUALS_CHAR)
+                            .append(URLEncoder.encode(parameters.get(parameterName), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "DevicesTrack Exception +++ " + e.toString(), e);
+                }
 
                 firstParameter = false;
             }
