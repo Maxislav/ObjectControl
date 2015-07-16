@@ -1,13 +1,17 @@
 package com.atlas.mars.objectcontrol.gps;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mars on 6/26/15.
@@ -15,13 +19,18 @@ import java.io.IOException;
 public class TrackParser {
     public final static String TAG = "myLog";
     LatLng[] latLngs;
+    ObjectNode root;
+
+    ParseLenght parseLenght;
+    List<ParseLenght> parseLenghtList;
+    PolyLenghth polyLenghth;
     public TrackParser(String json) {
+        parseLenghtList = new ArrayList<>();
         Log.d(TAG, json);
         latLngs = new LatLng[0];
         ObjectMapper mapper = new ObjectMapper();
-
         try {
-            ObjectNode root = (ObjectNode) mapper.readTree(json);
+            root = (ObjectNode) mapper.readTree(json);
             ObjectNode route = (ObjectNode) root.get("route");
             ObjectNode shape = (ObjectNode) route.get("shape");
             ArrayNode shapePoints = (ArrayNode) shape.get("shapePoints");
@@ -45,10 +54,63 @@ public class TrackParser {
         return latLngs;
     }
 
+    public void getPolyLenght(PolyLenghth polyLenghth){
+        this.polyLenghth = polyLenghth;
+        parseLenght = new ParseLenght();
+        parseLenghtList.add(parseLenght);
+        parseLenght.execute();
+    }
+
+    private void callbackPolyLanght(double len){
+        polyLenghth.setDistance(len);
+    }
+
+    public  void  onStop(){
+        for(ParseLenght pl : parseLenghtList){
+            if(!pl.isCancelled()){
+                pl.onCancelled();
+            }
+        }
+    }
 
 
 
+    private class ParseLenght extends AsyncTask<String, Void, Double>{
+        boolean onStop;
+        ParseLenght(){
+            super();
+            this.onStop = false;
+        }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            this.onStop = true;
+        }
 
+        @Override
+        protected Double doInBackground(String... params) {
+
+            ObjectNode route = (ObjectNode) root.get("route");
+            ArrayNode legs = (ArrayNode) route.get("legs");
+            double dist = 0;
+            for(JsonNode leg : legs){
+                dist+=leg.path("distance").asDouble();
+
+            }
+            return dist;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Double d) {
+            super.onPostExecute(d);
+            if (!this.onStop)  callbackPolyLanght(d);
+        }
+    }
 
 }

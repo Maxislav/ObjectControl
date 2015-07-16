@@ -32,13 +32,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.widget.PopupMenu.OnMenuItemClickListener;
+
 /**
  * Created by Администратор on 6/27/15.
  */
-public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongClickListener, PopupMenu.OnMenuItemClickListener {
+public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongClickListener, OnMenuItemClickListener, PolyLenghth {
     private final String TAG = "myLog";
     InflateRoteMenu menu;
-    MapsActivity mapsActivity;
+    public MapsActivity mapsActivity;
     ImageButton btnTrack;
     LinearLayout layoutRouteType;
     LinearLayout layoutRouteMenu;
@@ -49,17 +51,20 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     List<Marker> listMarkerPoints; //Лист  маркеров по пути маршрута;
     List<Polyline> listPolylineTrack;
     HashMap<String, String> mapSetting;
+    List<Double> distance;
     String from;
     DataBaseHelper db;
     String timeStampCreated;
     long idTrack = 0;
     GetFromServer getFromServer;
     public boolean toObject = false;
+    TrackParser track;
 
     TrackButton(MapsActivity mapsActivity, ImageButton btnTrack, GoogleMap mMap) {
         this.mapsActivity = mapsActivity;
         this.btnTrack = btnTrack;
         this.mMap = mMap;
+        distance = new ArrayList<>();
         menu = new InflateRoteMenu(mapsActivity, this);
 
         listMarkerPoints = new ArrayList<>();
@@ -277,8 +282,15 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         if (0 < listMarkerPoints.size()) {
             listMarkerPoints.remove(listMarkerPoints.size() - 1).remove();
             if (listPolylineTrack.size() == listMarkerPoints.size() && 0 < listPolylineTrack.size()) {
-                listPolylineTrack.remove(listPolylineTrack.size() - 1).remove();
+                int size = listPolylineTrack.size() - 1;
+                listPolylineTrack.remove(size).remove();
+                if(size<=distance.size()){
+                    distance.remove(size);
+                }
             }
+        }
+        if(track!=null){
+            track.onStop();
         }
     }
 
@@ -315,6 +327,13 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         while (0 < listPolylineTrack.size()) {
             listPolylineTrack.remove(listPolylineTrack.size() - 1).remove();
         }
+
+        while (0< distance.size()){
+            distance.remove(distance.size()-1);
+        }
+        if(track!=null){
+            track.onStop();
+        }
         idTrack = 0;
         mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, "0");
         db.setSetting(mapSetting);
@@ -322,11 +341,21 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
 
     public void drawPoly(String result) {
         if (result != null) {
-            TrackParser track = new TrackParser(result);
+            track = new TrackParser(result);
             LatLng[] latLngs = track.getLatLngs();
+            track.getPolyLenght(this);
             drawPoly(latLngs);
         }
+    }
 
+    @Override
+    synchronized public void setDistance(double lenght) {
+        distance.add(lenght);
+        double dist = 0;
+        for(Double d: distance){
+            dist+=d;
+        }
+        toastShow(""+dist+ " km");
     }
 
     public void drawPoly(LatLng[] latLngs) {
@@ -346,6 +375,9 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     public void onPause() {
         Log.d(TAG, "++++ ID Track: " + String.valueOf(idTrack));
         mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, String.valueOf(idTrack));
+        if(track!=null){
+            track.onStop();
+        }
         // db.setSetting(mapSetting);
     }
 
@@ -371,7 +403,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         timeStampCreated = formatter.format(now);
-       // idTrack = db.createRowNameTrack();
         DialogSaveTrack dialogSaveTrack = new Dialog(mapsActivity);
         dialogSaveTrack.onCreate();
         dialogSaveTrack.vHide(v);
