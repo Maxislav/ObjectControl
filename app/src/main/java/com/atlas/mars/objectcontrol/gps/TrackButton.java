@@ -306,8 +306,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             }
             getFromServer.findRoute(strFrom, strTo, mapSetting.get(DataBaseHelper.MAP_ROUTE_TYPE));
         }
-
-
     }
 
     private void delTrack() {

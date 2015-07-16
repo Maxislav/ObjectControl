@@ -16,7 +16,7 @@
 
     <item name="startColor" type="color">#ffeaf3f6</item>
     <item name="centerColor" type="color">#fff</item>
-    <item name="endColor" type="color">#ffeaf3f6</item>
+    <item name="endColorG" type="color">#ffeaf3f6</item>
 
     <item name="borderColor" type="color">#8ca4b5</item>
     <item name="listBorder" type="color">#198ca4b5</item>

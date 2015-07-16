@@ -31,7 +31,6 @@ import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.M2Http;
 import com.atlas.mars.objectcontrol.http.NaviZone;
-import com.atlas.mars.objectcontrol.http.OkoServ;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -203,14 +202,22 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         if (m2Http != null) m2Http.onPause();
         if (naviZone != null) naviZone.onPause();
 
+        if(mMap==null) {
+            super.onPause();
+            return;
+        }
+
         LatLng startLatLng = mMap.getCameraPosition().target;
         double lat  = startLatLng.latitude;
         double lng  = startLatLng.longitude;
         float zoom = mMap.getCameraPosition().zoom;
 
-        mapSetting.put(dataBaseHelper.MAP_START_LAT, Double.toString(lat));
-        mapSetting.put(dataBaseHelper.MAP_START_LNG, Double.toString(lng));
-        mapSetting.put(dataBaseHelper.MAP_START_ZOOM, Float.toString(zoom));
+        if(mapSetting!=null){
+            mapSetting.put(dataBaseHelper.MAP_START_LAT, Double.toString(lat));
+            mapSetting.put(dataBaseHelper.MAP_START_LNG, Double.toString(lng));
+            mapSetting.put(dataBaseHelper.MAP_START_ZOOM, Float.toString(zoom));
+        }
+
 
         if(trackButton!=null){
             trackButton.onPause();
@@ -639,10 +646,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setMarkerMyPos(String title) {
+        if(mMap==null)return;
+
         if (myPosMarker != null) {
             myPosMarker.remove();
             myPosMarker = null;
         }
+
+
         myPosMarker = mMap.addMarker(
                 new MarkerOptions()
                         .position(myPos)
@@ -660,6 +671,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {
+        if(mMap == null) return;
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         for (HashMap<String, String> hashMapMArkerOpt : arrayList) {
             String id = hashMapMArkerOpt.get("id");
@@ -790,6 +802,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setAccuracy(float accuracy) {
+        if(mMap == null) return;
         if (circle != null) {
             circle.remove();
             circle = null;
