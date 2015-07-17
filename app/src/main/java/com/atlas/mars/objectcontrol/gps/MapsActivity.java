@@ -92,7 +92,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     TrackButton trackButton;
     FragmentZoomControl fragmentZoomControl;
     public int countObj = 0;
-    /***
+    /**
      * Тип карты
      */
     private String mapType;
@@ -162,7 +162,6 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
 
 
-
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         setClickListenerBtnList();
@@ -170,10 +169,10 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         setUpMapIfNeeded();
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
-        trackButton =  new TrackButton(this, btnTrack, mMap );
+        trackButton = new TrackButton(this, btnTrack, mMap);
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+        new ScrollOnTouchListener(null, listContainer, this, null);
 
     }
 
@@ -204,24 +203,24 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         if (m2Http != null) m2Http.onPause();
         if (naviZone != null) naviZone.onPause();
 
-        if(mMap==null) {
+        if (mMap == null) {
             super.onPause();
             return;
         }
 
         LatLng startLatLng = mMap.getCameraPosition().target;
-        double lat  = startLatLng.latitude;
-        double lng  = startLatLng.longitude;
+        double lat = startLatLng.latitude;
+        double lng = startLatLng.longitude;
         float zoom = mMap.getCameraPosition().zoom;
 
-        if(mapSetting!=null){
+        if (mapSetting != null) {
             mapSetting.put(dataBaseHelper.MAP_START_LAT, Double.toString(lat));
             mapSetting.put(dataBaseHelper.MAP_START_LNG, Double.toString(lng));
             mapSetting.put(dataBaseHelper.MAP_START_ZOOM, Float.toString(zoom));
         }
 
 
-        if(trackButton!=null){
+        if (trackButton != null) {
             trackButton.onPause();
         }
         dataBaseHelper.setSetting(mapSetting);
@@ -233,7 +232,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         super.onResume();
         setUpMapIfNeeded();
 
-        if(!haveNetworkConnection() || !isNetworkAvailable()){
+        if (!haveNetworkConnection() || !isNetworkAvailable()) {
             toastShow("No connections");
             return;
         }
@@ -243,14 +242,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
         if (haveNetworkConnection()) {
-            if(mapSetting.get(SettingMapActivity.PROTOCOL_TYPE)==null || mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("0") ){
-                if(m2Http==null){
+            if (mapSetting.get(SettingMapActivity.PROTOCOL_TYPE) == null || mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("0")) {
+                if (m2Http == null) {
                     m2Http = new M2Http(this);
                 }
                 m2Http.onResume();
-            }else if(mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("1")){
-                if(naviZone == null){
-                    naviZone =  new NaviZone(this);
+            } else if (mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("1")) {
+                if (naviZone == null) {
+                    naviZone = new NaviZone(this);
                 }
                 naviZone.onResume();
             }
@@ -284,13 +283,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 //Todo нажато сохранение
             }
         }
-        if(requestCode == 1){
+        if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                trackButton.onSelectIdTrack( data.getStringExtra("selectId"));
+                trackButton.onSelectIdTrack(data.getStringExtra("selectId"));
             }
         }
     }
-    public void drawPoly(String path){
+
+    public void drawPoly(String path) {
         String state = Environment.getExternalStorageState();
         if (!(state.equals(Environment.MEDIA_MOUNTED))) {
             toastShow("There is no any sd card");
@@ -298,15 +298,15 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
         Mytrack mytrack = new Mytrack(path);
 
-        if(trackButton!=null){
+        if (trackButton != null) {
             LatLng[] latLngs = mytrack.getTrack();
-            if(latLngs.length<2){
+            if (latLngs.length < 2) {
                 return;
             }
             trackButton.drawPoly(latLngs);
 
             trackButton.addMarker(latLngs[0]);
-            trackButton.addMarker(latLngs[latLngs.length-1]);
+            trackButton.addMarker(latLngs[latLngs.length - 1]);
         }
 
     }
@@ -337,7 +337,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMap == null){
+                if (mMap == null) {
                     setUpMapIfNeeded();
                 }
                 if (myPos != null) {
@@ -357,7 +357,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     protected void setClickListenerBtnList() {
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
-        if(mapSetting.get(dataBaseHelper.MAP_SHOW_LIST)!=null && mapSetting.get(dataBaseHelper.MAP_SHOW_LIST).equals("1")){
+        if (mapSetting.get(dataBaseHelper.MAP_SHOW_LIST) != null && mapSetting.get(dataBaseHelper.MAP_SHOW_LIST).equals("1")) {
             listContainer.setVisibility(View.VISIBLE);
         }
         btnList.setOnClickListener(new View.OnClickListener() {
@@ -366,7 +366,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 if (listContainer.isShown()) {
                     hideListObject();
                 } else {
-                    if(countObj<1){
+                    if (countObj < 1) {
                         toastShow("Empty list objects");
                         return;
                     }
@@ -376,47 +376,64 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         });
     }
 
-    public void showListObgects(){
+    public void showListObgects() {
 
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
-        FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
-        frParams.leftMargin = 0;
+        FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
+        //frParams.leftMargin = 0;
         listContainer.setLayoutParams(frParams);
-        float leftMargin = (float)frParams.leftMargin;
-      //  float fromXDelta = leftMargin + listContainer.getWidth()/2;
+        final float leftMargin = (float) frParams.leftMargin;
+        //  float fromXDelta = leftMargin + listContainer.getWidth()/2;
         float fromXDelta = leftMargin;
-        float toXDelta = listContainer.getWidth()/2;
-        float fromYDelta = listContainer.getHeight()/2;
-        float toYDelta = listContainer.getHeight()/2;
+        float toXDelta = listContainer.getWidth() / 2;
+        float fromYDelta = listContainer.getHeight() / 2;
+        float toYDelta = listContainer.getHeight() / 2;
 
 
-        TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, 0,0 , 0);
-        translateAnimation.setDuration(500);
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, -fromXDelta, 0, 0);
+        translateAnimation.setDuration(222);
 
         translateAnimation.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
+
                 listContainer.setVisibility(View.VISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
             }
+
             @Override
             public void onAnimationEnd(Animation animation) {
+                listContainer.clearAnimation();
+                FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
+                frParams.leftMargin = 0;
+                listContainer.setLayoutParams(frParams);
                 //btnList.setVisibility(View.INVISIBLE);
             }
+
             @Override
             public void onAnimationRepeat(Animation animation) {
 
             }
         });
-       // listContainer.startAnimation(animIn);
+        // listContainer.startAnimation(animIn);
         listContainer.startAnimation(translateAnimation);
     }
-    public void hideListObject(){
-        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
-        if(trackButton!=null) trackButton.toObject = false;
 
-        aniOut.setAnimationListener(new Animation.AnimationListener() {
+    public void hideListObject() {
+        final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
+        if (trackButton != null) trackButton.toObject = false;
+        FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
+        float fromXDelta =  frParams.leftMargin;
+        float toXDelta =  -listContainer.getWidth();
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, fromXDelta+toXDelta, 0, 0);
+        translateAnimation.setDuration(222);
+        final int width = listContainer.getWidth();
+
+        //listContainer.setLayoutParams(frParams);
+      //  TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, 0, 0, 0);
+
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -426,10 +443,13 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             public void onAnimationEnd(Animation animation) {
                 listContainer.setVisibility(View.INVISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
-                FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
-                frParams.leftMargin =  -listContainer.getWidth();
-
+                FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
+                frParams.leftMargin = -width;
                 listContainer.setLayoutParams(frParams);
+              /*  FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
+                frParams.leftMargin = -listContainer.getWidth();
+
+                listContainer.setLayoutParams(frParams);*/
             }
 
             @Override
@@ -437,47 +457,47 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
             }
         });
-        listContainer.startAnimation(aniOut);
+        listContainer.startAnimation(translateAnimation);
     }
 
 
-    public void setTileLayer(String mapName){
-        if(mapType==null || mapType!=mapName){
+    public void setTileLayer(String mapName) {
+        if (mapType == null || mapType != mapName) {
             mapType = mapName;
-            switch (mapName){
+            switch (mapName) {
                 case "ggl":
-                    if(tileOverlay!= null){
+                    if (tileOverlay != null) {
                         tileOverlay.remove();
                     }
                     break;
                 case "osm":
-                    if(tileOverlay!= null){
+                    if (tileOverlay != null) {
                         tileOverlay.remove();
                         tileOverlay.clearTileCache();
                     }
                     setUpTileLayer(mapName);
-                    tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
                     break;
                 case "mapQuest":
-                    if(tileOverlay!= null){
+                    if (tileOverlay != null) {
                         tileOverlay.remove();
                         tileOverlay.clearTileCache();
                     }
                     setUpTileLayer(mapName);
-                    tileOverlay = mMap.addTileOverlay( new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
                     break;
             }
 
         }
     }
 
-    private void setUpTileLayer(final String mapName){
+    private void setUpTileLayer(final String mapName) {
         tileProvider = new UrlTileProvider(256, 256) {
             @Override
             public URL getTileUrl(int x, int y, int zoom) {
                 String s;
 
-                switch (mapName){
+                switch (mapName) {
                     case "mapQuest":
                         s = String.format("http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png", zoom, x, y);
                         break;
@@ -491,7 +511,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                         s = String.format("http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png", zoom, x, y);
                 }
 
-               // String
+                // String
                 if (!checkTileExists(x, y, zoom)) {
                     return null;
                 }
@@ -502,6 +522,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                     throw new AssertionError(e);
                 }
             }
+
             private boolean checkTileExists(int x, int y, int zoom) {
                 int minZoom = 6;
                 int maxZoom = 19;
@@ -536,7 +557,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
-            if(mapSetting!=null && mapSetting.get(DataBaseHelper.MAP_TYPE)!=null){
+            if (mapSetting != null && mapSetting.get(DataBaseHelper.MAP_TYPE) != null) {
                 setTileLayer(mapSetting.get(DataBaseHelper.MAP_TYPE));
             }
 
@@ -559,14 +580,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         String lat = mapSetting.get(dataBaseHelper.MAP_START_LAT);
         String lng = mapSetting.get(dataBaseHelper.MAP_START_LNG);
         LatLng startPos;
-        if(lat!=null && lng!=null){
+        if (lat != null && lng != null) {
             startPos = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-        }else {
+        } else {
             startPos = kiev;
         }
         String strZoom = mapSetting.get(dataBaseHelper.MAP_START_ZOOM);
         float zoom = 10;
-        if(strZoom!=null){
+        if (strZoom != null) {
             zoom = Float.parseFloat(strZoom);
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startPos, zoom));
@@ -601,6 +622,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos), 500, MyCancelableCallback);
         }
     }
+    public void moveCameraToMarkerPos(LatLng pos){
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(pos), 500, MyCancelableCallback);
+    }
 
     GoogleMap.CancelableCallback MyCancelableCallback = new GoogleMap.CancelableCallback() {
         @Override
@@ -624,7 +648,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setMarkerMyPos(String title) {
-        if(mMap==null)return;
+        if (mMap == null) return;
 
         if (myPosMarker != null) {
             myPosMarker.remove();
@@ -649,7 +673,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setObjectMarkers(ArrayList<HashMap> arrayList) {
-        if(mMap == null) return;
+        if (mMap == null) return;
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
         for (HashMap<String, String> hashMapMArkerOpt : arrayList) {
             String id = hashMapMArkerOpt.get("id");
@@ -728,18 +752,18 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public void onItemSelected(View v) {
         CameraPosition oldPos = mMap.getCameraPosition();
         CameraPosition pos;
-        Log.d(TAG,"+++ zoom in out");
+        Log.d(TAG, "+++ zoom in out");
         float zoom = oldPos.zoom;
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.zoomIn:
                 zoom++;
                 pos = CameraPosition.builder(oldPos).zoom(zoom).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300,MyCancelableCallback );
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300, MyCancelableCallback);
                 break;
             case R.id.zoomOut:
                 zoom--;
                 pos = CameraPosition.builder(oldPos).zoom(zoom).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300,MyCancelableCallback );
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 300, MyCancelableCallback);
                 break;
         }
 
@@ -747,7 +771,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-        public MarkerInfoWindowAdapter (){
+        public MarkerInfoWindowAdapter() {
             super();
         }
 
@@ -780,7 +804,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     public void setAccuracy(float accuracy) {
-        if(mMap == null) return;
+        if (mMap == null) return;
         if (circle != null) {
             circle.remove();
             circle = null;
@@ -801,8 +825,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         LayoutInflater ltInflater = getLayoutInflater();
         View view = hashViewRow.get(id) != null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
 
-        if(hashViewRow.get(id)==null){
-            new ListContainerEvents(view, listContainer ,this);
+        if (hashViewRow.get(id) == null) {
+            new ListContainerEvents(view, listContainer, this, map);
         }
 
         TextView textName = (TextView) view.findViewById(R.id.textName);
@@ -822,18 +846,18 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             hashViewRow.put(id, view);
             linearLayoutInScroll.addView(view);
         }
-        view.setOnClickListener(new View.OnClickListener() {
+        /*view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (map.get("lat") != null && !map.get("lat").isEmpty()) {
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
-                    if(trackButton!=null){
+                    if (trackButton != null) {
                         trackButton.onListObjectClick(pos);
                     }
                 }
             }
-        });
+        });*/
     }
 
 
@@ -841,7 +865,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if(!locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)){
+        if (!locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
             return false;
         }
 
@@ -857,6 +881,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
