@@ -75,6 +75,9 @@
         android:layout_marginTop="180dp"
         android:background="@drawable/list" />
 
+
+
+
     <fragment
         android:id="@+id/fragment_zoom"
         android:name="com.atlas.mars.objectcontrol.gps.FragmentZoomControl"

@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -158,6 +159,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         btnBearing = (ImageButton) findViewById(R.id.btnBearing);
         btnTrack = (ImageButton) findViewById(R.id.btnTrack);
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
+
+
+
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         setClickListenerBtnList();
@@ -358,10 +362,6 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* if(countObj<1){
-                    toastShow("Empty list objects");
-                    return;
-                }*/
                 if (listContainer.isShown()) {
                     hideListObject();
                 } else {
@@ -382,6 +382,10 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         animIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
+                frParams.leftMargin =  0;
+                listContainer.setLayoutParams(frParams);
+
                 listContainer.setVisibility(View.VISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
             }
@@ -410,6 +414,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             public void onAnimationEnd(Animation animation) {
                 listContainer.setVisibility(View.INVISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
+                FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
+                frParams.leftMargin =  0;
+                listContainer.setLayoutParams(frParams);
             }
 
             @Override
@@ -780,6 +787,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         String id = map.get("id");
         LayoutInflater ltInflater = getLayoutInflater();
         View view = hashViewRow.get(id) != null ? hashViewRow.get(id) : ltInflater.inflate(R.layout.row_map_object, null, false);
+
+        if(hashViewRow.get(id)==null){
+            new ListContainerEvents(view, listContainer ,this);
+        }
+
         TextView textName = (TextView) view.findViewById(R.id.textName);
         TextView textDate = (TextView) view.findViewById(R.id.textDate);
         TextView textTime = (TextView) view.findViewById(R.id.textTime);
