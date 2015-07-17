@@ -56,6 +56,9 @@ public class ListContainerEvents implements View.OnTouchListener {
                 if(map!=null){
                     LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     activity.moveCameraToMarkerPos(pos);
+                    if (activity.trackButton != null && activity.trackButton!=null) {
+                        activity.trackButton.onListObjectClick(pos);
+                    }
                 }
 
 
