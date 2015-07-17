@@ -10,18 +10,31 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.atlas.mars.objectcontrol.R;
+import com.atlas.mars.objectcontrol.gps.TrackParser;
+
+import java.util.List;
 
 /**
  * Created by Администратор on 6/29/15.
  */
 abstract public class DialogSaveTrack extends MyDialog implements View.OnClickListener {
+    public Double distance;
 
     public DialogSaveTrack(Activity activity) {
         super(activity);
     }
 
+    public void setDistance(List<Double> distance){
+        this.distance = 0.0;
+        for(Double d : distance){
+            this.distance+=d;
+        }
+        this.distance = TrackParser.round(this.distance,2);
+    }
+
     @Override
     public View onCreate() {
+
         displayMetrics = activity.getResources().getDisplayMetrics();
         density = displayMetrics.density;
         dpHeight = displayMetrics.heightPixels / density;
@@ -43,7 +56,8 @@ abstract public class DialogSaveTrack extends MyDialog implements View.OnClickLi
         viewDialog.findViewById(R.id.btn_cancel).setOnClickListener(this);
         pw.setFocusable(true);
         TextView edTextName = (TextView) contentDialog.findViewById(R.id.edTextName);
-        setValueText(edTextName);
+        TextView distanceText = (TextView) contentDialog.findViewById(R.id.distance);
+        setValueText(edTextName, distanceText);
         return viewDialog;
     }
 
@@ -70,7 +84,6 @@ abstract public class DialogSaveTrack extends MyDialog implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ok:
-
                 onOk();
                 onDismiss();
                 break;
@@ -81,7 +94,7 @@ abstract public class DialogSaveTrack extends MyDialog implements View.OnClickLi
         }
     }
 
-    abstract public void setValueText(TextView text);
+    abstract public void setValueText(TextView text, TextView distanceText);
 
     abstract public void onOk();
 

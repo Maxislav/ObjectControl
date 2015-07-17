@@ -67,6 +67,7 @@
                     <LinearLayout
                         style="@style/rowFields"
                         android:layout_width="match_parent"
+                        android:orientation="horizontal"
                         android:layout_height="wrap_content">
 
                         <EditText
@@ -76,7 +77,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:inputType="textNoSuggestions"
+                            android:layout_weight="1"
                             android:background="@drawable/text_field_background" />
+                        <TextView
+                            android:id="@+id/distance"
+                            android:layout_width="70dp"
+                            android:layout_marginLeft="5dp"
+                            style="@style/editTextStyle"
+                            android:gravity="center"
+                            android:layout_height="match_parent" android:text="0.0" />
+
                     </LinearLayout>
 
 

@@ -54,9 +54,11 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
             TextView textViewId =  (TextView)fields.get(0);
             TextView textViewName =  (TextView)fields.get(1);
             TextView textViewDate=  (TextView)fields.get(2);
+            TextView textViewDistance=  (TextView)fields.get(3);
             textViewId.setText(map.get("id")+".");
             textViewName.setText(map.get("name"));
             textViewDate.setText(map.get("date"));
+            textViewDistance.setText(map.get("distance")!=null ? map.get("distance") + " km": "");
             listRows.add(rowView);
             rowEventListener(rowView, map.get("id"));
         }
@@ -87,13 +89,7 @@ public class TrackListActivity extends ActionBarActivity implements View.OnClick
             public void onClick(View v) {
                 selectId = _id;
                 selectRow(row);
-                /*for(View _row : listRows){
-                    if(_row == row){
-                        _row.setBackgroundResource(R.color.activeRouteType);
-                    }else{
-                        _row.setBackground(null);
-                    }
-                }*/
+
             }
         });
         row.setOnLongClickListener(new View.OnLongClickListener() {

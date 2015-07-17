@@ -30,7 +30,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -69,6 +69,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_SHOW_LIST = "mapShowList";
     public static final String MAP_ROUTE_TYPE = "mapRouteType";
     public static  final String PROTOCOL_TYPE = "protocolType";
+    public static  final String DISTANCE = "distance";
 
     public static final String MAP_CURRENT_ID_TRACK = "mapCurrentIdTrack"; //Некущий отображаемый трек
 
@@ -95,11 +96,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_TRACK_COLLECTION = "CREATE TABLE if not exists "
             +TABLE_TRACK_COLLECTION+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + "name" + " VARCHAR(255), " + "date" +  " TIMESTAMP " + ");";
+            + "name" + " VARCHAR(255), " + "date" +  " TIMESTAMP, " + DISTANCE +" VARCHAR(255) "+ ");";
 
     private static final String SQL_CREATE_TABLE_TRACKS = "CREATE TABLE if not exists "
             +TABLE_TRACKS+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "trackId" + " INTEGER, lat DOUBLE, lng DOUBLE, date TIMESTAMP);";
+
+    private static final String UPDATE_TRACK_COLLECTION = "ALTER TABLE "+TABLE_TRACK_COLLECTION+" ADD COLUMN "+DISTANCE+" VARCHAR(255);";
 
 
 
@@ -133,6 +136,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
         db.execSQL(SQL_CREATE_TABLE_TRACKS);
+        db.execSQL(UPDATE_TRACK_COLLECTION);
+
+        //String upgradeQuery = "ALTER TABLE mytable ADD COLUMN mycolumn TEXT;";
+
        /* String query = "ALTER TABLE "+TABLE_NAME_HISTORY+" ADD COLUMN "+VALUE_DELIVERED+" INTEGER";
         db.execSQL(query);
         query = "UPDATE " + TABLE_NAME_HISTORY+" SET "+VALUE_DELIVERED+"="+0;
@@ -630,10 +637,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return a;
     }*/
 
-    public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,   List<HashMap<String, Double>> listControlPointsTrack){
+    public boolean fillRowNameTrack(long idTrack, String timeStamp, String name ,   List<HashMap<String, Double>> listControlPointsTrack, Double distance){
         boolean  a;
         sdb = getWritableDatabase();
-        String query = "UPDATE " + TABLE_TRACK_COLLECTION+" SET "+"name = '"+name+"', date = '"+timeStamp+"' WHERE "+UID+"="+idTrack;
+        String query = "UPDATE " + TABLE_TRACK_COLLECTION+" SET "+"name = '"+name+"', date = '"+timeStamp+"', "+DISTANCE+"="+Double.toString(distance)+" WHERE "+UID+"="+idTrack;
         try {
             sdb.execSQL(query);
             Log.d(TAG, "+++ name:  " + name);
@@ -727,10 +734,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             HashMap<String, String> map = new HashMap<>();
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String date = cursor.getString(cursor.getColumnIndex("date"));
+            String distance = cursor.getString(cursor.getColumnIndex(DISTANCE));
             String id = cursor.getString(cursor.getColumnIndex(UID));
             map.put("name", name);
             map.put("date", date);
             map.put("id", id);
+            map.put(DISTANCE, distance);
             list.add(map);
         }
         cursor.close();
