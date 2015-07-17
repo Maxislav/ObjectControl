@@ -289,9 +289,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
                 }
             }
         }
-        if(track!=null){
-            track.onStop();
-        }
+
     }
 
     private void closePath() {
@@ -301,7 +299,6 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
         LatLng latLng = new LatLng(listMarkerPoints.get(0).getPosition().latitude, listMarkerPoints.get(0).getPosition().longitude);
         addMarker(latLng);
-       // addMarker(latLng);
         Marker from = listMarkerPoints.get(listMarkerPoints.size() - 2);
         Marker to = listMarkerPoints.get(listMarkerPoints.size() - 1);
         toastShow("Accept: " + round(to.getPosition().latitude, 4) + "; " + round(to.getPosition().longitude, 4));
@@ -331,34 +328,26 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         while (0< distance.size()){
             distance.remove(distance.size()-1);
         }
-        if(track!=null){
-            track.onStop();
-        }
+
         idTrack = 0;
         mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, "0");
         db.setSetting(mapSetting);
     }
 
-    public void drawPoly(String result) {
-        if (result != null) {
-            track = new TrackParser(result);
-            LatLng[] latLngs = track.getLatLngs();
-            track.getPolyLenght(this);
-            drawPoly(latLngs);
-        }
-    }
-
-    @Override
-    synchronized public void setDistance(double lenght) {
-        distance.add(lenght);
-        double dist = 0;
-        for(Double d: distance){
-            dist+=d;
-        }
-        toastShow(""+dist+ " km");
-    }
-
     public void drawPoly(LatLng[] latLngs) {
+        HashMap<String, Object> res = new HashMap<>();
+        res.put(TrackParser.LATLNGS, latLngs);
+        res.put(TrackParser.DIST, TrackParser.getDistance(latLngs));
+
+
+        drawPoly(res);
+    }
+
+    public void drawPoly( HashMap<String, Object> res ) {
+        if(res.get("latLngs")==null){
+            return;
+        }
+        LatLng[] latLngs =(LatLng[])res.get("latLngs");
         if (latLngs != null && 1 < latLngs.length) {
             Polyline polyTrack = mMap.addPolyline(new PolylineOptions()
                     .add(latLngs)
@@ -369,15 +358,30 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             if(menu.routeMenu == null || !menu.routeMenu.isShown()){
                 menu.showRouteMenu();
             }
+
+            if(res.get(TrackParser.DIST)!=null){
+                setDistance((Double)res.get(TrackParser.DIST));
+            }
         }
     }
+
+    @Override
+    synchronized public void setDistance(double lenght) {
+        distance.add(lenght);
+        double dist = 0;
+        for(Double d: distance){
+            dist+=d;
+            dist = TrackParser.round(dist, 3);
+        }
+        toastShow(""+dist+ " km");
+    }
+
+
 
     public void onPause() {
         Log.d(TAG, "++++ ID Track: " + String.valueOf(idTrack));
         mapSetting.put(DataBaseHelper.MAP_CURRENT_ID_TRACK, String.valueOf(idTrack));
-        if(track!=null){
-            track.onStop();
-        }
+
         // db.setSetting(mapSetting);
     }
 
@@ -389,8 +393,8 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
         }
 
         @Override
-        public void onCallBack(String result) {
-            Log.d(TAG, result);
+        public void onCallBack( HashMap<String, Object>  result) {
+           // Log.d(TAG, result);
             drawPoly(result);
         }
     }

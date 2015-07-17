@@ -160,14 +160,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
         linearLayoutInScroll = (LinearLayout) findViewById(R.id.linearLayoutInScroll);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
-
-        setClickListenerImgTargetMyPos(btnFollow);
-        setClickListenerImgBearing(btnBearing);
-
-
         setClickListenerBtnList();
         new ChangeMap(this);
         setUpMapIfNeeded();
+        setClickListenerImgTargetMyPos(btnFollow);
+        setClickListenerImgBearing(btnBearing);
         trackButton =  new TrackButton(this, btnTrack, mMap );
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -331,9 +328,13 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     protected void setClickListenerImgTargetMyPos(final ImageView img) {
+
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mMap == null){
+                    setUpMapIfNeeded();
+                }
                 if (myPos != null) {
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos));
                     targetOn = true;
@@ -511,56 +512,13 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
      * method in {@link #onResume()} to guarantee that it will be called.
      */
     private void setUpMapIfNeeded() {
-      //  mapType = new HashMap<>();
-        //mapType.put("ggl", "http://mt0.googleapis.com/vt/lyrs=m@207000000&hl=ru&src=api&x=%d&y=%d&z=%d&s=Galile");
-       // mapType.put("mapQuest", "http://otile3.mqcdn.com/tiles/1.0.0/map/%d/%d/%d.png");
-
-
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            //mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-            //  MapView mapView = (MapView)(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             SupportMapFragment mainFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             View mapView = (View) mainFragment.getView();
-
-           /* mapView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    return false;
-                }
-            });
-            */
-           // new Track(this, mMap);
-          /*  mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                @Override
-                public void onMapLongClick(LatLng latLng) {
-                    toastShow(""+ latLng.latitude +": "+ latLng.longitude);
-                }
-            });*/
-
-
-            //todo раскоментировать потом
             if(mapSetting!=null && mapSetting.get(DataBaseHelper.MAP_TYPE)!=null){
                 setTileLayer(mapSetting.get(DataBaseHelper.MAP_TYPE));
             }
-            //setTileLayer("mapQuest");
-
-            /*Mytrack mytrack = new Mytrack();
-
-            Polyline line = mMap.addPolyline(new PolylineOptions()
-                    .add(mytrack.getTrack())
-                    .width(5)
-                    .color(Color.BLUE));
-            line.setZIndex(2.0f);*/
-
-
-
-
-            //   TouchableWrapper mTouchView = new TouchableWrapper(mainFragment.getActivity());
-
-
-            //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
             if (mMap != null) {
                 setUpMap();
