@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -378,14 +379,24 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public void showListObgects(){
 
         final Animation animIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_left);
+        FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
+        frParams.leftMargin = 0;
+        listContainer.setLayoutParams(frParams);
+        float leftMargin = (float)frParams.leftMargin;
+      //  float fromXDelta = leftMargin + listContainer.getWidth()/2;
+        float fromXDelta = leftMargin;
+        float toXDelta = listContainer.getWidth()/2;
+        float fromYDelta = listContainer.getHeight()/2;
+        float toYDelta = listContainer.getHeight()/2;
 
-        animIn.setAnimationListener(new Animation.AnimationListener() {
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, 0,0 , 0);
+        translateAnimation.setDuration(500);
+
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+
             @Override
             public void onAnimationStart(Animation animation) {
-                FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
-                frParams.leftMargin =  0;
-                listContainer.setLayoutParams(frParams);
-
                 listContainer.setVisibility(View.VISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "1");
             }
@@ -398,7 +409,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
             }
         });
-        listContainer.startAnimation(animIn);
+       // listContainer.startAnimation(animIn);
+        listContainer.startAnimation(translateAnimation);
     }
     public void hideListObject(){
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
@@ -415,7 +427,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 listContainer.setVisibility(View.INVISIBLE);
                 mapSetting.put(dataBaseHelper.MAP_SHOW_LIST, "0");
                 FrameLayout.LayoutParams frParams =  (FrameLayout.LayoutParams)listContainer.getLayoutParams();
-                frParams.leftMargin =  0;
+                frParams.leftMargin =  -listContainer.getWidth();
+
                 listContainer.setLayoutParams(frParams);
             }
 
