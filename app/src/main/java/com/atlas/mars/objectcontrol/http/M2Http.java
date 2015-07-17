@@ -69,7 +69,7 @@ public class M2Http {
     List<String> cookiesHeader;
 
 
-    public  void stopTimer(){
+    public void stopTimer() {
         if (mTimer != null) {
             mTimer.cancel();
         }
@@ -78,11 +78,12 @@ public class M2Http {
 
     }
 
-    public void onResume(){
+    public void onResume() {
         goRecursion = true;
         postData();
     }
-    public void onPause(){
+
+    public void onPause() {
         goRecursion = false;
     }
 
@@ -95,34 +96,32 @@ public class M2Http {
     }
 
     public void postData() {
-        if(!isAuth){
+        if (!isAuth) {
             getAuth();
-        }else{
+        } else {
             getPoints();
         }
     }
 
-    public void getAuth(){
+    public void getAuth() {
         String LOGIN, PASS, SERVERURL;
         LOGIN = mapSetting.get(db.MAP_LOGIN);
         PASS = mapSetting.get(db.MAP_PASS);
         SERVERURL = mapSetting.get(db.MAP_SERVER_URL);
-        if (LOGIN != null && PASS!= null && SERVERURL != null && !SERVERURL.isEmpty()) {
+        if (LOGIN != null && PASS != null && SERVERURL != null && !SERVERURL.isEmpty()) {
             au = new _Auth();
             au.execute(mapSetting.get(db.MAP_LOGIN), mapSetting.get(db.MAP_PASS), mapSetting.get(db.MAP_SERVER_URL));
         }
     }
 
-    private void getPoints(){
+    private void getPoints() {
         Log.d(TAG, "Http Post: +++ ");
         GetPoints mt = new GetPoints(mapsActivity);
         mt.execute(mapSetting.get(db.MAP_SERVER_URL) + "/loadevents.php?param=icars");
     }
 
 
-
-
-    public  void resData(String json) {
+    public void resData(String json) {
         ArrayList<HashMap> arrayListObjects = new ArrayList<>();
         GeoMath geoMath = new GeoMath();
 
@@ -131,7 +130,7 @@ public class M2Http {
             ArrayNode rows = (ArrayNode) root.get("rows");
             for (JsonNode jsonNode : rows) {
                 HashMap<String, String> map = new HashMap<>();
-               // Log.d(TAG, jsonNode.toString());
+                // Log.d(TAG, jsonNode.toString());
                 map.put("name", jsonNode.path("CarName").asText());
                 map.put("lat", jsonNode.path("X").asText());
                 map.put("lng", jsonNode.path("Y").asText());
@@ -144,21 +143,21 @@ public class M2Http {
                 double lat2 = jsonNode.path("pX").asDouble();
                 double lng2 = jsonNode.path("pY").asDouble();
 
-                double azimuth = geoMath.toAthimuth(lat2,lng2,lat1,lng1);
-                if(!Double.isNaN(azimuth)){
+                double azimuth = geoMath.toAthimuth(lat2, lng2, lat1, lng1);
+                if (!Double.isNaN(azimuth)) {
                     //Log.d(TAG,"azimuz ++ "+azimuth);
-                    map.put("azimuth", ""+(int) Math.round(azimuth));
+                    map.put("azimuth", "" + (int) Math.round(azimuth));
                 }
 
-                JsonNode arrayDateCar =  new ObjectMapper().readTree(jsonNode.path("DateCar").asText());
+                JsonNode arrayDateCar = new ObjectMapper().readTree(jsonNode.path("DateCar").asText());
                 String string_date = null;
-                if(arrayDateCar.isArray()){
+                if (arrayDateCar.isArray()) {
                     string_date = arrayDateCar.get(0).path("DateCar").asText();
                 }
 
                 double speed = jsonNode.path("SpeedV").asDouble();
-                speed = speed*1.61;
-                map.put("speed", ""+(int)speed);
+                speed = speed * 1.61;
+                map.put("speed", "" + (int) speed);
 
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                 Date d = null;
@@ -171,13 +170,13 @@ public class M2Http {
                 SimpleDateFormat df3 = new SimpleDateFormat("HH:mm:ss");
                 String dateText = df2.format(d);
                 String dateTime = df3.format(d);
-                if(d!=null){
+                if (d != null) {
                     //string_date = ""+ d.getTime();
                     map.put("date", dateText);
                     map.put("time", dateTime);
                     map.put("dateLong", "" + d.getTime());
                 }
-               // Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
+                // Log.d(TAG, "" + map.get("name") + " " + map.get("lat") + ":" + map.get("lng"));
                 arrayListObjects.add(map);
             }
             mapsActivity.setObjectMarkers(arrayListObjects);
@@ -188,14 +187,14 @@ public class M2Http {
 
     }
 
-    class _Auth extends  AsyncTask<String, Void, String>{
+    class _Auth extends AsyncTask<String, Void, String> {
 
         CookieManager msCookieManager = new CookieManager();
 
         @Override
         protected String doInBackground(String... params) {
             //List<NameValuePair> _params = new LinkedList<NameValuePair>();
-           // params.add(new BasicNameValuePair("login", "demo"));
+            // params.add(new BasicNameValuePair("login", "demo"));
 
             URL url = null;
             InputStream in = null;
@@ -206,27 +205,26 @@ public class M2Http {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestMethod("POST");
-              //  urlConnection.setUseCaches(true);
-               // urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                //  urlConnection.setUseCaches(true);
+                // urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 Map<String, String> mapParams = new HashMap<>();
                 mapParams.put("login", params[0]);
-                mapParams.put("password",params[1]);
+                mapParams.put("password", params[1]);
                 String postParameters = createQueryStringForParameters(mapParams);
 
                 urlConnection.setFixedLengthStreamingMode(postParameters.getBytes().length);
-                urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
                 out.print(postParameters);
                 out.close();
 
 
-
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
-                if(headers!=null && 0<headers.size()){
+                if (headers != null && 0 < headers.size()) {
                     cookiesHeader = headers.get("Set-Cookie");
                     Scanner inStream = new Scanner(urlConnection.getInputStream());
-                    while(inStream.hasNextLine()){
-                        response+=(inStream.nextLine());
+                    while (inStream.hasNextLine()) {
+                        response += (inStream.nextLine());
                     }
                     int statusCode = urlConnection.getResponseCode();
                     if (statusCode != HttpURLConnection.HTTP_OK) {
@@ -234,8 +232,6 @@ public class M2Http {
                         // throw some exception
                     }
                 }
-
-
 
 
             } catch (IOException e) {
@@ -250,27 +246,31 @@ public class M2Http {
 
             return response;//getResponseText(in);
         }
+
         @Override
         protected void onPostExecute(String result) {
             ObjectNode root = null;
-            if(result == null){
-                Log.d(TAG, "result = null"+ result);
+            if (result == null) {
+                Log.d(TAG, "result = null" + result);
                 mapsActivity.toastShow("Unable to connection");
                 return;
             }
-            Log.d(TAG, "++++++"+ result);
+            Log.d(TAG, "++++++" + result);
+            JsonNode successNode;
+            boolean res = false;
             try {
                 root = (ObjectNode) mapper.readTree(result);
+                successNode = root.path("success");
+                res = successNode.asBoolean();
             } catch (IOException e) {
+                isAuth = false;
                 e.printStackTrace();
             }
-            JsonNode successNode = root.path("success");
-            boolean res = successNode.asBoolean();
-            if(res){
+            if (res) {
                 isAuth = true;
                 getPoints();
-            }else{
-              isAuth = false;
+            } else {
+                isAuth = false;
             }
         }
 
@@ -278,10 +278,12 @@ public class M2Http {
 
     class GetPoints extends AsyncTask<String, Void, String> {
         MapsActivity mapsActivity;
-        GetPoints(MapsActivity mapsActivity){
+
+        GetPoints(MapsActivity mapsActivity) {
             super();
             this.mapsActivity = mapsActivity;
         }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -291,9 +293,9 @@ public class M2Http {
         @Override
         protected String doInBackground(String... params) {
             try {
-                if(doIt){
+                if (doIt) {
                     Thread.sleep(5000);
-                }else{
+                } else {
                     doIt = true;
                 }
             } catch (InterruptedException e) {
@@ -305,32 +307,33 @@ public class M2Http {
                 url = new URL(params[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 String cookie = "";
-                int count = cookiesHeader.size()-1;
-                for (int i = 0; i<cookiesHeader.size(); i++){
-                    cookie+=cookiesHeader.get(i);
-                    if(i!=count){
-                        cookie+=";"  ;
+                int count = cookiesHeader.size() - 1;
+                for (int i = 0; i < cookiesHeader.size(); i++) {
+                    cookie += cookiesHeader.get(i);
+                    if (i != count) {
+                        cookie += ";";
                     }
                 }
                 urlConnection.addRequestProperty("Cookie", cookie);
                 Scanner inStream = new Scanner(urlConnection.getInputStream());
-                while(inStream.hasNextLine()){
-                    response+=(inStream.nextLine());
+                while (inStream.hasNextLine()) {
+                    response += (inStream.nextLine());
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
             }
             return response;
         }
+
         @Override
         protected void onPostExecute(String result) {
-            if(goRecursion){
+            if (goRecursion) {
                 resData(result);
             }
         }
@@ -340,7 +343,7 @@ public class M2Http {
     class getPointsAsync extends AsyncTask<String, Void, String> {
         MapsActivity mapsActivity;
 
-        getPointsAsync(MapsActivity mapsActivity){
+        getPointsAsync(MapsActivity mapsActivity) {
             super();
             this.mapsActivity = mapsActivity;
         }
@@ -355,9 +358,9 @@ public class M2Http {
         protected String doInBackground(String... params) {
 
             try {
-                if(doIt){
+                if (doIt) {
                     Thread.sleep(5000);
-                }else{
+                } else {
                     doIt = true;
                 }
             } catch (InterruptedException e) {
@@ -382,7 +385,7 @@ public class M2Http {
 
         @Override
         protected void onPostExecute(String result) {
-            if(goRecursion){
+            if (goRecursion) {
                 resData(result);
             }
         }
@@ -410,7 +413,7 @@ public class M2Http {
     }
 
 
-    class  Auth extends AsyncTask<String, Void, String>{
+    class Auth extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             httpClient = new DefaultHttpClient();
@@ -450,11 +453,12 @@ public class M2Http {
 
             return resText;
         }
+
         @Override
         protected void onPostExecute(String result) {
             // super.onPostExecute(result);
             ObjectNode root = null;
-            if(result!=null){
+            if (result != null) {
                 try {
                     root = (ObjectNode) mapper.readTree(result);
                 } catch (IOException e) {
@@ -463,7 +467,7 @@ public class M2Http {
 
                 JsonNode successNode = root.path("success");
                 boolean res = successNode.asBoolean();
-                if(res){
+                if (res) {
                     getPoints();
                 }
             }
