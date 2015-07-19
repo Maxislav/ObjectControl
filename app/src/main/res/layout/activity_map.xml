@@ -13,6 +13,59 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
+
+    <ImageButton
+        android:id="@+id/btnFollow"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:background="@drawable/target" />
+    <ImageButton
+        android:id="@+id/btnBearing"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="right|top"
+        android:background="@drawable/bitmap_nord" />
+
+
+
+
+    <ImageButton
+        android:id="@+id/btnLayers"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/bitmap_layers" />
+    <ImageButton
+        android:id="@+id/btnTrack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/bitmap_track_show" />
+
+
+
+    <ImageButton
+        android:id="@+id/btnList"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/list" />
+
+
+    <!--<ImageButton
+        android:id="@+id/btnUp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left|bottom"
+        android:background="@drawable/up" />-->
+
     <LinearLayout
         android:id="@+id/listContainer"
         android:layout_width="250dp"
@@ -33,49 +86,6 @@
         </ScrollView>
 
     </LinearLayout>
-
-
-    <ImageButton
-        android:id="@+id/btnFollow"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:background="@drawable/target" />
-
-    <ImageButton
-        android:id="@+id/btnBearing"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/bitmap_nord" />
-    <ImageButton
-        android:id="@+id/btnTrack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="90dp"
-        android:background="@drawable/bitmap_track_show" />
-
-    <ImageButton
-        android:id="@+id/btnLayers"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="135dp"
-        android:background="@drawable/bitmap_layers" />
-
-
-
-    <ImageButton
-        android:id="@+id/btnList"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="180dp"
-        android:background="@drawable/list" />
-
-
 
 
     <fragment

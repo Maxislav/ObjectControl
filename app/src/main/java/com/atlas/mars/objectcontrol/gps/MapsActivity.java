@@ -196,9 +196,12 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         if (locationManagerGps != null) {
             locationManagerGps.removeUpdates(locationListenerGps);
         }
-        if (locationManagerNet != null) {
-            locationManagerNet.removeUpdates(locationListenerNet);
+        if (isNetworkAvailable()) {
+            if (locationManagerNet != null) {
+                locationManagerNet.removeUpdates(locationListenerNet);
+            }
         }
+
         MyLocationListenerGps.statusGps = false;
         if (m2Http != null) m2Http.onPause();
         if (naviZone != null) naviZone.onPause();
@@ -232,14 +235,18 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         super.onResume();
         setUpMapIfNeeded();
 
+
+        locationListenerGps = new MyLocationListenerGps(this, mMap);
+        locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
+
+
         if (!haveNetworkConnection() || !isNetworkAvailable()) {
             toastShow("No connections");
             return;
         }
 
-        locationListenerGps = new MyLocationListenerGps(this, mMap);
+
         locationListenerNet = new MyLocationListenerNet(this, mMap);
-        locationManagerGps.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGps);
         locationManagerNet.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
         if (haveNetworkConnection()) {
             if (mapSetting.get(SettingMapActivity.PROTOCOL_TYPE) == null || mapSetting.get(SettingMapActivity.PROTOCOL_TYPE).equals("0")) {
@@ -424,14 +431,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         final Animation aniOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_left);
         if (trackButton != null) trackButton.toObject = false;
         FrameLayout.LayoutParams frParams = (FrameLayout.LayoutParams) listContainer.getLayoutParams();
-        float fromXDelta =  frParams.leftMargin;
-        float toXDelta =  -listContainer.getWidth();
-        TranslateAnimation translateAnimation = new TranslateAnimation(0, fromXDelta+toXDelta, 0, 0);
+        float fromXDelta = frParams.leftMargin;
+        float toXDelta = -listContainer.getWidth();
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, fromXDelta + toXDelta, 0, 0);
         translateAnimation.setDuration(222);
         final int width = listContainer.getWidth();
 
         //listContainer.setLayoutParams(frParams);
-      //  TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, 0, 0, 0);
+        //  TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, 0, 0, 0);
 
         translateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -560,6 +567,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             if (mapSetting != null && mapSetting.get(DataBaseHelper.MAP_TYPE) != null) {
                 setTileLayer(mapSetting.get(DataBaseHelper.MAP_TYPE));
             }
+            // mMap.getUiSettings().setCompassEnabled(false);
 
             if (mMap != null) {
                 setUpMap();
@@ -622,7 +630,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             mMap.animateCamera(CameraUpdateFactory.newLatLng(myPos), 500, MyCancelableCallback);
         }
     }
-    public void moveCameraToMarkerPos(LatLng pos){
+
+    public void moveCameraToMarkerPos(LatLng pos) {
         mMap.animateCamera(CameraUpdateFactory.newLatLng(pos), 500, MyCancelableCallback);
     }
 
