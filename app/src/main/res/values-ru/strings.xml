@@ -69,5 +69,5 @@
     <string name="from_current_position">От текущего местоположения</string>
     <string name="from_map_click">От указанного на карте</string>
     <string name="to_object">К выбранному объекту</string>
-    <string name="to_map_click_position">До точки на карте</string>
+    <string name="to_map_click_position">К точке на карте</string>
 </resources>

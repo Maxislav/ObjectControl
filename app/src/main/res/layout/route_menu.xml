@@ -13,66 +13,67 @@
         android:gravity="center"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/closeAll"
-            android:layout_margin="3dp"
-
+            android:layout_margin="1dp"
             android:layout_weight="1">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/cross_close_red" />
+            <ImageButton
+                android:id="@+id/fromToPoint"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/finish_btn" />
         </LinearLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/delTrack"
-            android:layout_margin="3dp"
 
+            android:layout_margin="1dp"
             android:layout_weight="1">
-            <ImageView
+            <ImageButton
+                android:id="@+id/delTrack"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/del" />
+                android:background="@drawable/del_btn" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/closePath"
-            android:layout_margin="3dp"
+
+            android:layout_margin="1dp"
             android:layout_weight="1">
-            <ImageView
+            <ImageButton
+                android:id="@+id/closePath"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/close_path" />
+                android:background="@drawable/close_path_btn" />
         </LinearLayout>
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/back"
-            android:layout_margin="3dp"
+
+            android:layout_margin="1dp"
             android:layout_weight="1">
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/back"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/back" />
+                android:background="@drawable/back_btn" />
         </LinearLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/save"
             android:clickable="true"
             android:layout_margin="3dp"
             android:layout_weight="1">
-            <ImageView
+            <ImageButton
+                android:id="@+id/save"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/save_icon" />
+                android:background="@drawable/save_btn" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

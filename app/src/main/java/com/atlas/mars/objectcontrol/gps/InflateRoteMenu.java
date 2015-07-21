@@ -179,10 +179,10 @@ public class InflateRoteMenu implements View.OnClickListener {
         LinearLayout layoutMoto = (LinearLayout) routeType.findViewById(R.id.moto);
         LinearLayout layoutVelo = (LinearLayout) routeType.findViewById(R.id.velo);
         LinearLayout layoutHand = (LinearLayout) routeType.findViewById(R.id.hand);
-
-        ImageButton fromToPoint =  (ImageButton) routeType.findViewById(R.id.fromToPoint);
+        routeType.findViewById(R.id.closeAll).setOnClickListener(this);
+        /*ImageButton fromToPoint =  (ImageButton) routeType.findViewById(R.id.fromToPoint);
         fromToPoint.setOnClickListener(trackButton);
-
+*/
         trackButton.listRouteType.add(layoutCar);
         trackButton.listRouteType.add(layoutMoto);
         trackButton.listRouteType.add(layoutVelo);
@@ -227,7 +227,9 @@ public class InflateRoteMenu implements View.OnClickListener {
         routeMenu.findViewById(R.id.back).setOnClickListener(trackButton);
         routeMenu.findViewById(R.id.closePath).setOnClickListener(trackButton);
         routeMenu.findViewById(R.id.delTrack).setOnClickListener(trackButton);
-        routeMenu.findViewById(R.id.closeAll).setOnClickListener(this);
+
+       // routeMenu.findViewById(R.id.closeAll).setOnClickListener(this);
+        routeMenu.findViewById(R.id.fromToPoint).setOnClickListener(trackButton);
     }
 
     /*private void inflateStartEnd() {
@@ -251,12 +253,14 @@ public class InflateRoteMenu implements View.OnClickListener {
                     hideRouteStartEnd();
                     return;
                 }*/
-                if (routeType != null && routeType.isShown()) {
-                    hideRouteType();
-                    trackButton.offLongClickListener();
+                /*if (routeType != null && routeType.isShown()) {
+
+
                     return;
-                }
+                }*/
+                hideRouteType();
                 hideRouteMenu();
+                trackButton.offLongClickListener();
 
                 break;
 
