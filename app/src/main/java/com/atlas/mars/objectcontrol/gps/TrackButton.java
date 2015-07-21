@@ -86,6 +86,19 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
     public void onClick(View v) {
         PopupMenu popupMenu;
         switch (v.getId()) {
+            case R.id.fromToPoint:
+                popupMenu = new PopupMenu(mapsActivity, v);
+                popupMenu.inflate(R.menu.menu_select_from_to);
+                if (mapSetting.get("startTrackDraw").equals("current")) {
+                    popupMenu.getMenu().findItem(R.id.current).setChecked(true);
+                }
+                if (mapSetting.get("startTrackDraw").equals("hand")) {
+                    popupMenu.getMenu().findItem(R.id.handStart).setChecked(true);
+                }
+
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
+                break;
             case R.id.btnTrack:
                 showPopupMenu(v);
                 break;
@@ -155,7 +168,7 @@ public class TrackButton implements View.OnClickListener, GoogleMap.OnMapLongCli
             case (R.id.createRoute):
                 menu.showRouteType();
                 menu.showRouteMenu();
-                menu.showRouteStartEnd();
+              //  menu.showRouteStartEnd();
                 mMap.setOnMapLongClickListener(this);
                 return true;
             case (R.id.trackList):

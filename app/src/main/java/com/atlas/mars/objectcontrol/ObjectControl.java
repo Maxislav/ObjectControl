@@ -26,5 +26,6 @@ public class ObjectControl  extends Application {
 
         super.onCreate();
         ACRA.init(this);
+
     }
 }

@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.Density;
 import com.atlas.mars.objectcontrol.R;
 
 import java.util.HashMap;
@@ -26,11 +30,13 @@ public class InflateRoteMenu implements View.OnClickListener {
     float density, width, height;
     DataBaseHelper db;
     HashMap<String, String> mapSetting;
+    Density dns;
 
 
     InflateRoteMenu(Activity activity, TrackButton trackButton) {
         this.activity = activity;
         this.trackButton = trackButton;
+        dns = new Density(activity);
         layoutInflater = activity.getLayoutInflater();
         globalLayout = (FrameLayout) activity.findViewById(R.id.globalLayout);
         density = activity.getResources().getDisplayMetrics().density;
@@ -42,14 +48,49 @@ public class InflateRoteMenu implements View.OnClickListener {
         if (routeType == null) {
             inflateRouteType();
         }
-        routeType.setVisibility(View.VISIBLE);
+        final Animation animIn = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.show_down);
+        animIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                routeType.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        routeType.startAnimation(animIn);
+
     }
 
     public void hideRouteType() {
         if (routeType == null) {
             inflateRouteType();
         }
-        routeType.setVisibility(View.INVISIBLE);
+        final Animation animIn = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.hide_down);
+        animIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // routeMenu.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                routeType.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        routeType.startAnimation(animIn);
     }
 
     protected void showRouteMenu() {
@@ -57,7 +98,27 @@ public class InflateRoteMenu implements View.OnClickListener {
             inflateRouteMenu();
         }
         if (!routeMenu.isShown()) {
-            routeMenu.setVisibility(View.VISIBLE);
+
+            final Animation animIn = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.show_up);
+            animIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    routeMenu.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            routeMenu.startAnimation(animIn);
+
+
         }
 
     }
@@ -66,22 +127,42 @@ public class InflateRoteMenu implements View.OnClickListener {
         if (routeMenu == null) {
             inflateRouteMenu();
         }
-        routeMenu.setVisibility(View.INVISIBLE);
+
+        final Animation animIn = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.hide_up);
+        animIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+               // routeMenu.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                routeMenu.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        routeMenu.startAnimation(animIn);
     }
 
+/*
     protected void showRouteStartEnd() {
         if (routeStartEnd == null) {
             inflateStartEnd();
         }
         routeStartEnd.setVisibility(View.VISIBLE);
     }
+*/
 
-    protected void hideRouteStartEnd() {
+   /* protected void hideRouteStartEnd() {
         if (routeStartEnd == null) {
             inflateStartEnd();
         }
         routeStartEnd.setVisibility(View.INVISIBLE);
-    }
+    }*/
 
 
     private void inflateRouteType() {
@@ -89,7 +170,7 @@ public class InflateRoteMenu implements View.OnClickListener {
         routeType = (LinearLayout) view;
         routeType.setVisibility(View.INVISIBLE);
         globalLayout.addView(routeType, 1);
-        width = activity.getResources().getDisplayMetrics().density * 160;
+        width = activity.getResources().getDisplayMetrics().density * 200;
         height = activity.getResources().getDisplayMetrics().density * 40;
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) width, (int) height);
         layoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
@@ -98,6 +179,10 @@ public class InflateRoteMenu implements View.OnClickListener {
         LinearLayout layoutMoto = (LinearLayout) routeType.findViewById(R.id.moto);
         LinearLayout layoutVelo = (LinearLayout) routeType.findViewById(R.id.velo);
         LinearLayout layoutHand = (LinearLayout) routeType.findViewById(R.id.hand);
+
+        ImageButton fromToPoint =  (ImageButton) routeType.findViewById(R.id.fromToPoint);
+        fromToPoint.setOnClickListener(trackButton);
+
         trackButton.listRouteType.add(layoutCar);
         trackButton.listRouteType.add(layoutMoto);
         trackButton.listRouteType.add(layoutVelo);
@@ -145,7 +230,7 @@ public class InflateRoteMenu implements View.OnClickListener {
         routeMenu.findViewById(R.id.closeAll).setOnClickListener(this);
     }
 
-    private void inflateStartEnd() {
+    /*private void inflateStartEnd() {
         routeStartEnd = (LinearLayout) layoutInflater.inflate(R.layout.track_start_end_menu, null, false);
         routeStartEnd.setVisibility(View.INVISIBLE);
         LinearLayout.LayoutParams layoutStartEndParams = new LinearLayout.LayoutParams((int) (40 * density), (int) (100 * density));
@@ -155,17 +240,17 @@ public class InflateRoteMenu implements View.OnClickListener {
         routeStartEnd.findViewById(R.id.toPoint).setOnClickListener(trackButton);
         globalLayout.addView(routeStartEnd, 1);
 
-    }
+    }*/
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.closeAll:
-                if (routeStartEnd != null && routeStartEnd.isShown()) {
+               /* if (routeStartEnd != null && routeStartEnd.isShown()) {
                     hideRouteStartEnd();
                     return;
-                }
+                }*/
                 if (routeType != null && routeType.isShown()) {
                     hideRouteType();
                     trackButton.offLongClickListener();

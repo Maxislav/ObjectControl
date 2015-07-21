@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="160dp"
+    android:layout_width="200dp"
     android:layout_height="40dp"
     android:layout_gravity="bottom|center"
     android:background="@drawable/border"
-
     android:orientation="vertical">
-
     <LinearLayout
-        android:layout_width="160dp"
+        android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="1dp"
+            android:layout_weight="1">
+            <ImageButton
+                android:id="@+id/fromToPoint"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/finish_btn" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/car"
-            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
             android:layout_weight="1">
             <ImageView
                 android:layout_width="match_parent"
@@ -26,12 +36,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:id="@+id/moto"
-            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
             android:layout_weight="1">
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -40,10 +49,10 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:id="@+id/velo"
-            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
             android:layout_weight="1">
 
             <ImageView
@@ -51,11 +60,12 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/velo" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:id="@+id/hand"
-            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
             android:layout_weight="1">
             <ImageView
                 android:layout_width="match_parent"

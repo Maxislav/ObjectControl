@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/current"
+            android:title="@string/from_current_position" />
+        <item android:id="@+id/handStart"
+            android:title="@string/from_map_click" />
+    </group>
+    <item
+        android:id="@+id/selectObject"
+        android:orderInCategory="0"
+        android:title="@string/to_object"/>
+    <item
+        android:orderInCategory="1"
+        android:title="@string/to_map_click_position"/>
+</menu>
