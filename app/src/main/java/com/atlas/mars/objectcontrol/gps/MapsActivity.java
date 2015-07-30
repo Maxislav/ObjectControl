@@ -172,7 +172,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         trackButton = new TrackButton(this, btnTrack, mMap);
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        new ScrollOnTouchListener(null, listContainer, this, null);
+       // new ScrollOnTouchListener(null, listContainer, this, null);
 
     }
 
