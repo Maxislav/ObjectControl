@@ -6,9 +6,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.atlas.mars.objectcontrol.R;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.HashMap;
 
 /**
@@ -54,11 +51,11 @@ public class ListContainerEvents implements View.OnTouchListener {
                 Log.d(TAG, "+++ACTION_DOWN  " + _xDelta);
 
                 if(map!=null){
-                    LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+                    /*LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
                     activity.moveCameraToMarkerPos(pos);
                     if (activity.trackButton != null && activity.trackButton!=null) {
                         activity.trackButton.onListObjectClick(pos);
-                    }
+                    }*/
                 }
 
 

@@ -836,6 +836,25 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
         if (hashViewRow.get(id) == null) {
             new ListContainerEvents(view, listContainer, this, map);
+
+            view.findViewById(R.id.textName).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+                    moveCameraToMarkerPos(pos);
+                    if (trackButton != null && trackButton!=null) {
+                        trackButton.onListObjectClick(pos);
+                    }
+
+                    /*LatLng pos = new LatLng(Float.parseFloat(map.get("lat")), Float.parseFloat(map.get("lng")));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                    if (trackButton != null) {
+                        trackButton.onListObjectClick(pos);
+                    }*/
+                }
+            });
+
         }
 
         TextView textName = (TextView) view.findViewById(R.id.textName);
