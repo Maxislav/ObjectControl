@@ -68,7 +68,7 @@ public class ListContainerEvents implements View.OnTouchListener {
                 }else{
                     activity.showListObgects();
                 }
-                break;
+                return false;
             case MotionEvent.ACTION_POINTER_DOWN:
                 Log.d(TAG, "+++ACTION_POINTER_DOWN  ");
                 break;
@@ -84,7 +84,7 @@ public class ListContainerEvents implements View.OnTouchListener {
                     listContainerf.setLayoutParams(frParams);
                 }
 
-                break;
+                return false;
             case MotionEvent.ACTION_OUTSIDE:
                 Log.d(TAG, "+++ACTION_MOVE");
                 break;
