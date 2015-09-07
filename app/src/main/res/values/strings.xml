@@ -9,6 +9,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_settings_map">Settings map</string>
+    <string name="action_go_command">Command</string>
     <string name="action_add_object">Create object</string>
     <string name="action_list_object">List objects</string>
     <string name="map">Map</string>
@@ -50,6 +51,7 @@
 
     <string name="web" translatable="false"><![CDATA[<html><meta charset=\"utf-8\"><body><p style=\"color:#A0A0A0;text-indent: 20px; text-align: justify;\">{content}</p></body></html> ]]></string>
     <string name="multiple_send_help">Allows you to select multiple commands</string>
+    <string name="start_on_map_help">Start application on map activity</string>
     <string name="server_url">Server URL where device use</string>
     <string name="server_url_title">Server URL</string>
     <string name="server_login_title">Login</string>
@@ -60,6 +62,7 @@
     <string name="server_login">Login on server</string>
 
     <string name="multiple_send">Multiple sending</string>
+    <string name="start_on_map">Start on map</string>
     <string name="confirm_send">Request confirmation</string>
     <string name="confirm_send_help">Ask for confirmation before sending SMS</string>
     <string name="total_in_history_title">Amount commands in the history memory </string>

@@ -4,8 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MapsActivity">
+    <item android:id="@+id/action_go_command"
+        android:title="@string/action_go_command"
+        android:orderInCategory="0"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_settings_map"
         android:title="@string/action_settings_map"
         android:orderInCategory="0"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 </menu>

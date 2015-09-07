@@ -91,6 +91,8 @@ public class ActivitySetting extends ActionBarActivity {
 
 
     private void onDraw(){
+
+        parsePasteWeb((WebView)findViewById(R.id.webStartOnMap), getString(R.string.start_on_map_help) );
         parsePasteWeb((WebView)findViewById(R.id.webMultipleSend), getString(R.string.multiple_send_help) );
         parsePasteWeb((WebView)findViewById(R.id.webConfirmSend), getString(R.string.confirm_send_help) );
         parsePasteWeb((WebView)findViewById(R.id.countHistory), getString(R.string.count_command_history) );

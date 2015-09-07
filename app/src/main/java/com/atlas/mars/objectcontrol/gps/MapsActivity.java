@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
+import com.atlas.mars.objectcontrol.MainActivity;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.M2Http;
 import com.atlas.mars.objectcontrol.http.NaviZone;
@@ -280,6 +281,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 questionIntent = new Intent(MapsActivity.this, SettingMapActivity.class);
                 startActivityForResult(questionIntent, 0);
                 return true;
+            case R.id.action_go_command:
+                questionIntent = new Intent(MapsActivity.this, MainActivity.class);
+                startActivityForResult(questionIntent, 1);
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

@@ -70,4 +70,7 @@
     <string name="from_map_click">От указанного на карте</string>
     <string name="to_object">К выбранному объекту</string>
     <string name="to_map_click_position">К точке на карте</string>
+    <string name="action_go_command">Команды</string>
+    <string name="start_on_map">Стартовать на карте</string>
+    <string name="start_on_map_help">При запуске сначала отображается  активность с картой </string>
 </resources>
