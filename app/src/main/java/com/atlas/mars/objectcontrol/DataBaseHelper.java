@@ -61,6 +61,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_LOGIN = "mapLogin";
     public static final String MAP_PASS = "mapPass";
     public static final String MAP_SERVER_URL = "mapServerUrl";
+    public static final String START_ON_MAP_ACTIVITY = "startOnMapActivity"; //старт на активности карты
 
     public static final String MAP_TYPE = "mapType";
     public static final String MAP_START_LAT = "startLat";

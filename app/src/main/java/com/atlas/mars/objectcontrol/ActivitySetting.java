@@ -27,7 +27,7 @@ public class ActivitySetting extends ActionBarActivity {
     static HashMap<String,String> mapSetting;
     String web;
     DataBaseHelper db;
-    CheckBox multipleSend, confirmSend;
+    CheckBox multipleSend, confirmSend, startOnMap;
     EditText commandInMemory, commandInStart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,9 @@ public class ActivitySetting extends ActionBarActivity {
     private void init(){
         multipleSend = (CheckBox)findViewById(R.id.multipleSend);
         confirmSend = (CheckBox)findViewById(R.id.confirmSend);
+        startOnMap = (CheckBox)findViewById(R.id.startOnMap);
+
+        //webStartOnMap
         commandInMemory = (EditText)findViewById(R.id.commandInMemory);
         commandInStart = (EditText)findViewById(R.id.commandInStart);
         if(mapSetting== null) mapSetting = new HashMap<>();
@@ -80,6 +83,11 @@ public class ActivitySetting extends ActionBarActivity {
         if(mapSetting.get(db.CONFIRM_SEND).equals("1")){
             confirmSend.setChecked(true);
         }
+
+        if(mapSetting.get(db.START_ON_MAP_ACTIVITY)!=null && mapSetting.get(db.START_ON_MAP_ACTIVITY).equals("1")){
+            startOnMap.setChecked(true);
+        }
+
 
         commandInMemory.setText(mapSetting.get(db.COUNT_MEMORY_HISTORY));
         commandInStart.setText(mapSetting.get(db.COUNT_DISPLAY_HISTORY));
@@ -152,6 +160,13 @@ public class ActivitySetting extends ActionBarActivity {
         }else{
             changesSettingMap.put(db.CONFIRM_SEND,"0");
         }
+
+        if(startOnMap.isChecked()){
+            mapSetting.put(db.START_ON_MAP_ACTIVITY, "1");
+        }else{
+            mapSetting.put(db.START_ON_MAP_ACTIVITY, "0");
+        }
+
 
         String inMemory = commandInMemory.getText().toString();
         if(inMemory.isEmpty()){
