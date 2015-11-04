@@ -111,7 +111,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         if(hashSetting==null){
-            getSetting(hashSetting = new HashMap<>());
+            hashSetting = new HashMap<>();
+            getSetting(hashSetting);
         }
     }
 
@@ -594,7 +595,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
 
-    public void getSetting(HashMap<String,String> map){
+    private void getSetting(HashMap<String,String> map){
         sdb = getWritableDatabase();
         //HashMap<String,String> map = new HashMap<>();
         String query =  "SELECT * FROM " + TABLE_NAME_SETTING;

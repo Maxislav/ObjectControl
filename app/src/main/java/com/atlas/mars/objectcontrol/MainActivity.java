@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
     FragmentHistory fragmentHistory;
     Menu menu;
     BroadcastReceiver receiver, receiverDeliver;
-    public HashMap<String, String> mapSetting;
+    public static  HashMap<String, String> mapSetting;
     M2Http m2Http;
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         mapSelectObjects = new HashMap<>();
         mapSetting = new HashMap<>();
         db = new DataBaseHelper(this);
-        setMapSetting();
+        mapSetting =  db.hashSetting;
         ArrayList arrayList = db.getValueSelected();
         HashMap<String, String> map = new HashMap<>();
         for (int k = 0; k < arrayList.size(); k++) {
@@ -148,10 +148,6 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
         //setTextSelectedObj();
 
-    }
-
-    public void setMapSetting(){
-        db.getSetting(mapSetting);
     }
 
     private void setTitleClickListener(View view, int _i) {
@@ -378,7 +374,7 @@ public class MainActivity extends ActionBarActivity implements PageFragment.OnSe
         }
         if(requestCode == FROM_SETTING){
             if (resultCode == RESULT_OK) {
-                setMapSetting();
+
                 if(fragmentHome!=null) try{
                     fragmentHome.onRedraw();
                 }catch (Exception e){

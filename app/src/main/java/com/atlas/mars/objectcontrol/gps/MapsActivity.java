@@ -72,6 +72,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     ImageButton btnList;
     ImageButton btnBearing;
     ImageButton btnTrack;
+    ImageButton btnPhone;
+
+
     LinearLayout listContainer;
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
@@ -160,6 +163,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         btnList = (ImageButton) findViewById(R.id.btnList);
         btnBearing = (ImageButton) findViewById(R.id.btnBearing);
         btnTrack = (ImageButton) findViewById(R.id.btnTrack);
+        btnPhone = (ImageButton) findViewById(R.id.btnPhone);
+
+
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
 
 
@@ -171,6 +177,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         setClickListenerImgTargetMyPos(btnFollow);
         setClickListenerImgBearing(btnBearing);
         trackButton = new TrackButton(this, btnTrack, mMap);
+
+        new PhoneEvents(btnPhone, this);
+
+
+
         locationManagerGps = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManagerNet = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         //todo навешивание на сткролл

@@ -70,7 +70,7 @@ public class ActivitySetting extends ActionBarActivity {
         if(mapSetting== null) mapSetting = new HashMap<>();
         if(db==null){
             db = new DataBaseHelper(this);
-            db.getSetting(mapSetting);
+            mapSetting = db.hashSetting;
         }
 
         web = getString(R.string.web);
