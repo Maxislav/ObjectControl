@@ -63,7 +63,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     private float dpHeight, dpWidth, density;
     private TileOverlay tileOverlay;
 
-    public final static String TAG = "myLog";
+    public final static String TAG = "MapsActivityLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private TileProvider tileProvider; //
     public LocationManager locationManagerGps, locationManagerNet;
@@ -79,6 +79,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     LinearLayout linearLayoutInScroll;
     ScrollView scrollView;
 
+    int fromActivityFlag;
 
     public LatLng myPos;
     public float mySpeed;
@@ -121,7 +122,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        Intent intent = getIntent();
 
+        fromActivityFlag = intent.getFlags();
 
         hashObjects = new HashMap<>();
         targetOn = false;
@@ -278,6 +281,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, fromActivityFlag+"");
         getMenuInflater().inflate(R.menu.map_menu, menu);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.actionbar_background, null));
@@ -291,10 +295,16 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             case R.id.action_settings_map:
                 questionIntent = new Intent(MapsActivity.this, SettingMapActivity.class);
                 startActivityForResult(questionIntent, 0);
+
                 return true;
             case R.id.action_go_command:
                 questionIntent = new Intent(MapsActivity.this, MainActivity.class);
-                startActivityForResult(questionIntent, 1);
+
+                if(fromActivityFlag == 1){
+                    startActivity(questionIntent);
+                }else {
+                    startActivityForResult(questionIntent, 1);
+                }
                 return true;
 
         }

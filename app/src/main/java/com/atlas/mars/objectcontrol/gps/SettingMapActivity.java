@@ -11,6 +11,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -19,9 +20,7 @@ import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
 import com.squareup.phrase.Phrase;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by mars on 5/5/15.
@@ -30,6 +29,7 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
     String web;
     Spinner spinner;
     DataBaseHelper db;
+    CheckBox  startOnMap;
     HashMap<String,String> mapSetting = DataBaseHelper.hashSetting;
     String LOGIN, PASS, URL;
     EditText serverUrl, edTextServerLogin, edTextServerPass;
@@ -69,6 +69,7 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         serverUrl = (EditText)findViewById(R.id.serverUrl);
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
+        startOnMap = (CheckBox)findViewById(R.id.startOnMap);
 
        /* List<String> SpinnerArray = new ArrayList<String>();
         SpinnerArray.add("Item 1");
@@ -116,12 +117,17 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         if(PASS!=null){
             edTextServerPass.setText(PASS);
         }
+        if(mapSetting.get(db.START_ON_MAP_ACTIVITY)!=null && mapSetting.get(db.START_ON_MAP_ACTIVITY).equals("1")){
+            startOnMap.setChecked(true);
+        }
+
         web = getString(R.string.web);
 
 
         onDraw();
     }
     private void onDraw(){
+        parsePasteWeb((WebView)findViewById(R.id.webStartOnMap), getString(R.string.start_on_map_help) );
         parsePasteWeb((WebView)findViewById(R.id.server), getString(R.string.server_url) );
         parsePasteWeb((WebView)findViewById(R.id.wLogin), getString(R.string.server_login) );
         parsePasteWeb((WebView)findViewById(R.id.wPass), getString(R.string.server_pass) );
@@ -146,6 +152,12 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         if(PASS!=null){
             mapSetting.put(db.MAP_PASS, PASS);
         }
+        if(startOnMap.isChecked()){
+            mapSetting.put(db.START_ON_MAP_ACTIVITY, "1");
+        }else{
+            mapSetting.put(db.START_ON_MAP_ACTIVITY, "0");
+        }
+
         mapSetting.put(PROTOCOL_TYPE, Integer.valueOf(spinnerPosition).toString());
         db.setSetting(mapSetting);
     }

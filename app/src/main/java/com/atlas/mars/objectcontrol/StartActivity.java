@@ -12,6 +12,8 @@ import java.util.HashMap;
  * Created by mars on 11/4/15.
  */
 public class StartActivity extends Activity {
+    public final String FROM_ACTIVITY = "FROM_ACTIVITY";
+    public final String ACTIVITY_NAME = "StartActivity";
 
     DataBaseHelper db;
     static HashMap<String,String> mapSetting;
@@ -22,7 +24,9 @@ public class StartActivity extends Activity {
         mapSetting = db.hashSetting;
         Intent intent;
         if(mapSetting.get(db.START_ON_MAP_ACTIVITY)!=null && mapSetting.get(db.START_ON_MAP_ACTIVITY).equals("1")){
+
             intent = new Intent(this, MapsActivity.class);
+            intent.setFlags(1);
 
         }else{
             intent = new Intent(this, MainActivity.class);
