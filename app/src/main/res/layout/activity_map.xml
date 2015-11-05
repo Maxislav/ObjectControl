@@ -61,6 +61,7 @@
         android:layout_height="40dp"
         android:layout_gravity="right|top"
         android:layout_marginTop="200dp"
+        android:visibility="invisible"
         android:background="@drawable/phone_btn" />
 
 
