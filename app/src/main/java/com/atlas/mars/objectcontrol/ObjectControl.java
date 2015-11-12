@@ -7,6 +7,8 @@ import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 
+import java.util.HashMap;
+
 /**
  * Created by mars on 6/24/15.
  */
@@ -19,11 +21,14 @@ import org.acra.sender.HttpSender;
         httpMethod = HttpSender.Method.POST
 )
 public class ObjectControl  extends Application {
+    DataBaseHelper db;
+    static HashMap hashMapSetting;
     @Override
     public void onCreate() {
         // The following line triggers the initialization of ACRA
 
-
+        db = new DataBaseHelper(this);
+        hashMapSetting = db.hashSetting;
         super.onCreate();
         ACRA.init(this);
 
