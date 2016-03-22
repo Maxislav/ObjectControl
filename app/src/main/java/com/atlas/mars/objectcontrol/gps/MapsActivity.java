@@ -171,6 +171,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         btnPhone = (ImageButton) findViewById(R.id.btnPhone);
 
 
+
+        setOnClickListinerPhone();
+
         listContainer = (LinearLayout) findViewById(R.id.listContainer);
 
 
@@ -529,7 +532,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     private void setUpTileLayer(final String mapName) {
-        tileProvider = new UrlTileProvider(256, 256) {
+        tileProvider = new UrlTileProvider(512, 512) {
             @Override
             public URL getTileUrl(int x, int y, int zoom) {
                 String s;
@@ -946,4 +949,13 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    /**
+     * Нажатие на телефон
+     */
+    public void setOnClickListinerPhone(){
+      //  img.setOnClickListener(new View.OnClickListener() {
+
+    }
+
 }

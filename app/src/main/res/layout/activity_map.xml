@@ -47,7 +47,6 @@
         android:background="@drawable/bitmap_track_show" />
 
 
-
     <ImageButton
         android:id="@+id/btnList"
         android:layout_width="40dp"
@@ -61,7 +60,6 @@
         android:layout_height="40dp"
         android:layout_gravity="right|top"
         android:layout_marginTop="200dp"
-        android:visibility="invisible"
         android:background="@drawable/phone_btn" />
 
 
