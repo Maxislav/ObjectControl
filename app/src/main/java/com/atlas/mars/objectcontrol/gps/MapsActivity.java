@@ -2,6 +2,7 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -46,12 +47,16 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -516,7 +521,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                         tileOverlay.clearTileCache();
                     }
                     setUpTileLayer(mapName);
-                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                   // CustomMapTileProvider customMapTileProvider = new CustomMapTileProvider();
+                   // tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())).zIndex(1.0f));
                     break;
                 case "mapQuest":
                     if (tileOverlay != null) {
@@ -530,6 +537,61 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
         }
     }
+
+    public class CustomMapTileProvider implements TileProvider {
+        private static final int TILE_WIDTH = 256;
+        private static final int TILE_HEIGHT = 256;
+        private static final int BUFFER_SIZE = 16 * 1024;
+
+        private AssetManager mAssets;
+
+        public CustomMapTileProvider(AssetManager assets) {
+            mAssets = assets;
+        }
+
+        @Override
+        public Tile getTile(int x, int y, int zoom) {
+            byte[] image = readTileImage(x, y, zoom);
+            return image == null ? null : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
+        }
+
+        private byte[] readTileImage(int x, int y, int zoom) {
+            InputStream in = null;
+            ByteArrayOutputStream buffer = null;
+
+            try {
+                in = mAssets.open(getTileFilename(x, y, zoom));
+                buffer = new ByteArrayOutputStream();
+
+                int nRead;
+                byte[] data = new byte[BUFFER_SIZE];
+
+                while ((nRead = in.read(data, 0, BUFFER_SIZE)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                buffer.flush();
+
+                return buffer.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                if (in != null) try { in.close(); } catch (Exception ignored) {}
+                if (buffer != null) try { buffer.close(); } catch (Exception ignored) {}
+            }
+        }
+
+        private String getTileFilename(int x, int y, int zoom) {
+            return "http://a.tile.openstreetmap.org/" + zoom + '/' + x + '/' + y + ".png";
+        }
+    }
+
+
+
+
 
     private void setUpTileLayer(final String mapName) {
         tileProvider = new UrlTileProvider(512, 512) {
