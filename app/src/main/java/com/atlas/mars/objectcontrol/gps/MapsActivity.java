@@ -53,8 +53,11 @@ import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -511,10 +514,15 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 tileHill.clearTileCache();
             }
 
-            tileHill = mMap.addTileOverlay(new TileOverlayOptions()
+            tileHill  = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(
+                    getUrlTileProvider("hill")
+            ).zIndex(2.0f));
+
+            //todo кастомный свой запрос
+           /* tileHill = mMap.addTileOverlay(new TileOverlayOptions()
                     .tileProvider(
                             new HillTileProvider()
-                    ).zIndex(2.0f));
+                    ).zIndex(2.0f));*/
 
             switch (mapName) {
                 case "ggl":
@@ -562,6 +570,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
         }
     }
+
+
 
 
 
@@ -1053,6 +1063,40 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             byte[] byteArray = hillRest.getResultByteArray();
             return byteArray;
         }
+    }
+
+    private UrlTileProvider getUrlTileProvider(final String mapName){
+        return new UrlTileProvider(256,256) {
+            @Override
+            public URL getTileUrl(int x, int y, int zoom) {
+                URL url = null;
+
+
+                if (!checkTileExists(x, y, zoom)) {
+                    return null;
+                }
+                switch (mapName){
+                    case "hill":
+                        try {
+                            url = new URL(String.format("http://hills.gpsies.com/%d/%d/%d.png", zoom, x, y));
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+                        return url;
+                }
+                return null;
+            }
+
+            private boolean checkTileExists(int x, int y, int zoom) {
+                int minZoom = 10;
+                int maxZoom = 20;
+
+                if ((zoom < minZoom || zoom > maxZoom)) {
+                    return false;
+                }
+                return true;
+            }
+        };
     }
 
 }
