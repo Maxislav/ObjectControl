@@ -56,8 +56,8 @@ public class RestTest {
 
     public byte[] getImgByteSync() throws IOException {
         InputStream is = null;
-
         ResponseBody responseBody = null;
+
         responseBody = call.execute().body();
         is = responseBody.byteStream();
         int len;

@@ -2,7 +2,6 @@ package com.atlas.mars.objectcontrol.gps;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -36,7 +35,8 @@ import com.atlas.mars.objectcontrol.MainActivity;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.M2Http;
 import com.atlas.mars.objectcontrol.http.NaviZone;
-import com.atlas.mars.objectcontrol.rest.RestTest;
+import com.atlas.mars.objectcontrol.rest.MapQuestRest;
+import com.atlas.mars.objectcontrol.rest.OsmRest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -52,12 +52,8 @@ import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
-import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -527,18 +523,25 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                    // tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
 
                     //todo попытка своего
-                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())).zIndex(1.0f));
+                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions()
+                            .tileProvider(
+                                    new OsmMapTileProvider()
+                            ).zIndex(1.0f));
+
                     mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-
-
                     break;
                 case "mapQuest":
                     if (tileOverlay != null) {
                         tileOverlay.remove();
                         tileOverlay.clearTileCache();
                     }
-                    setUpTileLayer(mapName);
+                    /*setUpTileLayer(mapName);
                     tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NONE);*/
+                    tileOverlay = mMap.addTileOverlay(new TileOverlayOptions()
+                            .tileProvider(
+                                    new MapQuestTileProvider()
+                            ).zIndex(1.0f));
                     mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                     break;
             }
@@ -552,7 +555,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
 
 
-    private void setUpTileLayer(final String mapName) {
+    /*private void setUpTileLayer(final String mapName) {
         tileProvider = new UrlTileProvider(512, 512) {
             @Override
             public URL getTileUrl(int x, int y, int zoom) {
@@ -596,7 +599,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             }
         };
     }
-
+*/
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -984,16 +987,10 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
 
 
-    public class CustomMapTileProvider implements TileProvider {
-        private static final int TILE_WIDTH = 256;
-        private static final int TILE_HEIGHT = 256;
+    public class OsmMapTileProvider implements TileProvider {
+        private static final int TILE_WIDTH = 512;
+        private static final int TILE_HEIGHT = 512;
         private static final int BUFFER_SIZE = 16 * 1024;
-
-        private AssetManager mAssets;
-
-        public CustomMapTileProvider(AssetManager assets) {
-            mAssets = assets;
-        }
 
         @Override
         public Tile getTile(int x, int y, int zoom) {
@@ -1002,27 +999,27 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
 
         private byte[] readTileImage(int x, int y, int zoom) {
-
-
-            RestTest restTest =  new RestTest(zoom, x, y);
-           // restTest.requestTile();
-
-           /* Bitmap bitmap = restTest._execute();
-
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();*/
-
-            byte[] byteArray = null;
-            try {
-                byteArray = restTest.getImgByteSync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            OsmRest osmRest = new OsmRest(zoom, x, y);
+            byte[] byteArray = osmRest.getResultByteArray();
             return byteArray;
+        }
+    }
 
+    public class MapQuestTileProvider implements TileProvider {
+        private static final int TILE_WIDTH = 512;
+        private static final int TILE_HEIGHT = 512;
+        private static final int BUFFER_SIZE = 16 * 1024;
 
+        @Override
+        public Tile getTile(int x, int y, int zoom) {
+            byte[] image = readTileImage(x, y, zoom);
+            return image == null ? null : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
+        }
+
+        private byte[] readTileImage(int x, int y, int zoom) {
+            MapQuestRest mapQuestRest = new MapQuestRest(zoom, x, y);
+            byte[] byteArray = mapQuestRest.getResultByteArray();
+            return byteArray;
         }
     }
 
