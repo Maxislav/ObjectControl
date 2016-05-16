@@ -35,6 +35,7 @@ import com.atlas.mars.objectcontrol.MainActivity;
 import com.atlas.mars.objectcontrol.R;
 import com.atlas.mars.objectcontrol.http.M2Http;
 import com.atlas.mars.objectcontrol.http.NaviZone;
+import com.atlas.mars.objectcontrol.rest.HillRest;
 import com.atlas.mars.objectcontrol.rest.MapQuestRest;
 import com.atlas.mars.objectcontrol.rest.OsmRest;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,7 +63,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     DisplayMetrics displayMetrics;
     public DataBaseHelper dataBaseHelper;
     private float dpHeight, dpWidth, density;
-    private TileOverlay tileOverlay;
+    private TileOverlay tileOverlay, tileHill;
 
     public final static String TAG = "MapsActivityLog";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -504,6 +505,17 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public void setTileLayer(String mapName) {
         if (mapType == null || mapType != mapName) {
             mapType = mapName;
+
+            if(tileHill!=null){
+                tileHill.remove();
+                tileHill.clearTileCache();
+            }
+
+            tileHill = mMap.addTileOverlay(new TileOverlayOptions()
+                    .tileProvider(
+                            new HillTileProvider()
+                    ).zIndex(2.0f));
+
             switch (mapName) {
                 case "ggl":
                     if (tileOverlay != null) {
@@ -527,6 +539,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                             .tileProvider(
                                     new OsmMapTileProvider()
                             ).zIndex(1.0f));
+
+
 
                     mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                     break;
@@ -1019,6 +1033,24 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         private byte[] readTileImage(int x, int y, int zoom) {
             MapQuestRest mapQuestRest = new MapQuestRest(zoom, x, y);
             byte[] byteArray = mapQuestRest.getResultByteArray();
+            return byteArray;
+        }
+    }
+
+    public class HillTileProvider implements TileProvider {
+        private static final int TILE_WIDTH = 512;
+        private static final int TILE_HEIGHT = 512;
+        private static final int BUFFER_SIZE = 16 * 1024;
+
+        @Override
+        public Tile getTile(int x, int y, int zoom) {
+            byte[] image = readTileImage(x, y, zoom);
+            return image == null ? null : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
+        }
+
+        private byte[] readTileImage(int x, int y, int zoom) {
+            HillRest hillRest = new HillRest(zoom, x, y);
+            byte[] byteArray = hillRest.getResultByteArray();
             return byteArray;
         }
     }
