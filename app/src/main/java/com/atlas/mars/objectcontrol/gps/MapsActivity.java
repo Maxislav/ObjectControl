@@ -3,7 +3,6 @@ package com.atlas.mars.objectcontrol.gps;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -56,7 +55,7 @@ import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 import com.google.maps.android.ui.IconGenerator;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -514,13 +513,14 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                     if (tileOverlay != null) {
                         tileOverlay.remove();
                     }
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                     break;
                 case "osm":
                     if (tileOverlay != null) {
                         tileOverlay.remove();
                         tileOverlay.clearTileCache();
                     }
-                    setUpTileLayer(mapName);
+                   // setUpTileLayer(mapName);
                    // CustomMapTileProvider customMapTileProvider = new CustomMapTileProvider();
 
                     //todo рабочий вариант
@@ -528,6 +528,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
                     //todo попытка своего
                     tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())).zIndex(1.0f));
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+
                     break;
                 case "mapQuest":
                     if (tileOverlay != null) {
@@ -536,6 +539,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                     }
                     setUpTileLayer(mapName);
                     tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1.0f));
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                     break;
             }
 
@@ -635,6 +639,9 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     private void setUpMap() {
         // private static final LatLng MELBOURNE = new LatLng(-37.813, 144.962);
         //    MapView mapView = (MapView)findViewById(R.id.map);
+
+
+
         String lat = mapSetting.get(dataBaseHelper.MAP_START_LAT);
         String lng = mapSetting.get(dataBaseHelper.MAP_START_LNG);
         LatLng startPos;
@@ -1000,45 +1007,22 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             RestTest restTest =  new RestTest(zoom, x, y);
            // restTest.requestTile();
 
-            Bitmap bitmap = restTest._execute();
+           /* Bitmap bitmap = restTest._execute();
 
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            return byteArray;
+            byte[] byteArray = stream.toByteArray();*/
 
-            /*InputStream in = null;
-            ByteArrayOutputStream buffer = null;
-
+            byte[] byteArray = null;
             try {
-
-                in = mAssets.open(getTileFilename(x, y, zoom));
-                buffer = new ByteArrayOutputStream();
-
-                int nRead;
-                byte[] data = new byte[BUFFER_SIZE];
-
-                while ((nRead = in.read(data, 0, BUFFER_SIZE)) != -1) {
-                    buffer.write(data, 0, nRead);
-                }
-                buffer.flush();
-
-                return buffer.toByteArray();
+                byteArray = restTest.getImgByteSync();
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
-            } catch (OutOfMemoryError e) {
-                e.printStackTrace();
-                return null;
-            } finally {
-                if (in != null) try { in.close(); } catch (Exception ignored) {}
-                if (buffer != null) try { buffer.close(); } catch (Exception ignored) {}
-            }*/
-        }
+            }
+            return byteArray;
 
-        private String getTileFilename(int x, int y, int zoom) {
-            return "http://a.tile.openstreetmap.org/" + zoom + '/' + x + '/' + y + ".png";
+
         }
     }
 
