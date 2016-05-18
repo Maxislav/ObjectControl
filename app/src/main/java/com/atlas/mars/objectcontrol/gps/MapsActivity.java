@@ -218,6 +218,10 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
     @Override
     protected void onPause() {
+        if(myPosMarker!=null){
+            myPosMarker.remove();
+            myPosMarker = null;
+        }
         if (locationManagerGps != null) {
             locationManagerGps.removeUpdates(locationListenerGps);
         }
@@ -743,25 +747,31 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     public void setMarkerMyPos(String title) {
         if (mMap == null) return;
 
-        if (myPosMarker != null) {
-            myPosMarker.remove();
-            myPosMarker = null;
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(myPos)
+                .anchor(0.5f, 0.5f)
+                .flat(true)
+                .title(title);
+
+
+
+        if (myPosMarker == null) {
+            myPosMarker = mMap.addMarker(markerOptions);
+            //myPosMarker.remove();
+           // myPosMarker = null;
         }
+        myPosMarker.setVisible(true);
 
 
-        myPosMarker = mMap.addMarker(
-                new MarkerOptions()
-                        .position(myPos)
-                        .anchor(0.5f, 0.5f)
-                        .flat(true)
-                        .title(title));
-        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point)));
         if (MyLocationListenerGps.statusGps && myBearing != 0.0f) {
-            myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_obj));
             myPosMarker.setRotation(myBearing);
+            myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_obj));
+
         } else {
             myPosMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ico_point));
         }
+        myPosMarker.setPosition(myPos);
+        myPosMarker.setAnchor(0.5f, 0.5f);
 
     }
 
