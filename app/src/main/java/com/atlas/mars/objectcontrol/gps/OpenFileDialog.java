@@ -2,26 +2,35 @@ package com.atlas.mars.objectcontrol.gps;
 //package edu.android.openfiledialog;
 
         import android.app.AlertDialog;
-        import android.content.Context;
-        import android.content.DialogInterface;
-        import android.graphics.Paint;
-        import android.graphics.Point;
-        import android.graphics.Rect;
-        import android.graphics.drawable.Drawable;
-        import android.os.Environment;
-        import android.util.DisplayMetrics;
-        import android.util.Log;
-        import android.util.TypedValue;
-        import android.view.*;
-        import android.widget.*;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import com.atlas.mars.objectcontrol.MainActivity;
-
-        import java.io.File;
-        import java.io.FilenameFilter;
-        import java.lang.reflect.Method;
-        import java.util.*;
-        import java.util.concurrent.Callable;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -103,13 +112,12 @@ public class OpenFileDialog extends AlertDialog.Builder {
 
                         if (selectedIndex > -1) {
                             Log.d(TAG, "+++++" + currentPath);
-                            MapsActivity activity = (MapsActivity) context;
-                            activity.drawPoly(currentPath);
+                            Result result = (Result) context;
+                            result.onSelectPath(currentPath);
                         }
                         if (selectedIndex > -1 && listener != null) {
                             listener.OnSelectedFile(listView.getItemAtPosition(selectedIndex).toString());
                             listView.getItemAtPosition(selectedIndex);
-
                         }
                     }
                 })
@@ -306,5 +314,8 @@ public class OpenFileDialog extends AlertDialog.Builder {
             }
         });
         return listView;
+    }
+    public interface Result{
+        public void onSelectPath(String currentPath);
     }
 }

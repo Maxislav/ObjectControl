@@ -61,7 +61,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MapsActivity extends ActionBarActivity implements FragmentZoomControl.OnClickListener {
+public class MapsActivity extends ActionBarActivity implements FragmentZoomControl.OnClickListener, OpenFileDialog.Result {
 
     DisplayMetrics displayMetrics;
     public DataBaseHelper dataBaseHelper;
@@ -336,27 +336,6 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 trackButton.onSelectIdTrack(data.getStringExtra("selectId"));
             }
         }
-    }
-
-    public void drawPoly(String path) {
-        String state = Environment.getExternalStorageState();
-        if (!(state.equals(Environment.MEDIA_MOUNTED))) {
-            toastShow("There is no any sd card");
-            return;
-        }
-        Mytrack mytrack = new Mytrack(path);
-
-        if (trackButton != null) {
-            LatLng[] latLngs = mytrack.getTrack();
-            if (latLngs.length < 2) {
-                return;
-            }
-            trackButton.drawPoly(latLngs);
-
-            trackButton.addMarker(latLngs[0]);
-            trackButton.addMarker(latLngs[latLngs.length - 1]);
-        }
-
     }
 
     protected void setClickListenerImgBearing(final ImageView img) {
@@ -873,6 +852,8 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
 
+
+
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         public MarkerInfoWindowAdapter() {
             super();
@@ -1107,6 +1088,27 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
                 return true;
             }
         };
+    }
+
+    @Override
+    public void onSelectPath(String path) {
+        String state = Environment.getExternalStorageState();
+        if (!(state.equals(Environment.MEDIA_MOUNTED))) {
+            toastShow("There is no any sd card");
+            return;
+        }
+        Mytrack mytrack = new Mytrack(path);
+
+        if (trackButton != null) {
+            LatLng[] latLngs = mytrack.getTrack();
+            if (latLngs.length < 2) {
+                return;
+            }
+            trackButton.drawPoly(latLngs);
+
+            trackButton.addMarker(latLngs[0]);
+            trackButton.addMarker(latLngs[latLngs.length - 1]);
+        }
     }
 
 }
