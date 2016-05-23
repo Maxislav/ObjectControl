@@ -596,8 +596,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public boolean clearSettingValue(String key){
         sdb = getWritableDatabase();
-        boolean del = sdb.delete(TABLE_NAME_SETTING, VALUE_NAME_SETTING_CODE+ "="+key, null )>0;
-        sdb.close();
+        boolean del =false;
+        try{
+            del =  sdb.delete(TABLE_NAME_SETTING,  VALUE_NAME_SETTING_CODE + " = ?", new String[] { key })>0;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sdb.close();
+        }
+
+        if(del){
+            hashSetting.remove(key);
+        }
         return  del;
     }
 

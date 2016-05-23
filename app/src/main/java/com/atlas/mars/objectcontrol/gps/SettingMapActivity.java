@@ -27,17 +27,19 @@ import java.util.HashMap;
 /**
  * Created by mars on 5/5/15.
  */
-public class SettingMapActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener,  OpenFileDialog.Result  {
+public class SettingMapActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener,  OpenFileDialog.Result, View.OnClickListener  {
     final static String TAG = "SettingMapActivityLogs";
 
     String web;
-
+    String storagePathTiles;
     Spinner spinner;
+
+
     DataBaseHelper db;
     CheckBox  startOnMap, checkBoxStoragePathTiles;
     HashMap<String,String> mapSetting = DataBaseHelper.hashSetting;
     String LOGIN, PASS, URL;
-    EditText serverUrl, edTextServerLogin, edTextServerPass;
+    EditText serverUrl, edTextServerLogin, edTextServerPass, editTextStoragePathTiles;
     boolean isInit = false;
     public  static final String PROTOCOL_TYPE = "protocolType";
     private int spinnerPosition;
@@ -74,8 +76,14 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         serverUrl = (EditText)findViewById(R.id.serverUrl);
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
+        editTextStoragePathTiles = (EditText)findViewById(R.id.editTextStoragePathTiles);
+        editTextStoragePathTiles.setKeyListener(null);
+        editTextStoragePathTiles.setOnClickListener(this);
+
         startOnMap = (CheckBox)findViewById(R.id.startOnMap);
         checkBoxStoragePathTiles = (CheckBox)findViewById(R.id.checkBoxStoragePathTiles);
+
+
 
        /* List<String> SpinnerArray = new ArrayList<String>();
         SpinnerArray.add("Item 1");
@@ -127,7 +135,9 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         }
 
         if(mapSetting.get(db.STORAGE_PATH_TILES)!=null){
+            storagePathTiles = mapSetting.get(db.STORAGE_PATH_TILES);
             checkBoxStoragePathTiles.setChecked(true);
+            editTextStoragePathTiles.setText(storagePathTiles);
         }
 
         checkBoxStoragePathTiles.setOnCheckedChangeListener(this);
@@ -170,6 +180,12 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
             mapSetting.put(db.START_ON_MAP_ACTIVITY, "0");
         }
 
+        if(storagePathTiles==null){
+            db.clearSettingValue(db.STORAGE_PATH_TILES);
+
+        }else{
+            mapSetting.put(db.STORAGE_PATH_TILES, storagePathTiles);
+        }
         mapSetting.put(PROTOCOL_TYPE, Integer.valueOf(spinnerPosition).toString());
         db.setSetting(mapSetting);
     }
@@ -196,9 +212,12 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()){
             case R.id.checkBoxStoragePathTiles:
-                if(isChecked){
+                if(isChecked && storagePathTiles==null){
                     OpenFileDialog fileDialog = new OpenFileDialog(this);
                     fileDialog.show();
+                }else if(!isChecked){
+                    editTextStoragePathTiles.setText("");
+                    storagePathTiles = null;
                 }
                 break;
         }
@@ -212,7 +231,19 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
     //путь
     @Override
     public void onSelectPath(String currentPath) {
-
         Log.d(TAG, currentPath);
+        editTextStoragePathTiles.setText(currentPath);
+        storagePathTiles = currentPath;
+        checkBoxStoragePathTiles.setChecked(true);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.editTextStoragePathTiles:
+                OpenFileDialog fileDialog = new OpenFileDialog(this);
+                fileDialog.show();
+                break;
+        }
     }
 }

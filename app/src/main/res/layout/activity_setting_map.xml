@@ -46,6 +46,24 @@
                             android:paddingTop="5dp"
                             android:text="@string/path_to_save_maps" />
 
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true">
+
+                            <EditText
+                                android:id="@+id/editTextStoragePathTiles"
+                                style="@style/editTextStyle"
+                                android:inputType="none"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:minWidth="60dp"
+                                android:padding="10dp" />
+                        </LinearLayout>
+
+
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
