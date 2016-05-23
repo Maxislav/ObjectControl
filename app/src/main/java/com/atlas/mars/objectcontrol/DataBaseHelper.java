@@ -62,6 +62,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String MAP_PASS = "mapPass";
     public static final String MAP_SERVER_URL = "mapServerUrl";
     public static final String START_ON_MAP_ACTIVITY = "startOnMapActivity"; //старт на активности карты
+    public static final String STORAGE_PATH_TILES = "storagePathTiles"; //путь хранения тайлов карт
+
 
     public static final String MAP_TYPE = "mapType";
     public static final String MAP_START_LAT = "startLat";
@@ -590,10 +592,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         sdb.close();
-
     }
 
-
+    public boolean clearSettingValue(String key){
+        sdb = getWritableDatabase();
+        boolean del = sdb.delete(TABLE_NAME_SETTING, VALUE_NAME_SETTING_CODE+ "="+key, null )>0;
+        sdb.close();
+        return  del;
+    }
 
     private void getSetting(HashMap<String,String> map){
         sdb = getWritableDatabase();

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -25,11 +27,14 @@ import java.util.HashMap;
 /**
  * Created by mars on 5/5/15.
  */
-public class SettingMapActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class SettingMapActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener,  OpenFileDialog.Result  {
+    final static String TAG = "SettingMapActivityLogs";
+
     String web;
+
     Spinner spinner;
     DataBaseHelper db;
-    CheckBox  startOnMap;
+    CheckBox  startOnMap, checkBoxStoragePathTiles;
     HashMap<String,String> mapSetting = DataBaseHelper.hashSetting;
     String LOGIN, PASS, URL;
     EditText serverUrl, edTextServerLogin, edTextServerPass;
@@ -70,6 +75,7 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         edTextServerLogin = (EditText)findViewById(R.id.edTextServerLogin);
         edTextServerPass = (EditText)findViewById(R.id.edTextServerPass);
         startOnMap = (CheckBox)findViewById(R.id.startOnMap);
+        checkBoxStoragePathTiles = (CheckBox)findViewById(R.id.checkBoxStoragePathTiles);
 
        /* List<String> SpinnerArray = new ArrayList<String>();
         SpinnerArray.add("Item 1");
@@ -100,7 +106,6 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
                     spinnerPosition = 1;
                     break;
             }
-
         }
         spinner.setSelection(spinnerPosition);
         db = new DataBaseHelper(this);
@@ -121,6 +126,12 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
             startOnMap.setChecked(true);
         }
 
+        if(mapSetting.get(db.STORAGE_PATH_TILES)!=null){
+            checkBoxStoragePathTiles.setChecked(true);
+        }
+
+        checkBoxStoragePathTiles.setOnCheckedChangeListener(this);
+
         web = getString(R.string.web);
 
 
@@ -132,6 +143,7 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
         parsePasteWeb((WebView)findViewById(R.id.wLogin), getString(R.string.server_login) );
         parsePasteWeb((WebView)findViewById(R.id.wPass), getString(R.string.server_pass) );
         parsePasteWeb((WebView)findViewById(R.id.protocol), getString(R.string.server_protocol) );
+        parsePasteWeb((WebView)findViewById(R.id.webStoragePathTile), getString(R.string.web_storage_path_tile) );
 
     }
     private void parsePasteWeb(WebView browser, String put ){
@@ -178,5 +190,29 @@ public class SettingMapActivity extends ActionBarActivity implements AdapterView
     }
     public void toastShow(String str) {
         Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()){
+            case R.id.checkBoxStoragePathTiles:
+                if(isChecked){
+                    OpenFileDialog fileDialog = new OpenFileDialog(this);
+                    fileDialog.show();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onSelectFile(String currentPath) {
+       // Log.d(TAG, currentPath);
+    }
+
+    //путь
+    @Override
+    public void onSelectPath(String currentPath) {
+
+        Log.d(TAG, currentPath);
     }
 }

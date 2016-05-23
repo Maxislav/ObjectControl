@@ -1091,7 +1091,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
     }
 
     @Override
-    public void onSelectPath(String path) {
+    public void onSelectFile(String path) {
         String state = Environment.getExternalStorageState();
         if (!(state.equals(Environment.MEDIA_MOUNTED))) {
             toastShow("There is no any sd card");
@@ -1109,6 +1109,11 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
             trackButton.addMarker(latLngs[0]);
             trackButton.addMarker(latLngs[latLngs.length - 1]);
         }
+    }
+
+    @Override
+    public void onSelectPath(String currentPath) {
+
     }
 
 }

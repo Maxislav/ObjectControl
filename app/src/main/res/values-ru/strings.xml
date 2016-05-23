@@ -73,4 +73,6 @@
     <string name="action_go_command">Команды</string>
     <string name="start_on_map">Стартовать на карте</string>
     <string name="start_on_map_help">При запуске сначала отображается  активность с картой </string>
+    <string name="path_to_save_maps">Сохранять тайлы карт</string>
+    <string name="web_storage_path_tile">Путь на cd карте храниения карт для работы в офлайн</string>
 </resources>

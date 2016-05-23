@@ -113,7 +113,10 @@ public class OpenFileDialog extends AlertDialog.Builder {
                         if (selectedIndex > -1) {
                             Log.d(TAG, "+++++" + currentPath);
                             Result result = (Result) context;
-                            result.onSelectPath(currentPath);
+                            result.onSelectFile(currentPath);
+                            result.onSelectPath(currentPath.replaceAll("[^/]+$", "").replaceAll("/$",""));
+                        }else if(selectedIndex == -1){
+                            ((Result) context).onSelectPath(currentPath);
                         }
                         if (selectedIndex > -1 && listener != null) {
                             listener.OnSelectedFile(listView.getItemAtPosition(selectedIndex).toString());
@@ -316,6 +319,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
         return listView;
     }
     public interface Result{
+        public void onSelectFile(String currentPath);
         public void onSelectPath(String currentPath);
     }
 }
