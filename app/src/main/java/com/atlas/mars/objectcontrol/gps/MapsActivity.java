@@ -1000,8 +1000,6 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
 
     }
 
-
-
     public class OsmMapTileProvider implements TileProvider {
         private static final int TILE_WIDTH = 512;
         private static final int TILE_HEIGHT = 512;
@@ -1014,7 +1012,7 @@ public class MapsActivity extends ActionBarActivity implements FragmentZoomContr
         }
 
         private byte[] readTileImage(int x, int y, int zoom) {
-            OsmRest osmRest = new OsmRest(zoom, x, y);
+            OsmRest osmRest = new OsmRest(zoom, x, y, getApplicationContext());
             byte[] byteArray = osmRest.getResultByteArray();
             return byteArray;
         }

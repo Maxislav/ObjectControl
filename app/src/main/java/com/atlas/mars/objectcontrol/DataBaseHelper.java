@@ -30,7 +30,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "myLog";
     private static final String DATABASE_NAME = "obcon.db";
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     private static final String TABLE_NAME_DEVICES = "devices";
     private static final String TABLE_NAME_COMMANDS = "commands";
@@ -38,6 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME_SETTING = "setting";
     private static final String TABLE_TRACK_COLLECTION = "trackCollection";
     private static final String TABLE_TRACKS = "traks";
+    private static final String TABLE_TILES = "tiles";
 
 
     public static final String UID = "_id";
@@ -105,6 +106,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             +TABLE_TRACKS+ " ("+ UID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "trackId" + " INTEGER, lat DOUBLE, lng DOUBLE, date TIMESTAMP);";
 
+    private static final String SQL_CREATE_TABLE_TILES = "CREATE TABLE if not exists "
+            +TABLE_TILES+" ("+ UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            +"path" + " VARCHAR(255), " + "date" + " TIMESTAMP, " + "size" + " INTEGER "   +");";
+
     private static final String UPDATE_TRACK_COLLECTION = "ALTER TABLE "+TABLE_TRACK_COLLECTION+" ADD COLUMN "+DISTANCE+" VARCHAR(255);";
 
 
@@ -129,6 +134,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_SETTING);
         db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
         db.execSQL(SQL_CREATE_TABLE_TRACKS);
+        db.execSQL(SQL_CREATE_TABLE_TILES);
         fillSetting(CONFIRM_SEND, "1",db);
         fillSetting(MULTIPLE_SEND, "0", db);
         fillSetting(COUNT_MEMORY_HISTORY, "100", db);
@@ -138,9 +144,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
-        db.execSQL(SQL_CREATE_TABLE_TRACKS);
-        db.execSQL(UPDATE_TRACK_COLLECTION);
+       // db.execSQL(SQL_CREATE_TABLE_TRACK_COLLECTION);
+      //  db.execSQL(SQL_CREATE_TABLE_TRACKS);
+       // db.execSQL(UPDATE_TRACK_COLLECTION);
+
+        db.execSQL(SQL_CREATE_TABLE_TILES);
 
         //String upgradeQuery = "ALTER TABLE mytable ADD COLUMN mycolumn TEXT;";
 
@@ -800,6 +808,59 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         sdb.close();
         return b;
+    }
+
+    public boolean addTile(String path, int size){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        String timestamp = formatter.format(date);
+        sdb = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("path", path);
+        cv.put("date", timestamp);
+        cv.put("size", size);
+        return  sdb.insert(TABLE_TILES, null, cv)!=-1;
+    }
+
+    public long getTilesSize(){
+        long size = 0;
+
+        sdb = getWritableDatabase();
+
+
+        String query =  "SELECT size FROM " + TABLE_TILES + " ORDER BY date" ;
+        Cursor cursor = sdb.rawQuery(query,null);
+        while (cursor.moveToNext()) {
+            size+=cursor.getInt(cursor.getColumnIndex("size"));
+        }
+        cursor.close();
+        sdb.close();
+        return  size;
+    }
+
+    public String removeTile(){
+        sdb = getWritableDatabase();
+        String path = null;
+        long id = 0;
+
+        String query =  "SELECT * FROM " + TABLE_TILES + " ORDER BY date LIMIT 1" ;
+        Cursor cursor = sdb.rawQuery(query,null);
+        while (cursor.moveToNext()) {
+            path = cursor.getString(cursor.getColumnIndex("path"));
+            id = cursor.getInt(cursor.getColumnIndex(UID));
+        }
+
+
+        query = "DELETE FROM "+TABLE_TILES+" WHERE "+UID+"="+id;
+        try {
+            sdb.execSQL(query);
+        }catch (SQLException e){
+            Log.e(TAG, "+++SQLException " + e.toString());
+        }
+        sdb.close();
+        return path;
+
     }
 
 }
