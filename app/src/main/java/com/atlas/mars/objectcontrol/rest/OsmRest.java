@@ -49,14 +49,8 @@ public class OsmRest {
         storagePathTilesFull = storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
 
 
-        Retrofit client = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .build();
-        OsmInterfaceService service = client.create(OsmInterfaceService.class);
-        call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
-        call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
-        call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
-        call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
+
+
     }
 
 
@@ -65,6 +59,15 @@ public class OsmRest {
         Bitmap bmp = null;
 
         if(storagePathTiles == null || !createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))){
+            Retrofit client = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .build();
+            OsmInterfaceService service = client.create(OsmInterfaceService.class);
+            call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
+            call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
+            call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
+            call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
+
             bitmap1 = getBitmapSync(call1);
             bitmap2 = getBitmapSync(call2);
             bitmap3 = getBitmapSync(call3);
