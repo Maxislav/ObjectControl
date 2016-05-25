@@ -77,5 +77,5 @@
     <string name="to_object">To select object</string>
     <string name="to_map_click_position">To map click position</string>
     <string name="path_to_save_maps">Path storage map tiles</string>
-    <string name="web_storage_path_tile">Path on cd card card storage for offline mode</string>
+    <string name="web_storage_path_tile">Path on external cd card card storage for OSM offline mode (0.5гБ)</string>
 </resources>

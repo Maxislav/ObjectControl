@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.Environment;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.squareup.okhttp.ResponseBody;
@@ -139,6 +140,7 @@ public class OsmRest {
         if (0 < listPath.size()) {
             _path = _path + "/" + listPath.remove(0);
         }
+        Environment.getExternalStorageDirectory();
         File file = new File(_path);
         if (!file.exists()) {
             file.mkdirs();
