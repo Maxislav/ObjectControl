@@ -10,10 +10,16 @@ fs.readFile('pass-config.json', (err, data) => {
 
   let pass = JSON.parse(data.toString()).pass
 
+  let mess = ''
+  process.argv.forEach((val, index, array)=>{
+    if(2<=index){
+      mess+=val+' '
+    }
+  })
 
   onExec("cd app/; zip -P \""+pass+"\" build.gradle.zip -r build.gradle")
   .then((d)=>{
-     return onExec("git add * ; git commit -m \"archive pass\"; git push ")
+     return onExec("git add * ; git commit -m \""+mess+"\"; git push ")
   })
 });
 
