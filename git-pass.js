@@ -33,4 +33,22 @@ fs.readFile('pass-config.json', (err, data) => {
   
 });
 
+function onExec(str){
+
+    return new Promise((resolve, reject)=>{
+
+         exec(str, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(`exec error: ${error}`);
+                  reject(error)
+                  return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.log(`stderr: ${stderr}`);
+                resolve(stdout)
+              });
+    })
+
+}
+
 
