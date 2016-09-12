@@ -24,7 +24,7 @@ fs.readFile('pass-config.json', (err, data) => {
 
   onExec("cd app/; zip -P \"" + pass + "\" build.gradle.zip -r build.gradle")
     .then(d=> {
-      return ("cd app/src/main/; zip -P \"" + pass + "\" AndroidManifest.xml.zip -r AndroidManifest.xml")
+      return onExec("cd app/src/main/; zip -P \"" + pass + "\" AndroidManifest.xml.zip -r AndroidManifest.xml")
     })
     .then((d)=> {
       return onExec("git add * ; git commit -m \"" + mess + "\"; git push ")
