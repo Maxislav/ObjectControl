@@ -11,7 +11,13 @@ fs.readFile('pass-config.json', (err, data) => {
 
   let pass = JSON.parse(data.toString()).pass
 
-  exec("cd app/; zip -P \""+pass+"\" build.gradle.zip -r build.gradle", (error, stdout, stderr) => {
+
+  onExec("cd app/; zip -P \""+pass+"\" build.gradle.zip -r build.gradle")
+  .then((d)=>{
+     return onExec("git add * ; git commit -m \"archive pass\"; git push ")
+  })
+
+  /*exec("cd app/; zip -P \""+pass+"\" build.gradle.zip -r build.gradle", (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -28,15 +34,13 @@ fs.readFile('pass-config.json', (err, data) => {
         console.log(`stdout: ${stdout}`);
         console.log(`stderr: ${stderr}`);
       });
-  });
+  });*/
   
   
 });
 
 function onExec(str){
-
     return new Promise((resolve, reject)=>{
-
          exec(str, (error, stdout, stderr) => {
                 if (error) {
                   console.error(`exec error: ${error}`);
