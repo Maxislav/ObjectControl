@@ -16,11 +16,17 @@ fs.readFile('pass-config.json', (err, data) => {
       mess+=val+' '
     }
   })
+  
+  if (mess.length==0){
+    console.log("Enter message commit")
+    return
+  }
 
   onExec("cd app/; zip -P \""+pass+"\" build.gradle.zip -r build.gradle")
   .then((d)=>{
      return onExec("git add * ; git commit -m \""+mess+"\"; git push ")
   })
+  
 });
 
 function onExec(str){
