@@ -1,9 +1,7 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
 /build
 .idea
 app/build.gradle
 app/src/main/AndroidManifest.xml
+pass-config.json
