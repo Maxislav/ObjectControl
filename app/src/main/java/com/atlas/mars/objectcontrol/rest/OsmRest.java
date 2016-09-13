@@ -49,8 +49,6 @@ public class OsmRest {
         storagePathTilesFull = storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
 
 
-
-
     }
 
 
@@ -58,7 +56,7 @@ public class OsmRest {
         byte[] byteArray = null;
         Bitmap bmp = null;
 
-        if(storagePathTiles == null || !createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))){
+        if (storagePathTiles == null || !createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
             Retrofit client = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .build();
@@ -75,15 +73,30 @@ public class OsmRest {
             bmp = merge();
         }
 
-        if( storagePathTiles!=null && createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))){
+        if (storagePathTiles != null && createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            bmp = BitmapFactory.decodeFile(storagePathTilesFull, options);
+            bitmap1 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2), Integer.toString(y*2));
+            bitmap2 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2+1), Integer.toString(y*2));
+            bitmap3 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2), Integer.toString(y*2+1));
+            bitmap4 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2+1), Integer.toString(y*2+1));
+            bmp = merge() ;
+
+                    //bmp = BitmapFactory.decodeFile(storagePathTilesFull, options);
         }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byteArray = stream.toByteArray();
         return byteArray;
+    }
+
+    private Bitmap getStorageBitmap(String zoom, String x, String y) {
+        if (storagePathTiles != null && createPathFolderIfNeeded(zoom, x, y)) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            return BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png", options);
+        }
+
+        return null;
     }
 
     private Bitmap merge() {
@@ -96,9 +109,9 @@ public class OsmRest {
         comboCanvas.drawBitmap(bitmap4, 256.0f, 256.0f, null);
 
         if (storagePathTiles != null) {
-           if(!createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))){
-               saveBitmap(comboBitmap, storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png");
-           }
+            if (!createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
+                saveBitmap(comboBitmap, storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png");
+            }
         }
 
         return comboBitmap;
@@ -153,15 +166,15 @@ public class OsmRest {
         }
     }
 
-    private void saveBitmap(Bitmap bitmap, String path){
-        File file = new File (path);
+    private void saveBitmap(Bitmap bitmap, String path) {
+        File file = new File(path);
         try {
             FileOutputStream out = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
             long size = db.getTilesSize();
-            if(500000000<size){
+            if (500000000 < size) {
                 String remPath = db.removeTile();
                 new File(remPath).delete();
             }
