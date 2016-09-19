@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
+import android.view.ViewDebug;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.squareup.okhttp.ResponseBody;
@@ -29,6 +31,7 @@ import retrofit.http.Path;
 public class OsmRest {
     private final static String BASE_URL = "http://a.tile.openstreetmap.org";
     private final static String MAP_TYPE = "OSM";
+    private final static String TAG = "OsmRestLog";
 
     Call<ResponseBody> call1, call2, call3, call4;
     Bitmap bitmap1, bitmap2, bitmap3, bitmap4;
@@ -36,6 +39,8 @@ public class OsmRest {
     private static HashMap<String, String> hashSetting = DataBaseHelper.hashSetting;
     String storagePathTiles, storagePathTilesFull;
     DataBaseHelper db;
+    OsmInterfaceService service;
+    Retrofit client;
 
 
     public OsmRest(int zoom, int x, int y, Context context) {
@@ -56,11 +61,9 @@ public class OsmRest {
         byte[] byteArray = null;
         Bitmap bmp = null;
 
-        if (storagePathTiles == null || !createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
-            Retrofit client = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .build();
-            OsmInterfaceService service = client.create(OsmInterfaceService.class);
+
+        if(storagePathTiles == null){
+            retrofitCreate();
             call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
             call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
             call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
@@ -70,33 +73,118 @@ public class OsmRest {
             bitmap2 = getBitmapSync(call2);
             bitmap3 = getBitmapSync(call3);
             bitmap4 = getBitmapSync(call4);
-            bmp = merge();
-        }
+            //bmp = merge();
+        }else{
+            /** Все ли файлы имеются на крточке */
+            if(isNededretrofitCreate(zoom, x, y)){
+                retrofitCreate();
+            }
 
-        if (storagePathTiles != null && createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            bitmap1 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2), Integer.toString(y*2));
-            bitmap2 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2+1), Integer.toString(y*2));
-            bitmap3 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2), Integer.toString(y*2+1));
-            bitmap4 = getStorageBitmap(Integer.toString(zoom+1), Integer.toString(x*2+1), Integer.toString(y*2+1));
-            bmp = merge() ;
+            if(isFileExist(zoom + 1, x * 2, y * 2)){
+                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
+                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
+                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
+            }else{
+                call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
+                bitmap1 = getBitmapSync(call1);
 
-                    //bmp = BitmapFactory.decodeFile(storagePathTilesFull, options);
+                if(storagePathTiles!= null &&  bitmap1!=null){
+                    saveBitmap(bitmap1, getPath(zoom + 1, x * 2, y * 2));
+                }
+            }
+
+            if(isFileExist(zoom + 1, (x * 2) + 1, y * 2)){
+                bitmap2 = getStorageBitmap(zoom + 1, (x * 2) + 1, y * 2);
+            }else{
+                call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
+                bitmap2 = getBitmapSync(call2);
+                if(storagePathTiles!= null &&  bitmap3!=null){
+                    saveBitmap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2));
+                }
+            }
+
+            if(isFileExist(zoom + 1, (x * 2), (y * 2) + 1)){
+                bitmap3 = getStorageBitmap(zoom + 1, (x * 2), (y * 2) + 1);
+            }else{
+                call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
+                bitmap3 = getBitmapSync(call3);
+                if(storagePathTiles!= null &&  bitmap3!=null){
+                    saveBitmap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+                }
+            }
+
+            if(isFileExist(zoom + 1, (x * 2) + 1, (y * 2) + 1)){
+                bitmap4 = getStorageBitmap(zoom + 1, (x * 2) + 1, (y * 2) + 1);
+            }else{
+                call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
+                bitmap4 = getBitmapSync(call4);
+                if(storagePathTiles!= null &&  bitmap3!=null){
+                    saveBitmap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
+                }
+            }
         }
+        bmp = merge();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byteArray = stream.toByteArray();
         return byteArray;
     }
 
-    private Bitmap getStorageBitmap(String zoom, String x, String y) {
-        if (storagePathTiles != null && createPathFolderIfNeeded(zoom, x, y)) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            return BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png", options);
+    private String getPath(int zoom, int x, int y){
+      return   storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
+    }
+
+    private boolean isNededretrofitCreate(int zoom, int x, int y){
+        if(!isFileExist(zoom + 1, x * 2, y * 2)){
+            return true;
+        }
+        else if(!isFileExist(zoom + 1, (x * 2) + 1, y * 2)){
+            return true;
+        }
+        else if(!isFileExist(zoom + 1, (x * 2), (y * 2) + 1)){
+            return true;
+        }
+        else if(!isFileExist(zoom + 1, (x * 2) + 1, (y * 2) + 1)){
+            return true;
+        }
+        return false;
+    }
+
+    private void retrofitCreate(){
+        if(client == null){
+            client = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .build();
+        }
+        if (service==null){
+            service = client.create(OsmInterfaceService.class);
+        }
+    }
+
+    private boolean isFileExist(int zoom, int x, int y){
+        String path = storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
+        File file = new File(path);
+        if (file.exists()) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+    private Bitmap getStorageBitmap(int zoom, int  x, int  y) {
+        BitmapFactory.Options options = null;
+        try {
+            options  = new BitmapFactory.Options();
+        }catch (RuntimeException e){
+            Log.d(TAG, e.toString());
         }
 
-        return null;
+
+        //Log.d(TAG, options.toString());
+        return BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
+
+        //return null;
     }
 
     private Bitmap merge() {
@@ -108,11 +196,11 @@ public class OsmRest {
         comboCanvas.drawBitmap(bitmap3, 0.0f, 256.0f, null);
         comboCanvas.drawBitmap(bitmap4, 256.0f, 256.0f, null);
 
-        if (storagePathTiles != null) {
-            if (!createPathFolderIfNeeded(Integer.toString(zoom), Integer.toString(x), Integer.toString(y))) {
+       /* if (storagePathTiles != null) {
+            if (!createPathFolderIfNeeded(zoom, x,y)) {
                 saveBitmap(comboBitmap, storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png");
             }
-        }
+        }*/
 
         return comboBitmap;
     }
@@ -130,28 +218,37 @@ public class OsmRest {
             e.printStackTrace();
             return null;
         }
+
+
         return bitmap;
     }
 
-    private synchronized boolean createPathFolderIfNeeded(String zoom, String x, String y) {
+    private synchronized boolean createPathFolderIfNeeded(int zoom, int x, int y) {
         boolean ret = true;
-        String path = storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
+        String path = storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png";
         ArrayList<String> listPath = new ArrayList<>();
         listPath.add(MAP_TYPE);
-        listPath.add(zoom);
-        listPath.add(x);
+        listPath.add(Integer.toString(zoom));
+        listPath.add(Integer.toString(x));
 
-        File file = new File(path);
+        File file = new File(path);;
+
+
 
         if (file.exists()) {
             return true;
         } else {
-            createPath(listPath, storagePathTiles);
+            try{
+                createPath(listPath, storagePathTiles);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
+
             return false;
         }
     }
 
-    private void createPath(ArrayList<String> listPath, String path) {
+    private void createPath (ArrayList<String> listPath, String path)  throws Exception{
         String _path = path;
         if (0 < listPath.size()) {
             _path = _path + "/" + listPath.remove(0);
