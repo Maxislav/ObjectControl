@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Call;
 import retrofit.Retrofit;
@@ -89,7 +91,8 @@ public class OsmRest {
                 bitmap1 = getBitmapSync(call1);
 
                 if(storagePathTiles!= null &&  bitmap1!=null){
-                    saveBitmap(bitmap1, getPath(zoom + 1, x * 2, y * 2));
+                    AsyncSave asyncSave = new  AsyncSave();
+                    asyncSave.execute(getHashMap(bitmap1, getPath(zoom + 1, x * 2, y * 2)));
                 }
             }
 
@@ -99,7 +102,9 @@ public class OsmRest {
                 call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
                 bitmap2 = getBitmapSync(call2);
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    saveBitmap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2));
+                    AsyncSave asyncSave = new  AsyncSave();
+                    asyncSave.execute(getHashMap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2)));
+                   // saveBitmap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2));
                 }
             }
 
@@ -109,7 +114,11 @@ public class OsmRest {
                 call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
                 bitmap3 = getBitmapSync(call3);
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    saveBitmap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+                    AsyncSave asyncSave = new  AsyncSave();
+                    asyncSave.execute(getHashMap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1)));
+
+                    //saveBitmap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+
                 }
             }
 
@@ -119,7 +128,9 @@ public class OsmRest {
                 call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
                 bitmap4 = getBitmapSync(call4);
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    saveBitmap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
+                    AsyncSave asyncSave = new  AsyncSave();
+                    asyncSave.execute(getHashMap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1)));
+                   // saveBitmap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
                 }
             }
         }
@@ -130,6 +141,13 @@ public class OsmRest {
         return byteArray;
     }
 
+    /**
+     *
+     * @param zoom
+     * @param x
+     * @param y
+     * @return
+     */
     private String getPath(int zoom, int x, int y){
       return   storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
     }
@@ -263,6 +281,17 @@ public class OsmRest {
         }
     }
 
+    private Map<String, Bitmap> getHashMap(Bitmap b, String path){
+        Map<String, Bitmap> map = new HashMap<>();
+        map.put(path, b);
+
+//действия с ключом и значением
+
+
+        return  map;
+    }
+
+
     private void saveBitmap(Bitmap bitmap, String path) {
         File file = new File(path);
         try {
@@ -295,6 +324,49 @@ public class OsmRest {
             return bitmap.getByteCount();
         } else {
             return bitmap.getRowBytes() * bitmap.getHeight();
+        }
+    }
+
+    class AsyncSave extends AsyncTask<Map<String, Bitmap>, Void, String >{
+
+        @Override
+        protected String doInBackground(Map... maps) {
+            Map<String, Bitmap> map = maps[0];
+            String path = null;
+            Bitmap bitmap = null;
+
+            for (Map.Entry entry: map.entrySet()) {
+                path = (String) entry.getKey();
+                bitmap = (Bitmap) entry.getValue();
+            }
+
+            File file = new File(path);
+
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                if(bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)){
+                    out.flush();
+                    out.close();
+                };
+                long size = db.getTilesSize();
+                if (500000000 < size) {
+                    String remPath = db.removeTile();
+                    new File(remPath).delete();
+                }
+                db.addTile(storagePathTilesFull, byteSizeOf(bitmap));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
         }
     }
 

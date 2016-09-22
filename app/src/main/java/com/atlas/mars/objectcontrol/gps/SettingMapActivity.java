@@ -20,7 +20,8 @@ import android.widget.Toast;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
 import com.atlas.mars.objectcontrol.R;
-import com.squareup.phrase.Phrase;
+import com.atlas.mars.objectcontrol.phrase.Phrase;
+//import com.squareup.phrase.Phrase;
 
 import java.util.HashMap;
 

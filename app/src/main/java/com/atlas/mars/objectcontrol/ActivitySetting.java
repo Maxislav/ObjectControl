@@ -13,7 +13,9 @@ import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.squareup.phrase.Phrase;
+//import com.squareup.phrase.Phrase;
+
+import com.atlas.mars.objectcontrol.phrase.Phrase;
 
 import java.util.HashMap;
 
