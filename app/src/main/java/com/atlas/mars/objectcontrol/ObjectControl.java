@@ -2,6 +2,7 @@ package com.atlas.mars.objectcontrol;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import org.acra.*;
 import org.acra.annotation.*;
@@ -21,6 +22,9 @@ import java.util.HashMap;
         resToastText = R.string.app_error
 )
 public class ObjectControl  extends Application {
+
+
+
     DataBaseHelper db;
     static HashMap hashMapSetting;
    /* @Override
@@ -42,6 +46,7 @@ public class ObjectControl  extends Application {
         super.attachBaseContext(base);
         db = new DataBaseHelper(this);
         hashMapSetting = db.hashSetting;
+        MultiDex.install(base);
 
         // The following line triggers the initialization of ACRA
         ACRA.init(this);

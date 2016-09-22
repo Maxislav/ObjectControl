@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
@@ -95,8 +97,6 @@ public class OsmRest {
             }else{
                 call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
                 bitmap1 = getBitmapSync(call1, getPath(zoom + 1, x * 2, y * 2));
-
-
 
                 if(storagePathTiles!= null &&  bitmap1!=null){
                     AsyncSave asyncSave = new  AsyncSave();
@@ -213,8 +213,16 @@ public class OsmRest {
         }
 
 
-        //Log.d(TAG, options.toString());
-        return BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
+        Bitmap b = BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
+
+      /*  Canvas canvas = new Canvas(b);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.rgb(255, 0, 0));
+        paint.setTextSize(14);
+        canvas.drawText(zoom+"/"+x+"/"+y, 0, 0, paint);
+*/
+
+        return b;
 
         //return null;
     }
