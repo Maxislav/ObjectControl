@@ -1,6 +1,7 @@
 package com.atlas.mars.objectcontrol.rest;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,7 +12,7 @@ import android.util.Log;
 import android.view.ViewDebug;
 
 import com.atlas.mars.objectcontrol.DataBaseHelper;
-import com.squareup.okhttp.ResponseBody;
+//import com.squareup.okhttp.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,10 +23,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+
+//import retrofit.Call;
+//import retrofit.Retrofit;
+//import retrofit.http.GET;
+//import retrofit.http.Path;
 
 /**
  * Created by mars on 5/16/16.
@@ -71,10 +78,10 @@ public class OsmRest {
             call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
             call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
 
-            bitmap1 = getBitmapSync(call1);
-            bitmap2 = getBitmapSync(call2);
-            bitmap3 = getBitmapSync(call3);
-            bitmap4 = getBitmapSync(call4);
+            bitmap1 = getBitmapSync(call1, getPath(zoom + 1, x * 2, y * 2));
+            bitmap2 = getBitmapSync(call2, getPath(zoom + 1, (x * 2) + 1, y * 2));
+            bitmap3 = getBitmapSync(call3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+            bitmap4 = getBitmapSync(call4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
             //bmp = merge();
         }else{
             /** Все ли файлы имеются на крточке */
@@ -84,11 +91,12 @@ public class OsmRest {
 
             if(isFileExist(zoom + 1, x * 2, y * 2)){
                 bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
-                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
-                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
+
             }else{
                 call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
-                bitmap1 = getBitmapSync(call1);
+                bitmap1 = getBitmapSync(call1, getPath(zoom + 1, x * 2, y * 2));
+
+
 
                 if(storagePathTiles!= null &&  bitmap1!=null){
                     AsyncSave asyncSave = new  AsyncSave();
@@ -100,7 +108,7 @@ public class OsmRest {
                 bitmap2 = getStorageBitmap(zoom + 1, (x * 2) + 1, y * 2);
             }else{
                 call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
-                bitmap2 = getBitmapSync(call2);
+                bitmap2 = getBitmapSync(call2, getPath(zoom + 1, (x * 2) + 1, y * 2));
                 if(storagePathTiles!= null &&  bitmap3!=null){
                     AsyncSave asyncSave = new  AsyncSave();
                     asyncSave.execute(getHashMap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2)));
@@ -112,7 +120,7 @@ public class OsmRest {
                 bitmap3 = getStorageBitmap(zoom + 1, (x * 2), (y * 2) + 1);
             }else{
                 call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
-                bitmap3 = getBitmapSync(call3);
+                bitmap3 = getBitmapSync(call3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
                 if(storagePathTiles!= null &&  bitmap3!=null){
                     AsyncSave asyncSave = new  AsyncSave();
                     asyncSave.execute(getHashMap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1)));
@@ -126,7 +134,7 @@ public class OsmRest {
                 bitmap4 = getStorageBitmap(zoom + 1, (x * 2) + 1, (y * 2) + 1);
             }else{
                 call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
-                bitmap4 = getBitmapSync(call4);
+                bitmap4 = getBitmapSync(call4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
                 if(storagePathTiles!= null &&  bitmap3!=null){
                     AsyncSave asyncSave = new  AsyncSave();
                     asyncSave.execute(getHashMap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1)));
@@ -170,9 +178,14 @@ public class OsmRest {
 
     private void retrofitCreate(){
         if(client == null){
-            client = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .build();
+            try {
+                client = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .build();
+            }catch (Exception e){
+                Log.e("OsmRestLog", e.toString());
+            }
+
         }
         if (service==null){
             service = client.create(OsmInterfaceService.class);
@@ -191,6 +204,7 @@ public class OsmRest {
 
 
     private Bitmap getStorageBitmap(int zoom, int  x, int  y) {
+        Log.d(TAG, "StorageBitmap " + getPath(zoom , x, y ) );
         BitmapFactory.Options options = null;
         try {
             options  = new BitmapFactory.Options();
@@ -224,7 +238,8 @@ public class OsmRest {
     }
 
 
-    private Bitmap getBitmapSync(Call<ResponseBody> call) {
+    private Bitmap getBitmapSync(Call<ResponseBody> call, String path) {
+        Log.d(TAG, "Bitmap sync " + path);
         InputStream is = null;
         Bitmap bitmap;
         try {
@@ -331,6 +346,7 @@ public class OsmRest {
 
         @Override
         protected String doInBackground(Map... maps) {
+
             Map<String, Bitmap> map = maps[0];
             String path = null;
             Bitmap bitmap = null;
@@ -366,6 +382,7 @@ public class OsmRest {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
 
         }
     }

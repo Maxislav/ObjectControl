@@ -4,16 +4,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
-import com.squareup.okhttp.ResponseBody;
+//import com.squareup.okhttp.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import retrofit.Call;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+
 
 /**
  * Created by mars on 5/16/16.

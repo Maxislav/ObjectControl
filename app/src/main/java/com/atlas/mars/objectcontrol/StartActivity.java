@@ -8,6 +8,8 @@ import com.atlas.mars.objectcontrol.gps.MapsActivity;
 
 import java.util.HashMap;
 
+import retrofit2.Retrofit;
+
 /**
  * Created by mars on 11/4/15.
  */
@@ -24,6 +26,12 @@ public class StartActivity extends Activity {
         mapSetting = db.hashSetting;
         Intent intent;
         if(mapSetting.get(db.START_ON_MAP_ACTIVITY)!=null && mapSetting.get(db.START_ON_MAP_ACTIVITY).equals("1")){
+
+
+            //Retrofit.Builder client = new Retrofit.Builder();
+
+
+
 
             intent = new Intent(this, MapsActivity.class);
             intent.setFlags(1);
