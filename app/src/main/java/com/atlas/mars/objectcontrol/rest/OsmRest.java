@@ -53,10 +53,31 @@ public class OsmRest {
     OsmInterfaceService service;
     Retrofit client;
 
+   int[][] listPath;
+
 
     public OsmRest(int zoom, int x, int y, Context context) {
 
         db = new DataBaseHelper(context);
+        listPath = new int[4][3];
+        int i = 0;
+        for (i = 0;i<4; i++){
+            switch (i){
+                case 0:
+                    listPath[i] = new int[]{zoom + 1, x * 2, y * 2};
+                    break;
+                case 1:
+                    listPath[i] = (new int[]{zoom + 1, (x * 2) + 1, y * 2});
+                    break;
+                case 2:
+                    listPath[i]=(new int[]{zoom + 1, (x * 2), (y * 2) + 1});
+                    break;
+                case 3:
+                    listPath[i] = (new int[]{zoom + 1, (x * 2) + 1, (y * 2) + 1});
+                    break;
+            }
+
+        }
 
         this.zoom = zoom;
         this.x = x;
@@ -91,54 +112,50 @@ public class OsmRest {
                 retrofitCreate();
             }
 
-            if(isFileExist(zoom + 1, x * 2, y * 2)){
-                bitmap1 = getStorageBitmap(zoom + 1, x * 2, y * 2 );
+            if(isFileExist(listPath[0])){
+                bitmap1 = getStorageBitmap(listPath[0]);
 
             }else{
-                call1 = service.getMapTile(zoom + 1, x * 2, y * 2);
-                bitmap1 = getBitmapSync(call1, getPath(zoom + 1, x * 2, y * 2));
+                call1 = getCall(listPath[0]);
+                bitmap1 = getBitmapSync(call1, getPath(listPath[0]));
 
                 if(storagePathTiles!= null &&  bitmap1!=null){
-                    AsyncSave asyncSave = new  AsyncSave();
-                    asyncSave.execute(getHashMap(bitmap1, getPath(zoom + 1, x * 2, y * 2)));
+                    saveFile(bitmap1,listPath[0]);
+                   /* AsyncSave asyncSave = new  AsyncSave();
+                    asyncSave.execute(getHashMap(bitmap1, getPath(listPath[0])));*/
                 }
             }
 
-            if(isFileExist(zoom + 1, (x * 2) + 1, y * 2)){
-                bitmap2 = getStorageBitmap(zoom + 1, (x * 2) + 1, y * 2);
+
+
+            if(isFileExist(listPath[1])){
+                bitmap2 = getStorageBitmap(listPath[1]);
             }else{
-                call2 = service.getMapTile(zoom + 1, (x * 2) + 1, y * 2);
-                bitmap2 = getBitmapSync(call2, getPath(zoom + 1, (x * 2) + 1, y * 2));
+                call2 = getCall(listPath[1]);
+                bitmap2 = getBitmapSync(call2, getPath(listPath[1]));
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    AsyncSave asyncSave = new  AsyncSave();
-                    asyncSave.execute(getHashMap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2)));
-                   // saveBitmap(bitmap2, getPath(zoom + 1, (x * 2) + 1, y * 2));
+                    saveFile(bitmap2,listPath[1]);
                 }
             }
 
-            if(isFileExist(zoom + 1, (x * 2), (y * 2) + 1)){
-                bitmap3 = getStorageBitmap(zoom + 1, (x * 2), (y * 2) + 1);
+            if(isFileExist(listPath[2])){
+                bitmap3 = getStorageBitmap(listPath[2]);
             }else{
-                call3 = service.getMapTile(zoom + 1, (x * 2), (y * 2) + 1);
-                bitmap3 = getBitmapSync(call3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+                call3 = getCall(listPath[2]);
+                bitmap3 = getBitmapSync(call3, getPath(listPath[2]));
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    AsyncSave asyncSave = new  AsyncSave();
-                    asyncSave.execute(getHashMap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1)));
-
-                    //saveBitmap(bitmap3, getPath(zoom + 1, (x * 2), (y * 2) + 1));
+                    saveFile(bitmap3,listPath[2]);
 
                 }
             }
 
-            if(isFileExist(zoom + 1, (x * 2) + 1, (y * 2) + 1)){
-                bitmap4 = getStorageBitmap(zoom + 1, (x * 2) + 1, (y * 2) + 1);
+            if(isFileExist(listPath[3])){
+                bitmap4 = getStorageBitmap(listPath[3]);
             }else{
-                call4 = service.getMapTile(zoom + 1, (x * 2) + 1, (y * 2) + 1);
-                bitmap4 = getBitmapSync(call4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
+                call4 = getCall(listPath[3]);
+                bitmap4 = getBitmapSync(call4, getPath(listPath[3]));
                 if(storagePathTiles!= null &&  bitmap3!=null){
-                    AsyncSave asyncSave = new  AsyncSave();
-                    asyncSave.execute(getHashMap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1)));
-                   // saveBitmap(bitmap4, getPath(zoom + 1, (x * 2) + 1, (y * 2) + 1));
+                    saveFile(bitmap4,listPath[3]);
                 }
             }
         }
@@ -149,6 +166,17 @@ public class OsmRest {
         return byteArray;
     }
 
+    private boolean saveFile(Bitmap bitmap, int path[]){
+        AsyncSave asyncSave = new  AsyncSave();
+        asyncSave.execute(getHashMap(bitmap, path));
+        return true;
+    }
+
+
+    private  Call<ResponseBody> getCall(int arg[]){
+        return  service.getMapTile(arg[0], arg[1], arg[2]);
+    }
+
     /**
      *
      * @param zoom
@@ -157,7 +185,12 @@ public class OsmRest {
      * @return
      */
     private String getPath(int zoom, int x, int y){
+
+
       return   storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png";
+    }
+    private String getPath(int[] arg){
+        return   storagePathTiles + "/" + MAP_TYPE + "/" + arg[0] + "/" + arg[1] + "/" + arg[2] + ".png";
     }
 
     private boolean isNededretrofitCreate(int zoom, int x, int y){
@@ -202,8 +235,19 @@ public class OsmRest {
         }
     }
 
+    private boolean isFileExist(int arg[]){
+        String path = storagePathTiles + "/" + MAP_TYPE + "/" + arg[0] + "/" + arg[1] + "/" + arg[2] + ".png";
+        File file = new File(path);
+        if (file.exists()) {
+            return true;
+        }else {
+            return false;
+        }
+    }
 
-    private Bitmap getStorageBitmap(int zoom, int  x, int  y) {
+
+    private Bitmap getStorageBitmap(int zoom, int x, int y) {
+
         Log.d(TAG, "StorageBitmap " + getPath(zoom , x, y ) );
         BitmapFactory.Options options = null;
         try {
@@ -211,20 +255,23 @@ public class OsmRest {
         }catch (RuntimeException e){
             Log.d(TAG, e.toString());
         }
+       return  BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
+    }
 
+    private Bitmap getStorageBitmap(int arg[]) {
+        int zoom, x, y;
+        zoom = arg[0];
+        x = arg[1];
+        y = arg[2];
 
-        Bitmap b = BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
-
-      /*  Canvas canvas = new Canvas(b);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.rgb(255, 0, 0));
-        paint.setTextSize(14);
-        canvas.drawText(zoom+"/"+x+"/"+y, 0, 0, paint);
-*/
-
-        return b;
-
-        //return null;
+        Log.d(TAG, "StorageBitmap " + getPath(zoom , x, y ) );
+        BitmapFactory.Options options = null;
+        try {
+            options  = new BitmapFactory.Options();
+        }catch (RuntimeException e){
+            Log.d(TAG, e.toString());
+        }
+        return  BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
     }
 
     private Bitmap merge() {
@@ -264,7 +311,10 @@ public class OsmRest {
         return bitmap;
     }
 
-    private synchronized boolean createPathFolderIfNeeded(int zoom, int x, int y) {
+    private synchronized boolean createPathFolderIfNeeded(int... arg) {
+
+        int zoom=arg[0],  x=arg[1],  y=arg[2];
+
         boolean ret = true;
         String path = storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png";
         ArrayList<String> listPath = new ArrayList<>();
@@ -272,7 +322,7 @@ public class OsmRest {
         listPath.add(Integer.toString(zoom));
         listPath.add(Integer.toString(x));
 
-        File file = new File(path);;
+        File file = new File(path);
 
 
 
@@ -304,9 +354,13 @@ public class OsmRest {
         }
     }
 
-    private Map<String, Bitmap> getHashMap(Bitmap b, String path){
-        Map<String, Bitmap> map = new HashMap<>();
-        map.put(path, b);
+    private Map<String, Object> getHashMap(Bitmap b, int arg[]){
+        Map<String, Object> map = new HashMap<>();
+
+
+        map.put("path", arg);
+        map.put("bitmap", b);
+
 
 //действия с ключом и значением
 
@@ -350,19 +404,19 @@ public class OsmRest {
         }
     }
 
-    class AsyncSave extends AsyncTask<Map<String, Bitmap>, Void, String >{
+    class AsyncSave extends AsyncTask<Map<String, Object>, Void, String >{
 
         @Override
         protected String doInBackground(Map... maps) {
 
-            Map<String, Bitmap> map = maps[0];
-            String path = null;
-            Bitmap bitmap = null;
+            Map<String, Object> map = maps[0];
+            int arg[] = (int[]) map.get("path");
 
-            for (Map.Entry entry: map.entrySet()) {
-                path = (String) entry.getKey();
-                bitmap = (Bitmap) entry.getValue();
-            }
+
+            Bitmap bitmap = (Bitmap)map.get("bitmap");
+
+            String path = getPath(arg);
+            createPathFolderIfNeeded(arg);
 
             File file = new File(path);
 
