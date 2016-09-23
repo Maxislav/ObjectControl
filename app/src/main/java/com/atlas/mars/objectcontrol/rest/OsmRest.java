@@ -108,13 +108,12 @@ public class OsmRest {
             //bmp = merge();
         }else{
             /** Все ли файлы имеются на крточке */
-            if(isNededretrofitCreate(zoom, x, y)){
+            /*if(isNededretrofitCreate(zoom, x, y)){
                 retrofitCreate();
-            }
+            }*/
 
             if(isFileExist(listPath[0])){
                 bitmap1 = getStorageBitmap(listPath[0]);
-
             }else{
                 call1 = getCall(listPath[0]);
                 bitmap1 = getBitmapSync(call1, getPath(listPath[0]));
@@ -174,6 +173,9 @@ public class OsmRest {
 
 
     private  Call<ResponseBody> getCall(int arg[]){
+         if(!isFileExist(arg) && client==null){
+             retrofitCreate();
+         }
         return  service.getMapTile(arg[0], arg[1], arg[2]);
     }
 
@@ -193,7 +195,12 @@ public class OsmRest {
         return   storagePathTiles + "/" + MAP_TYPE + "/" + arg[0] + "/" + arg[1] + "/" + arg[2] + ".png";
     }
 
-    private boolean isNededretrofitCreate(int zoom, int x, int y){
+    private boolean isNededretrofitCreate(int... arg){
+        int x, y, zoom;
+        zoom = arg[0];
+        x = arg[1];
+        y = arg[2];
+
         if(!isFileExist(zoom + 1, x * 2, y * 2)){
             return true;
         }
@@ -246,17 +253,7 @@ public class OsmRest {
     }
 
 
-    private Bitmap getStorageBitmap(int zoom, int x, int y) {
 
-        Log.d(TAG, "StorageBitmap " + getPath(zoom , x, y ) );
-        BitmapFactory.Options options = null;
-        try {
-            options  = new BitmapFactory.Options();
-        }catch (RuntimeException e){
-            Log.d(TAG, e.toString());
-        }
-       return  BitmapFactory.decodeFile(storagePathTiles + "/" + MAP_TYPE + "/" + Integer.toString(zoom) + "/" + Integer.toString(x) + "/" + Integer.toString(y) + ".png", options);
-    }
 
     private Bitmap getStorageBitmap(int arg[]) {
         int zoom, x, y;
@@ -282,12 +279,6 @@ public class OsmRest {
         comboCanvas.drawBitmap(bitmap2, 256.0f, 0.0f, null);
         comboCanvas.drawBitmap(bitmap3, 0.0f, 256.0f, null);
         comboCanvas.drawBitmap(bitmap4, 256.0f, 256.0f, null);
-
-       /* if (storagePathTiles != null) {
-            if (!createPathFolderIfNeeded(zoom, x,y)) {
-                saveBitmap(comboBitmap, storagePathTiles + "/" + MAP_TYPE + "/" + zoom + "/" + x + "/" + y + ".png");
-            }
-        }*/
 
         return comboBitmap;
     }
@@ -356,37 +347,13 @@ public class OsmRest {
 
     private Map<String, Object> getHashMap(Bitmap b, int arg[]){
         Map<String, Object> map = new HashMap<>();
-
-
         map.put("path", arg);
         map.put("bitmap", b);
-
-
-//действия с ключом и значением
-
-
         return  map;
     }
 
 
-    private void saveBitmap(Bitmap bitmap, String path) {
-        File file = new File(path);
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-            long size = db.getTilesSize();
-            if (500000000 < size) {
-                String remPath = db.removeTile();
-                new File(remPath).delete();
-            }
-            db.addTile(storagePathTilesFull, byteSizeOf(bitmap));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private interface OsmInterfaceService {
@@ -425,13 +392,14 @@ public class OsmRest {
                 if(bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)){
                     out.flush();
                     out.close();
-                };
-                long size = db.getTilesSize();
-                if (500000000 < size) {
-                    String remPath = db.removeTile();
-                    new File(remPath).delete();
+                    long size = db.getTilesSize();
+                    if (500000000 < size) {
+                        String remPath = db.removeTile();
+                        new File(remPath).delete();
+                    }
+                    db.addTile(storagePathTilesFull, byteSizeOf(bitmap));
                 }
-                db.addTile(storagePathTilesFull, byteSizeOf(bitmap));
+
 
             } catch (Exception e) {
                 e.printStackTrace();
